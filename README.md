@@ -6,3 +6,5 @@ Group 1
 -Rory Schillo, https://github.com/Slenderslayer88
 
 -Alexander Maliziola, https://github.com/alex-maliziola
+
+-Jacob Rivers, https://github.com/SejongKadonk
