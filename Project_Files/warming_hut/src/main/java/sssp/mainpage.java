@@ -1,5 +1,6 @@
 package sssp;
-import sssp.Helper.RequestGuest;
+import sssp.Helper.HttpRequestBuilder;
+import sssp.Helper.GuestRequestBuilder;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,8 +9,8 @@ import java.awt.*;
 public class mainpage {
     public static void main(String[] args) {
 
-        RequestGuest testing = new RequestGuest();
-        testing.makeRequest();
+        GuestRequestBuilder testing = new GuestRequestBuilder();
+        testing.postNewGuest();
 
         // Create a new JFrame
         JFrame frame = new JFrame("My Swing Application");
@@ -42,7 +43,7 @@ public class mainpage {
 
        
         // Make the JFrame visible
-        frame.setVisible(true);
+        //frame.setVisible(true);
        
         // Set the default close operation
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
