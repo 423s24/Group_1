@@ -8,3 +8,5 @@ Group 1
 -Alexander Maliziola, https://github.com/alex-maliziola
 
 -Jacob Rivers, https://github.com/SejongKadonk
+
+-Beau Baer, https://github.com/beau101023
