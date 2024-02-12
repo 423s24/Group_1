@@ -1,10 +1,16 @@
 package sssp;
+import sssp.Helper.RequestGuest;
+
 import javax.swing.*;
 import java.awt.*;
 
 
 public class mainpage {
     public static void main(String[] args) {
+
+        RequestGuest testing = new RequestGuest();
+        testing.makeRequest();
+
         // Create a new JFrame
         JFrame frame = new JFrame("My Swing Application");
        
