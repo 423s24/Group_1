@@ -1,6 +1,9 @@
 package sssp;
+import sssp.Control.GuestController;
 import sssp.Helper.HttpRequestBuilder;
 import sssp.Helper.GuestRequestBuilder;
+import sssp.Model.GuestModel;
+import sssp.View.MockForm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,16 +12,14 @@ import java.awt.*;
 public class mainpage {
     public static void main(String[] args) {
 
-        GuestRequestBuilder testing = new GuestRequestBuilder();
-        testing.postNewGuest();
-
         // Create a new JFrame
-        JFrame frame = new JFrame("My Swing Application");
+        //JFrame frame = new JFrame("My Swing Application");
        
         // Set the frame to full screen
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setUndecorated(false); // Add window decorations
-       
+        //frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        //frame.setUndecorated(false); // Add window decorations
+
+
         // Create a JPanel to hold the content
         JPanel panel = new JPanel() {
             @Override
@@ -37,15 +38,27 @@ public class mainpage {
                 g.drawString("Hello, World!", x, y);
             }
         };
-       
+
+
         // Add the panel to the frame
-        frame.add(panel);
+        //frame.add(new MockForm());
 
        
         // Make the JFrame visible
         //frame.setVisible(true);
        
         // Set the default close operation
+        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        MockForm view = new MockForm();
+        GuestModel model = new GuestModel();
+        GuestController controller = new GuestController(view, model);
+
+        JFrame frame = new JFrame("MockForm");
+        frame.setContentPane(view.getMockPanel());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.pack();
+        frame.setVisible(true);
     }
 }

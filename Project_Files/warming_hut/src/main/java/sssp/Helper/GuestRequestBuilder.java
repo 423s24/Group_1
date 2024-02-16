@@ -5,17 +5,16 @@ import java.util.Random;
 
 public class GuestRequestBuilder extends HttpRequestBuilder {
 
-    private final String ENDPOINT = "guests";
+    private final String ENDPOINT = "clients/HRDC/tables/Guests";
 
-    public void postNewGuest(){
-        Random rand = new Random();
-        int randomID = Math.abs(rand.nextInt());
-        String path = String.format("%s/%s",ENDPOINT,String.format("newGuest%d", randomID));
+    public boolean postNewGuest(String firstName, String lastName, String password){
+        String path = String.format("%s/%s",ENDPOINT,String.format(String.format("%s-%s", lastName, firstName)));
 
         HashMap<String, String> newGuestData = new HashMap<>();
-        newGuestData.put("UserID", String.valueOf(randomID));
-        newGuestData.put("Username", "New User");
+        newGuestData.put("First Name", firstName);
+        newGuestData.put("Last Name", lastName);
+        newGuestData.put("Password", password);
 
-        postRequest(path, newGuestData);
+        return postRequest(path, newGuestData);
     }
 }

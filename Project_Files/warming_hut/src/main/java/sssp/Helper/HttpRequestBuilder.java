@@ -35,7 +35,7 @@ public abstract class HttpRequestBuilder {
         }
     }
 
-    public void postRequest(String path, HashMap<String, String> data){
+    public boolean postRequest(String path, HashMap<String, String> data){
         try{
 
             URL url = new URL(String.format("https://hrdc-warming-hut-db-manager-default-rtdb.firebaseio.com/%s/.json?auth=%s", path, SECRET));
@@ -63,10 +63,15 @@ public abstract class HttpRequestBuilder {
 
             in.close();
             System.out.println(content);
+            int responseCode = con.getResponseCode();
             con.disconnect();
+            if(responseCode == 200){
+                return true;
+            }
         } catch(Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     protected String mapToJSON(HashMap<String, String> data){
