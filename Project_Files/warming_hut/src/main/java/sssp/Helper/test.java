@@ -19,8 +19,8 @@ public class test {
 
         // Fetch the client's database
         test.getClientDatabase();
-
-        
+        Database dbDemo = test.getLocalClientDatabase();
+        dbDemo.printDatabase();
 
         test.database.enrollmentForm.get("testEntry1").put("FirstName", "Jane");
 
