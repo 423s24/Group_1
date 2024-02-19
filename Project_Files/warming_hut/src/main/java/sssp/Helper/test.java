@@ -15,16 +15,16 @@ public class test {
         String secret = "GHODuRVY3N2t2VfSzaEMEvVXN3iETl6pF6MeMXzr";
 
         // Create an instance of ModuleTemplate
-        ModuleTemplate moduleTemplate = new ModuleTemplate(client, secret);
+        DBConnector test = new DBConnector(client, secret);
 
         // Fetch the client's database
-        moduleTemplate.getClientDatabase();
+        test.getClientDatabase();
 
         
 
-        moduleTemplate.database.enrollmentForm.get("testEntry1").put("FirstName", "Jane");
+        test.database.enrollmentForm.get("testEntry1").put("FirstName", "Jane");
 
-        moduleTemplate.pushClientDatabase();
+        test.pushClientDatabase();
         
         
         

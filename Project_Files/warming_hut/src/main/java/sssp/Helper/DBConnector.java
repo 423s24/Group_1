@@ -14,7 +14,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 
-public class ModuleTemplate {
+public class DBConnector {
     //Initialize variables
     public Database database;
     private String client;
@@ -22,7 +22,7 @@ public class ModuleTemplate {
     private String endpoint = "https://hrdc-warming-hut-db-manager-default-rtdb.firebaseio.com/clients";
 
     // class constructor 
-    public ModuleTemplate(String client, String secret){
+    public DBConnector(String client, String secret){
         this.client = client;
         this.secret = secret;
         getClientDatabase();
