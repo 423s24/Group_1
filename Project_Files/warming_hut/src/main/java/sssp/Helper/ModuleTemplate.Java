@@ -5,8 +5,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
-public class ModuleTemplate{
+public class ModuleTemplate {
     //Initialize variables
     private HashMap<String, Object> database;
     private String client;
@@ -91,3 +92,4 @@ public class ModuleTemplate{
 
     }
 }
+
