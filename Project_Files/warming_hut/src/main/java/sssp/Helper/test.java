@@ -11,8 +11,8 @@ import java.util.Map;
 public class test {
     public static void main(String[] args) {
         // Provide client and secret
-        String client = "your_client_id";
-        String secret = "your_secret";
+        String client = "HRDC";
+        String secret = "GHODuRVY3N2t2VfSzaEMEvVXN3iETl6pF6MeMXzr";
 
         // Create an instance of ModuleTemplate
         ModuleTemplate moduleTemplate = new ModuleTemplate(client, secret);
@@ -20,16 +20,16 @@ public class test {
         // Fetch the client's database
         moduleTemplate.getClientDatabase();
 
-        HashMap<String, Object> clientDatabase = moduleTemplate.getLocalClientDatabase();
+        
 
-        // Print the output of getLocalClientDatabase()
-        System.out.println("Local Client Database:");
-        if (clientDatabase != null) {
-            for (Map.Entry<String, Object> entry : clientDatabase.entrySet()) {
-                System.out.println(entry.getKey() + ": " + entry.getValue());
-            }
-        } else {
-            System.out.println("Failed to fetch client database.");
-        }
+        moduleTemplate.database.enrollmentForm.get("testEntry1").put("FirstName", "Jane");
+
+        moduleTemplate.pushClientDatabase();
+        
+        
+        
+
     }
+
+    
 }

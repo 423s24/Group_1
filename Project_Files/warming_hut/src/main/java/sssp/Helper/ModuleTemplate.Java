@@ -1,5 +1,6 @@
 package sssp.Helper;
 
+import java.io.OutputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -7,12 +8,18 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.HashMap;
+
 public class ModuleTemplate {
     //Initialize variables
-    private HashMap<String, Object> database;
+    public Database database;
     private String client;
     private String secret;
-    private String endpoint = "clients";
+    private String endpoint = "https://hrdc-warming-hut-db-manager-default-rtdb.firebaseio.com/clients";
 
     // class constructor 
     public ModuleTemplate(String client, String secret){
@@ -22,10 +29,10 @@ public class ModuleTemplate {
     }
 
      // pull from database
-     public HashMap<String, Object> getClientDatabase() {
+     public Database getClientDatabase() {
         try {
             // Construct the URL to fetch client's data
-            String urlString = "https://hrdc-warming-hut-db-manager-default-rtdb.firebaseio.com/" + client + ".json?auth=" + secret;
+            String urlString = endpoint +"/"+ client + ".json?auth=" + secret;
     
             // Create URL object
             URL url = new URL(urlString);
@@ -48,7 +55,7 @@ public class ModuleTemplate {
                         response.append(inputLine);
                     }
                     // Parse JSON response
-                    HashMap<String, Object> clientData = parseJson(response.toString());
+                    Database clientData = parseJson(response.toString());
                     this.database = clientData;
                     return clientData;
                 }
@@ -63,33 +70,101 @@ public class ModuleTemplate {
         }
     }
 
-    public HashMap<String, Object> getLocalClientDatabase(){
+    public void pushClientDatabase() {
+        try {
+            // Construct the URL to push data to the Firebase Realtime Database
+            String urlString = endpoint + "/" + client + ".json?auth=" + secret;
+
+            // Create URL object
+            URL url = new URL(urlString);
+
+            // Open connection
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+            // Set request method to PUT
+            con.setRequestMethod("PUT");
+            con.setRequestProperty("Content-Type", "application/json");
+
+            // Enable input and output
+            con.setDoOutput(true);
+            con.setDoInput(true); // Enable input for reading response
+
+            // Convert the locally stored database to JSON string
+            String json = databaseToJson();
+
+            // Write JSON string to the output stream
+            try (OutputStream os = con.getOutputStream()) {
+                byte[] input = json.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            // Get response code
+            int responseCode = con.getResponseCode();
+
+            // Check if the response code indicates success
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // Read response
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+                    String inputLine;
+                    StringBuilder response = new StringBuilder();
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    // Print response
+                    System.out.println("Server response: " + response.toString());
+                }
+                System.out.println("Local database successfully pushed to Firebase Realtime Database.");
+            } else {
+                // If response code indicates failure, print error message
+                System.out.println("Failed to push local database to Firebase Realtime Database. Response Code: " + responseCode);
+            }
+        } catch (Exception e) {
+            // Print stack trace if an exception occurs
+            e.printStackTrace();
+        }
+    }
+
+    public Database getLocalClientDatabase(){
         return this.database;
     }
     
-    public void getLocalClientDatabase(HashMap<String, Object> database){
+    public void getLocalClientDatabase(Database database){
         this.database = database;
     }
 
     
-    // Method to parse JSON string into HashMap
-    private HashMap<String, Object> parseJson(String json) {
-        try {
-            // Initialize ObjectMapper
-            ObjectMapper objectMapper = new ObjectMapper();
+    // Standalone method to parse JSON string into HashMap
+    public Database parseJson(String json) {
+        System.out.println("DATABASE BEFORE\n");
+        System.out.println(json);
+        Gson gson = new Gson();
+        Type type = new TypeToken<Map<String, Map<String, Map<String, Map<String, String>>>>>(){}.getType();
+        Map<String, Map<String, Map<String, Map<String, String>>>> data = gson.fromJson(json, type);
 
-            // Parse JSON string into HashMap
-            HashMap<String, Object> parsedJson = objectMapper.readValue(json, new TypeReference<HashMap<String, Object>>() {});
+        Database database = new Database();
 
-            return parsedJson;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+        Map<String,Map<String,Map<String,String>>> tables = data.get("tables");
+
+        database.enrollmentForm = tables.get("Enrollment Form");
+        database.guests = tables.get("Guests");
+        database.storage = tables.get("Storage");
+
+        return database;
     }
 
-    public HashMap getData(String Table){
+    // Standalone method to convert Database object to JSON string
+    public String databaseToJson() {
+        Map<String, Map<String, Map<String, String>>> tables = new HashMap<>();
+        tables.put("Enrollment Form", database.enrollmentForm);
+        tables.put("Guests", database.guests);
+        tables.put("Storage", database.storage);
 
+        Map<String, Map<String, Map<String, Map<String, String>>>> data = new HashMap<>();
+        data.put("tables", tables);
+
+        Gson gson = new Gson();
+        return gson.toJson(data);
     }
+    
 }
 
