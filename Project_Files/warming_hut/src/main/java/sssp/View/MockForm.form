@@ -6,7 +6,7 @@
       <xy x="20" y="20" width="805" height="791"/>
     </constraints>
     <properties>
-      <background color="-2430999"/>
+      <background color="-1316627"/>
       <foreground color="-14606047"/>
     </properties>
     <border type="none"/>
@@ -18,7 +18,7 @@
           </grid>
         </constraints>
         <properties>
-          <background color="-2430999"/>
+          <background color="-2501674"/>
           <foreground color="-14606047"/>
         </properties>
       </component>
@@ -58,7 +58,7 @@
           </grid>
         </constraints>
         <properties>
-          <background color="-2430999"/>
+          <background color="-2501674"/>
           <foreground color="-14606047"/>
         </properties>
       </component>
@@ -87,7 +87,7 @@
           </grid>
         </constraints>
         <properties>
-          <background color="-2430999"/>
+          <background color="-2501674"/>
           <foreground color="-14606047"/>
         </properties>
       </component>
@@ -96,7 +96,7 @@
           <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <background color="-2430999"/>
+          <background color="-2501674"/>
           <borderPainted value="true"/>
           <contentAreaFilled value="true"/>
           <defaultCapable value="true"/>
