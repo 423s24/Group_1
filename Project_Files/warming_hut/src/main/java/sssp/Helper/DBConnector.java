@@ -5,27 +5,32 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.concurrent.Future;
 
-public class DBConnector {
+public class DBConnector implements HttpStreamingManager.IServerEventListener {
     //Initialize variables
     public Database database;
     private String client;
     private String secret;
     private String endpoint = "https://hrdc-warming-hut-db-manager-default-rtdb.firebaseio.com/clients";
 
+    private HttpStreamingManager streamingManager;
+
     // class constructor 
     public DBConnector(String client, String secret){
         this.client = client;
         this.secret = secret;
         getClientDatabase();
+        streamingManager = new HttpStreamingManager(client, secret, endpoint);
+        streamingManager.addServerEventListener(this);
+        ListenForServerEvents();
     }
 
      // pull from database
@@ -128,7 +133,7 @@ public class DBConnector {
         return this.database;
     }
     
-    public void getLocalClientDatabase(Database database){
+    public void setLocalClientDatabase(Database database){
         this.database = database;
     }
 
@@ -152,6 +157,7 @@ public class DBConnector {
         return database;
     }
 
+
     // Standalone method to convert Database object to JSON string
     public String databaseToJson() {
         Map<String, Map<String, Map<String, String>>> tables = new HashMap<>();
@@ -165,6 +171,22 @@ public class DBConnector {
         Gson gson = new Gson();
         return gson.toJson(data);
     }
-    
+
+    @Override
+    public void ServerEventCalled(String eventName) {
+        //Currently, we are only listening for PUT events. In the future we might want to listen for different types
+        getClientDatabase();
+    }
+
+    private void ListenForServerEvents(){
+        Thread newThread = new Thread(() -> {
+            try {
+                streamingManager.ListenForEvents();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        newThread.start();
+    }
 }
 
