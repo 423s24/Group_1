@@ -51,9 +51,12 @@ public class mainpage {
         // Set the default close operation
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        MockForm view = new MockForm();
-        GuestModel model = new GuestModel();
-        GuestController controller = new GuestController(view, model);
+        //Disabling all this for now, I'm tired and just want this stupid menu to work.
+
+
+        //MockForm view = new MockForm();
+        //GuestModel model = new GuestModel();
+        //GuestController controller = new GuestController(view, model);
 
         JFrame frame = new JFrame("MockForm");
         frame.setContentPane(view.getMockPanel());

@@ -22,10 +22,17 @@ public class test {
         // Fetch the client's database
         test.getClientDatabase();
         Database dbDemo = test.getLocalClientDatabase();
-        dbDemo.printDatabase();
 
         test.database.enrollmentForm.get("testEntry1").put("FirstName", "Jane");
 
+        System.out.println("\n\nBEFORE\n\n");
+        test.database.printDatabase();
+
+
         test.pushClientDatabase();
+
+
+        System.out.println("\n\nAFTER\n\n");
+        test.database.printDatabase();
     }
 }

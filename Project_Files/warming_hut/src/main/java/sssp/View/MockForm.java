@@ -34,7 +34,30 @@ public class MockForm {
         return MockPanel;
     }
 
-    public MockForm() {
+    private MainMenuMockup mainMenuMockup;
+    public MockForm(MainMenuMockup mainMenuMockup) {
+        this.mainMenuMockup = mainMenuMockup;
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String firstName = firstNameTextField.getText();
+                String lastName = lastNameTextField.getText();
+                String password = new String(passwordTextField.getPassword());
+                String date = "1/1/2000"; // Placeholder date
+
+                mainMenuMockup.addRowToTable(firstName, lastName, date); // Sends to menu table
+
+                // Just some console checking stuff
+                System.out.println("First Name: " + firstName);
+                System.out.println("Last Name: " + lastName);
+                System.out.println("Password: " + password);
+
+                // Clear fields after submission
+                firstNameTextField.setText("");
+                lastNameTextField.setText("");
+                passwordTextField.setText("");
+            }
+        });
     }
 
     public static void main(String[] args) {
