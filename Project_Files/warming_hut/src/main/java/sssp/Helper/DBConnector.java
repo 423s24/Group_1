@@ -157,8 +157,6 @@ public class DBConnector {
                     while ((inputLine = in.readLine()) != null) {
                         response.append(inputLine);
                     }
-                    // Print response
-                    System.out.println("Server response: " + response.toString());
                 }
                 System.out.println("Local database successfully pushed to Firebase Realtime Database.");
             } else {
@@ -217,12 +215,6 @@ public class DBConnector {
                         for (Map.Entry<String, String> originalfield : original.getValue().entrySet()){
                             if(localfield.getKey() == originalfield.getKey()){
                                 if(localfield.getValue() != originalfield.getValue()){
-                                    System.out.println("\n\nPROBLEM IDENTIFIED\n");
-                                    System.out.println(localfield.getKey());
-                                    System.out.println(localfield.getValue());
-                                    System.out.println(originalfield.getKey());
-                                    System.out.println(originalfield.getValue());
-                                    System.out.println("\n////////////////////\n\n");
                                     dbchanges.enrollmentForm.get(local.getKey()).put(localfield.getKey(), localfield.getValue());
                                 }
                             }   
@@ -245,12 +237,6 @@ public class DBConnector {
                         for (Map.Entry<String, String> originalfield : original.getValue().entrySet()){
                             if(localfield.getKey() == originalfield.getKey()){
                                 if(localfield.getValue() != originalfield.getValue()){
-                                    System.out.println("\n\nPROBLEM IDENTIFIED\n");
-                                    System.out.println(localfield.getKey());
-                                    System.out.println(localfield.getValue());
-                                    System.out.println(originalfield.getKey());
-                                    System.out.println(originalfield.getValue());
-                                    System.out.println("\n////////////////////\n\n");
                                     dbchanges.enrollmentForm.get(local.getKey()).put(localfield.getKey(), localfield.getValue());
                                 }
                             }
@@ -273,12 +259,6 @@ public class DBConnector {
                         for (Map.Entry<String, String> originalfield : original.getValue().entrySet()){
                             if(localfield.getKey() == originalfield.getKey()){
                                 if(localfield.getValue() != originalfield.getValue()){
-                                    System.out.println("\n\nPROBLEM IDENTIFIED\n");
-                                    System.out.println(localfield.getKey());
-                                    System.out.println(localfield.getValue());
-                                    System.out.println(originalfield.getKey());
-                                    System.out.println(originalfield.getValue());
-                                    System.out.println("\n////////////////////\n\n");
                                     dbchanges.enrollmentForm.get(local.getKey()).put(localfield.getKey(), localfield.getValue());
                                 }
                             }
