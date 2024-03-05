@@ -1,0 +1,152 @@
+{
+    "HRDC": {
+        "Tables": {
+            "Guests": {
+                "Guest_100": {
+                    "GuestId": 100,
+                    "FirstName": "Johhny",
+                    "LastName": "Apples"
+                }
+            },
+            "GuestRoster": {
+                "Roster_1": {
+                    "Date": "2/28/2024",
+                    "Notes": "Today was a good day!",
+                    "Roster": {
+                        "Guest_100": {
+                            "GuestId": 100,
+                            "BunkAssigned": "<bunk number>",
+                            "Laundry": true
+                        }
+                    }
+                }
+            },
+            "Lockers": {
+                "GuestLockers": {
+                    "Locker_1": {
+                        "LockerNum": 1,
+                        "GuestId": 100,
+                        "StartDate": "2/27/2024",
+                        "LastAccess": "2/27/2024",
+                        "AssignedStaff": "NA",
+                        "ReasonableAccommodation": "Some Medical Issue",
+                        "Notes": "None"
+                    }
+                },
+                "StaffLockers": {
+                    "Locker_1": {
+                        "LockerNum": 1,
+                        "Contents": "Weed Eater"
+                    }
+                }
+            },
+            "DayStorage": {
+                "WaitingList": {
+                    "WaitingGuest_1": {
+                        "GuestId": 100,
+                        "DateAdded": "2/27/2024",
+                        "ContactInfo": "None"
+                    }
+                },
+                "UnknownItems": {
+                    "Item_1": {
+                        "Description": "Some Description"
+                    }
+                },
+                "Bozeman": {
+                    "Shelf": "(A,B,C, or D)",
+                    "Slot": "B12",
+                    "GuestId": 100,
+                    "StartDate": "2/27/2024",
+                    "ExpirationDate": "2/27/2024",
+                    "DSContractSigned": true,
+                    "Description": "Some Description",
+                    "LastStaffCheck": "2/27/2024",
+                    "Staff": "NA",
+                    "Notes": "None" 
+                },
+                "Livingston": {
+                    "GuestId": 100,
+                    "StartDate": "2/27/2024",
+                    "RenewedOn": "2/27/2024",
+                    "Expiration": "2/27/2024",
+                    "Notes": "None"
+                }
+            },
+            "CubeStorage": {
+                "CubeAdditon":{
+                    "AdditionId": 200,
+                    "GuestId": 100,
+                    "StartDate": "2/27/2024",
+                    "ExpirationDate": "2/27/2024",
+                    "PreviousStorageLocationId": "<some id>",
+                    "ReasonsForMoving": "Items were left for over 14 days",
+                    "Staff": "NA",
+                    "Notes": "None",
+                    "Description": "Some Description",
+                    "GuestNotified": true,
+                    "NotificationDate": "2/27/2024",
+                    "NotificationStaff": "NA"
+                },
+                "CubeRemoval": {
+                    "AdditionId": 200,
+                    "DateRemoved": "2/27/2024",
+                    "ReasonsForRemoval": "Some Reason",
+                    "Staff": "NA"
+                }
+            },
+            "Conflicts": {
+                "Warnings":{
+                    "Warning_1": {
+                        "GuestId": 100,
+                        "Date": "2/28/2024",
+                        "Staff": "NA",
+                        "Notes": "None"
+                    }
+                },
+                "Suspensions":{
+                    "Suspension_1": {
+                        "ConflictId": 300,
+                        "GuestId": 100,
+                        "Date": "2/28/2024",
+                        "Photo": "None",
+                        "SuspendedFrom": "(All, or Wheat Drive)",
+                        "SuspensionLength": 20
+                    }
+                },
+                "NoTrespass":{
+                    "NoTrespass_1": {
+                        "ConflictId": 400,
+                        "GuestId": 100,
+                        "Date": "2/28/2024",
+                        "Photo": "None",
+                        "NoTrespassFrom": "(All, or Wheat Drive)",
+                        "Notes": "None",
+                        "StatusLPD": "No Status",
+                        "StatusBPD": "No Status",
+                        "AlertToCW": true
+                    }
+                },
+                "Probation":{
+                    "Probation_1": {
+                        "GuestId": 100,
+                        "Date": "2/28/2024",
+                        "Photo":"None",
+                        "ConflictId": 300,
+                        "Notes": "None",
+                        "ProbationLength": 20,
+                        "AlertToCW": true
+                    }
+                }
+            },
+            "Equipment": {
+                "CheckOut_1": {
+                    "GuestId": 100,
+                    "DateLastIssued": "2/27/2024",
+                    "DateNextEligible": "2/27/2024",
+                    "EquipementType": "(Bed, Tent, Pack, or Pad)" 
+                }
+            }
+        }
+    }
+}

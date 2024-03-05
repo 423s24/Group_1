@@ -310,6 +310,3 @@ public class DBConnector implements HttpStreamingManager.IServerEventListener {
         newThread.start();
     }
 }
-
-
-}

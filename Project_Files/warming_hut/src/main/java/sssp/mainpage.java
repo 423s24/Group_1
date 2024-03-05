@@ -58,13 +58,6 @@ public class mainpage {
         //GuestModel model = new GuestModel();
         //GuestController controller = new GuestController(view, model);
 
-        JFrame frame = new JFrame("MockForm");
-        frame.setContentPane(view.getMockPanel());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.pack();
-        frame.setVisible(true);
-
         String client = "HRDC";
         String secret = "GHODuRVY3N2t2VfSzaEMEvVXN3iETl6pF6MeMXzr";
 
