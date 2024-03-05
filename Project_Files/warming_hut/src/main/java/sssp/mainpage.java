@@ -1,6 +1,6 @@
 package sssp;
 import sssp.Control.GuestController;
-import sssp.Helper.DBConnector;
+//import sssp.Helper.DBConnector;
 import sssp.Helper.HttpRequestBuilder;
 import sssp.Helper.GuestRequestBuilder;
 import sssp.Model.GuestModel;
@@ -59,7 +59,7 @@ public class mainpage {
         //GuestController controller = new GuestController(view, model);
 
         JFrame frame = new JFrame("MockForm");
-        frame.setContentPane(view.getMockPanel());
+        //frame.setContentPane(view.getMockPanel());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.pack();
@@ -69,6 +69,6 @@ public class mainpage {
         String secret = "GHODuRVY3N2t2VfSzaEMEvVXN3iETl6pF6MeMXzr";
 
         // Create an instance of ModuleTemplate
-        DBConnector test = new DBConnector(client, secret);
+        //DBConnector test = new DBConnector(client, secret);
     }
 }

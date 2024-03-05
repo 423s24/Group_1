@@ -17,22 +17,8 @@ public class test {
         String secret = "GHODuRVY3N2t2VfSzaEMEvVXN3iETl6pF6MeMXzr";
 
         // Create an instance of ModuleTemplate
-        DBConnector test = new DBConnector(client, secret);
+        DBConnectorV2 test = new DBConnectorV2(client, secret);
 
-        // Fetch the client's database
-        test.getClientDatabase();
-        Database dbDemo = test.getLocalClientDatabase();
-
-        test.database.enrollmentForm.get("testEntry1").put("FirstName", "Jane");
-
-        System.out.println("\n\nBEFORE\n\n");
-        test.database.printDatabase();
-
-
-        test.pushClientDatabase();
-
-
-        System.out.println("\n\nAFTER\n\n");
-        test.database.printDatabase();
+        
     }
 }
