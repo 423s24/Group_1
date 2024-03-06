@@ -1,15 +1,23 @@
 package sssp.Helper;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import sssp.Model.RosterData;
+
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 public class StreamingTester {
 
+    /*
     private static String client = "HRDC";
     private static String secret = "GHODuRVY3N2t2VfSzaEMEvVXN3iETl6pF6MeMXzr";
     private static String endpoint = "https://hrdc-warming-hut-db-manager-default-rtdb.firebaseio.com/clients";
+    */
     public static void main(String[] args) {
-
+        /*
         HttpStreamingManager streamingTest = new HttpStreamingManager(client, secret, endpoint);
         try {
             Future<?> myFuture = streamingTest.ListenForEvents();
@@ -22,5 +30,27 @@ public class StreamingTester {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        */
+        String testJSON = "{\n" +
+                "  \"Roster_1\": {\n" +
+                "    \"Date\": \"1/27/2024\",\n" +
+                "    \"Guests\": {\n" +
+                "      \"Guest_100\": {\n" +
+                "        \"BunkAssigned\": \"<Bunk number>\",\n" +
+                "        \"Laundry\": true,\n" +
+                "        \"Services\": \"<Service numbers>\"\n" +
+                "      },\n" +
+                "      \"Guest_200\": {\n" +
+                "        \"BunkAssigned\": \"<Bunk number>\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"StaffNotes\": \"Today was a good day!\"\n" +
+                "  }\n" +
+                "}";
+        System.out.println(testJSON);
+        Gson gson = new Gson();
+
+        RosterData data = gson.fromJson(testJSON, RosterData.class);
+        System.out.println(data.getStaffNotes());
     }
 }

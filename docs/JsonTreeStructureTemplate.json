@@ -1,0 +1,161 @@
+{
+    "HRDC": {
+      "Tables": {
+        "Attributes": {
+          "GuestRoster": {
+            "Roster_1": {
+              "Date": "2/28/2024",
+              "Notes": "Today was a good day!",
+              "Roster": "Roster_1"
+            }
+          }
+        },
+        "Conflicts": {
+          "NoTrespass": {
+            "NoTrespass_1": {
+              "AlertToCW": true,
+              "ConflictId": 400,
+              "Date": "2/28/2024",
+              "GuestId": 100,
+              "NoTrespassFrom": "(All, or Wheat Drive)",
+              "Notes": "None",
+              "Photo": "None",
+              "StatusBPD": "No Status",
+              "StatusLPD": "No Status"
+            }
+          },
+          "Probation": {
+            "Probation_1": {
+              "AlertToCW": true,
+              "ConflictId": 300,
+              "Date": "2/28/2024",
+              "GuestId": 100,
+              "Notes": "None",
+              "Photo": "None",
+              "ProbationLength": 20
+            }
+          },
+          "Suspensions": {
+            "Suspension_1": {
+              "ConflictId": 300,
+              "Date": "2/28/2024",
+              "GuestId": 100,
+              "Photo": "None",
+              "SuspendedFrom": "(All, or Wheat Drive)",
+              "SuspensionLength": 20
+            }
+          },
+          "Warnings": {
+            "Warning_1": {
+              "Date": "2/28/2024",
+              "GuestId": 100,
+              "Notes": "None",
+              "Staff": "NA"
+            }
+          }
+        },
+        "CubeStorage": {
+          "CubeAdditon": {
+            "AdditionId": 200,
+            "Description": "Some Description",
+            "ExpirationDate": "2/27/2024",
+            "GuestId": 100,
+            "GuestNotified": true,
+            "Notes": "None",
+            "NotificationDate": "2/27/2024",
+            "NotificationStaff": "NA",
+            "PreviousStorageLocationId": "<some id>",
+            "ReasonsForMoving": "Items were left for over 14 days",
+            "Staff": "NA",
+            "StartDate": "2/27/2024"
+          },
+          "CubeRemoval": {
+            "AdditionId": 200,
+            "DateRemoved": "2/27/2024",
+            "ReasonsForRemoval": "Some Reason",
+            "Staff": "NA"
+          }
+        },
+        "DayStorage": {
+          "Bozeman": {
+            "StorageSlot_1": {
+                "DSContractSigned": true,
+                "Description": "Some Description",
+                "ExpirationDate": "2/27/2024",
+                "GuestId": 100,
+                "LastStaffCheck": "2/27/2024",
+                "Notes": "None",
+                "Shelf": "(A,B,C, or D)",
+                "Slot": "B12",
+                "Staff": "NA",
+                "StartDate": "2/27/2024"
+              }
+            },
+          "Livingston": {
+            "StorageSlot_1": {
+                "Expiration": "2/27/2024",
+                "GuestId": 100,
+                "Notes": "None",
+                "RenewedOn": "2/27/2024",
+                "StartDate": "2/27/2024"
+            }
+          }
+        },
+        "Equipment": {
+          "CheckOut_1": {
+            "DateLastIssued": "2/27/2024",
+            "DateNextEligible": "2/27/2024",
+            "EquipementType": "(Bed, Tent, Pack, or Pad)",
+            "GuestId": 100
+          }
+        },
+        "GuestRoster": {
+          "Roster_1": {
+            "Guest_100": {
+              "BunkAssigned": "<bunk number>",
+              "GuestId": 100,
+              "Laundry": true
+            }
+          }
+        },
+        "Guests": {
+          "Guest_100": {
+            "FirstName": "Johhny",
+            "GuestId": 100,
+            "LastName": "Apples"
+          }
+        },
+        "Lockers": {
+          "GuestLockers": {
+            "Locker_1": {
+              "AssignedStaff": "NA",
+              "GuestId": 100,
+              "LastAccess": "2/27/2024",
+              "LockerNum": 1,
+              "Notes": "None",
+              "ReasonableAccommodation": "Some Medical Issue",
+              "StartDate": "2/27/2024"
+            }
+          },
+          "StaffLockers": {
+            "Locker_1": {
+              "Contents": "Weed Eater",
+              "LockerNum": 1
+            }
+          }
+        },
+        "UnknownItems": {
+          "Item_1": {
+            "Description": "Some Description"
+          }
+        },
+        "WaitingList": {
+          "WaitingGuest_1": {
+            "ContactInfo": "None",
+            "DateAdded": "2/27/2024",
+            "GuestId": 100
+          }
+        }
+      }
+    }
+  }
