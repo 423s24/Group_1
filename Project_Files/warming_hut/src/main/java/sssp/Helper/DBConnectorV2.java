@@ -40,12 +40,13 @@ public class DBConnectorV2{
     public void getClientDatabase() {
         Database database = new Database();
         
+        database.attributes = formatTable2(getTableJson("Attributes"));
 
         database.conflicts = formatTable2(getTableJson("Conflicts"));
         
         database.cubeStorage = formatTable1(getTableJson("CubeStorage"));
-        System.out.println("HERE3");
-        database.dayStorage = formatTable1(getTableJson("DayStorage"));
+
+        database.dayStorage = formatTable2(getTableJson("DayStorage"));
         
         database.equipment = formatTable1(getTableJson("Equipment"));
 
@@ -54,6 +55,10 @@ public class DBConnectorV2{
         database.guests = formatTable1(getTableJson("Guests"));
         
         database.lockers = formatTable2(getTableJson("Lockers"));
+
+        database.unknownItems = formatTable1(getTableJson("UnknownItems"));
+
+        database.waitingList = formatTable1(getTableJson("WaitingList"));
         
         this.database = sortConflicts(database);
     }
@@ -63,20 +68,14 @@ public class DBConnectorV2{
         
         Gson gson = new Gson();
         Type type = new TypeToken<Map<String, Map<String, Map<String, String>>>>(){}.getType();
-        System.out.println("HERE1\n");
-        System.out.println(json);
         Map<String, Map<String, Map<String, String>>> data = gson.fromJson(json, type);
-        System.out.println("HERE2\n");
         return data;
     }
 
     public Map<String, Map<String, String>> formatTable1(String json) {
         Gson gson = new Gson();
         Type type = new TypeToken<Map<String, Map<String, String>>>(){}.getType();
-        System.out.println("HERE1\n");
-        System.out.println(json);
         Map<String, Map<String, String>> data = gson.fromJson(json, type);
-        System.out.println("HERE2\n");
         return data;
     }
 

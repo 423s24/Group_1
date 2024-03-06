@@ -26,7 +26,7 @@
 
 //     // class constructor 
 //     public DBConnector(String client, String secret){
-//         this.client = client;
+//         // this.client = client;
 //         this.secret = secret;
 //         getClientDatabase();
 //         streamingManager = new HttpStreamingManager(client, secret, endpoint);
