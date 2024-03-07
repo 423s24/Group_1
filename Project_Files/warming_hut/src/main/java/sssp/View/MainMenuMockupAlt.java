@@ -7,6 +7,9 @@ import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +19,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.HashMap;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
 
 
 import sssp.Helper.DBConnectorV2;
@@ -141,22 +146,6 @@ public class MainMenuMockupAlt extends JFrame {
         }
     };
 
-    private void updateGuestsTable()
-    {
-        // Update the guest table
-        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-
-        // Clear the table
-        tableModel.setRowCount(0);
-
-        // Add the updated data
-        for (Map.Entry<String, Map<String, String>> entry : db.database.guests.entrySet()) {
-            Map<String, String> guest = entry.getValue();
-            String[] rowData = {guest.get("FirstName") + " " + guest.get("LastName"), guest.get("Date")};
-            tableModel.addRow(rowData);
-        }
-    }
-
     private JPanel createCheckInPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
@@ -195,6 +184,23 @@ public class MainMenuMockupAlt extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 submitAction.actionPerformed(e);
+            }
+        });
+
+        guestNameField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                onGuestNameFieldChanged(e);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                onGuestNameFieldChanged(e);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                onGuestNameFieldChanged(e);
             }
         });
 
@@ -286,6 +292,72 @@ public class MainMenuMockupAlt extends JFrame {
         }
     }
 
+    public void onGuestNameFieldChanged(DocumentEvent e)
+    {
+        Document field = e.getDocument();
+
+        try
+        {
+            this.updateGuestsTable(field.getText(0, field.getLength()));
+        }
+        catch(BadLocationException ex)
+        {
+            // uh oh!
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+
+    /**
+     * Updates the guest table with the latest data from the database.
+     */
+    private void updateGuestsTable()
+    {
+        // Update the guest table
+        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+
+        // Clear the table
+        tableModel.setRowCount(0);
+
+        // Add the updated data
+        for (Map.Entry<String, Map<String, String>> entry : db.database.guests.entrySet()) {
+            Map<String, String> guest = entry.getValue();
+            String[] rowData = {guest.get("FirstName") + " " + guest.get("LastName"), guest.get("Date")};
+            tableModel.addRow(rowData);
+        }
+    }
+
+    private void updateGuestsTable(String filter)
+    {
+        // Update the guest table
+        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+
+        // Clear the table
+        tableModel.setRowCount(0);
+
+        // Add the updated data
+        for (Map.Entry<String, Map<String, String>> entry : db.database.guests.entrySet()) {
+            Map<String, String> guest = entry.getValue();
+            String guestName = guest.get("FirstName") + " " + guest.get("LastName");
+            if(guestName.toLowerCase().contains(filter.toLowerCase()))
+            {
+                String[] rowData = {guestName, guest.get("Date")};
+                tableModel.addRow(rowData);
+            }
+        }
+    
+    }
+
+    /**
+     * Creates a guest entry suitable for the guest table.
+     *
+     * @param guestName     the full name of the guest
+     * @param formattedDate the formatted date of the guest entry
+     * @return a map containing the guest table entry with the following key-value pairs:
+     *         - "FirstName": the first name of the guest
+     *         - "LastName": the last name of the guest
+     *         - "GuestId": the hash code of the guest name
+     *         - "Date": the formatted date of the guest entry
+     */
     public Map<String, String> createGuestEntry(String guestName, String formattedDate) {
         String[] nameParts = guestName.split(" ");
         String firstName = nameParts[0];
