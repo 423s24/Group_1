@@ -3,24 +3,33 @@ package sssp.View;
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 import java.util.HashMap;
 
 
 import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
+import sssp.Helper.HttpStreamingManager;
+import sssp.Helper.HttpStreamingManagerSingleton;
+import sssp.Helper.DatabaseEventListener;
 
 public class MainMenuMockupAlt extends JFrame {
     private JPanel mainPanel;
     private CardLayout cardLayout;
     private JButton activeButton;
     private DBConnectorV2 db;
+    private JTable table;
 
     public MainMenuMockupAlt() {
         setTitle("HRDC Warming Center Manager");
@@ -30,6 +39,12 @@ public class MainMenuMockupAlt extends JFrame {
         // Database Connection
         db = DBConnectorV2Singleton.getInstance();
 
+        // Subscribe to database events
+        subscribeToDatabasePuts(this::onDatabasePut);
+
+        // Start listening only AFTER events are subscribed
+        HttpStreamingManagerSingleton.startListening();
+        
         // Panel Switch Buttons
         JButton panel1Button = createButton("Check In");
         JButton panel2Button = createButton("Bunk Assignment");
@@ -75,6 +90,71 @@ public class MainMenuMockupAlt extends JFrame {
         setLocationRelativeTo(null);
 
         setVisible(true);
+    }
+
+    private void subscribeToDatabasePuts(Runnable subscriber) {
+        DatabaseEventListener databaseEventListener = new DatabaseEventListener("put", subscriber);
+
+        HttpStreamingManager httpStreamingManager = HttpStreamingManagerSingleton.getInstance();
+
+        httpStreamingManager.addServerEventListener(databaseEventListener);
+    }
+
+    private void onDatabasePut()
+    {
+        db.pull();
+
+        updateGuestsTable();
+    }
+
+    Action onTableCellUpdated = new AbstractAction()
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+            TableCellListener tcl = (TableCellListener)e.getSource();
+            int row = tcl.getRow();
+            String oldValue = (String) tcl.getOldValue();
+            String newValue = (String) tcl.getNewValue();
+
+            String name = (String)table.getValueAt(row, 0);
+            String date = (String)table.getValueAt(row, 1);
+    
+            String guestTableKey = getGuestTableKey(name);
+    
+            Map<String,String> guestTableEntry = createGuestEntry(name, date);
+    
+            // Key is based on name, so if the name changes, we must rekey the entry
+            if(row == 1 && oldValue != null && !oldValue.equals(newValue)) {
+                String originalGuestTableKey = getGuestTableKey(oldValue);
+            
+                db.database.guests.remove(originalGuestTableKey);
+                db.database.guests.put(guestTableKey, guestTableEntry);
+            }
+            else
+            {
+                db.database.guests.put(guestTableKey, guestTableEntry);
+            }
+
+            db.push();
+    
+            guestTableKey = null;
+        }
+    };
+
+    private void updateGuestsTable()
+    {
+        // Update the guest table
+        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+
+        // Clear the table
+        tableModel.setRowCount(0);
+
+        // Add the updated data
+        for (Map.Entry<String, Map<String, String>> entry : db.database.guests.entrySet()) {
+            Map<String, String> guest = entry.getValue();
+            String[] rowData = {guest.get("FirstName") + " " + guest.get("LastName"), guest.get("Date")};
+            tableModel.addRow(rowData);
+        }
     }
 
     private JPanel createCheckInPanel() {
@@ -150,15 +230,20 @@ public class MainMenuMockupAlt extends JFrame {
                 // method below for some more info.
         };
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
-        JTable table = new JTable(tableModel);
+        table = new JTable(tableModel);
         // Label Sizing
         table.getColumnModel().getColumn(0).setPreferredWidth(80);
         table.getColumnModel().getColumn(1).setPreferredWidth(80);
         table.getColumnModel().getColumn(2).setMaxWidth(50);
         table.getColumnModel().getColumn(3).setMaxWidth(50);
 
+        // register onTableCellUpdated, which must be done after table creation
+        new TableCellListener(table, onTableCellUpdated);
+
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
+
+        updateGuestsTable();
 
         return panel;
     }
@@ -200,33 +285,40 @@ public class MainMenuMockupAlt extends JFrame {
             lastName = nameParts[1];
         }
 
+        // Looks like "Guest_<integer>"
+        String guestTableKey = getGuestTableKey(guestName);
 
-        int nameHash = guestName.hashCode();
-        String guestTableEntryTitle = "Guest_"+nameHash;
-        Map<String, String> guestTableEntry = db.database.guests.get(guestTableEntryTitle);
-
-
-        // Just have this printing sample stuff for now, so here's where to start I guess
-        System.out.println("Guest Name: " + guestName);
-        System.out.println("Selected Date: " + formattedDate);
-
-        if (guestTableEntry != null) {
+        if (db.database.guests.containsKey(guestTableKey)) {
             JOptionPane.showMessageDialog(this, "Guest already checked in.", "Duplicate Guest", JOptionPane.WARNING_MESSAGE);
             return;
         }
         else
         {
-            guestTableEntry = new HashMap<String, String>();
-
-            guestTableEntry.put("FirstName", firstName);
-            guestTableEntry.put("LastName", lastName);
-            guestTableEntry.put("GuestId", Integer.toString(nameHash));
-            guestTableEntry.put("Date", formattedDate);
-
-            db.database.guests.put(guestTableEntryTitle, guestTableEntry);
-
+            Map<String,String> guestTableEntry = createGuestEntry(guestName, formattedDate);
+            db.database.guests.put(guestTableKey, guestTableEntry);
             db.push();
         }
+    }
+
+    public Map<String, String> createGuestEntry(String guestName, String formattedDate) {
+        String[] nameParts = guestName.split(" ");
+        String firstName = nameParts[0];
+        String lastName = (nameParts.length == 1) ? "" : nameParts[1];
+
+        int nameHash = guestName.hashCode();
+        Map<String, String> guestTableEntry = new HashMap<>();
+
+        guestTableEntry = new HashMap<>();
+        guestTableEntry.put("FirstName", firstName);
+        guestTableEntry.put("LastName", lastName);
+        guestTableEntry.put("GuestId", Integer.toString(nameHash));
+        guestTableEntry.put("Date", formattedDate);
+
+        return guestTableEntry;
+    }
+
+    public String getGuestTableKey(String guestName) {
+        return "Guest_" + guestName.hashCode();
     }
 
     // Button stuff for switching panels
