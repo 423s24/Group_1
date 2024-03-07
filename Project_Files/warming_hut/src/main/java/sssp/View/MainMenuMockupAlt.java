@@ -10,6 +10,9 @@ import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import sssp.Helper.DBConnectorV2;
+import sssp.Helper.DBConnectorV2Singleton;
+
 public class MainMenuMockupAlt extends JFrame {
     private JPanel mainPanel;
     private CardLayout cardLayout;
@@ -19,6 +22,9 @@ public class MainMenuMockupAlt extends JFrame {
         setTitle("HRDC Warming Center Manager");
         setSize(1366, 768);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Database Connection
+        DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
 
         // Panel Switch Buttons
         JButton panel1Button = createButton("Check In");
@@ -214,4 +220,14 @@ public class MainMenuMockupAlt extends JFrame {
             }
         });
     }
+
+    public static void runMenu() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new MainMenuMockupAlt();
+            }
+        });
+    }
+
 }
