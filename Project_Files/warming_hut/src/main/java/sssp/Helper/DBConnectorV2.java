@@ -36,9 +36,61 @@ public class DBConnectorV2{
         originalDatabasePull();
     }
 
+    public void runGarbageCollector(Database database){
+        this.killOldValues2(database.attributes);
+        this.killOldValues2(database.conflicts);
+        this.killOldValues1(database.cubeStorage);
+        this.killOldValues2(database.dayStorage);
+        this.killOldValues1(database.equipment);
+        this.killOldValues2(database.guestRoster);
+        this.killOldValues1(database.guests);
+        this.killOldValues2(database.lockers);
+        this.killOldValues1(database.unknownItems);
+        this.killOldValues1(database.waitingList);
+    }
+
+
+    public void killOldValues2( Map<String, Map<String, Map<String, String>>> table) {
+        for (Map.Entry<String, Map<String, Map<String, String>>> original : table.entrySet()){
+            if(!original.getValue().equals(null)){
+                for (Map.Entry<String, Map<String, String>> originalfield1 : original.getValue().entrySet()){
+                    if(!originalfield1.getValue().equals(null)){
+                        for (Map.Entry<String, String> originalfield2 : originalfield1.getValue().entrySet()){
+                            if(originalfield2.getValue().equals(null)){
+                                table.get(original.getKey()).get(originalfield1.getKey()).remove(originalfield2.getKey());
+                            }
+                        }
+                    } else {
+                        table.get(original.getKey()).remove(originalfield1.getKey());
+                    }
+                }                    
+            } else {
+                table.remove(original.getKey());
+            }   
+        }
+    }
+
+    public void killOldValues1(  Map<String, Map<String, String>> table) {
+        for (Map.Entry<String, Map<String, String>> original : table.entrySet()){
+            if(!original.getValue().equals(null)){
+                for (Map.Entry<String, String> originalfield1 : original.getValue().entrySet()){
+                    if(originalfield1.getValue().equals(null)){
+                        table.get(original.getKey()).remove(originalfield1.getKey());
+                    } 
+                }                    
+            } else {
+                table.remove(original.getKey());
+            }   
+        }
+    }
+    
+    
+
 
     public void push(){
+
         this.sortConflicts();
+
         pushTable("Attributes", this.convertToJson2(this.database.attributes));
         pushTable("Conflicts", this.convertToJson2(this.database.conflicts));
         pushTable("CubeStorage", this.convertToJson1(this.database.cubeStorage));
@@ -126,6 +178,7 @@ public class DBConnectorV2{
         this.findConflicts1(this.database.unknownItems, this.artifactDatabase.unknownItems, this.freshDatabase.unknownItems);
         this.findConflicts1(this.database.waitingList, this.artifactDatabase.waitingList, this.freshDatabase.waitingList);
 
+
         this.database = this.freshDatabase.deepCopy();
         this.artifactDatabase = this.database.deepCopy();
         
@@ -133,59 +186,78 @@ public class DBConnectorV2{
 
     public void findConflicts2( Map<String, Map<String, Map<String, String>>> table, Map<String, Map<String, Map<String, String>>> artifactTable, Map<String, Map<String, Map<String, String>>> freshTable  ) {
         for (Map.Entry<String, Map<String, Map<String, String>>> original : table.entrySet()){
-            boolean found1 = false;
-            for (Map.Entry<String, Map<String, Map<String, String>>> artifact : artifactTable.entrySet()){
-                if(artifact.getKey().equals(original.getKey())){
-                    found1 = true;
-                    // Iterate through the fields, checking for the same values. if a value was changed then update 
-                    for (Map.Entry<String, Map<String, String>> originalfield1 : original.getValue().entrySet()){
-                        boolean found2 = false;
-                        for (Map.Entry<String, Map<String, String>> artifactfield1 : artifact.getValue().entrySet()){
-                            if(artifactfield1.getKey().equals(originalfield1.getKey())){
-                                found2 = true;
-                                for (Map.Entry<String, String> originalfield2 : originalfield1.getValue().entrySet()){
-                                    for (Map.Entry<String, String> artifactfield2 : artifactfield1.getValue().entrySet()){
-                                        if(artifactfield2.getKey().equals(originalfield2.getKey())){
-                                            if(!artifactfield2.getValue().equals(originalfield2.getValue())){
-                                                freshTable.get(original.getKey()).get(originalfield1.getKey()).put(originalfield2.getKey(), originalfield2.getValue());
+            if(original.getValue() == null){
+                freshTable.remove(original.getKey());
+            } else{
+                boolean found1 = false;
+                for (Map.Entry<String, Map<String, Map<String, String>>> artifact : artifactTable.entrySet()){
+                    if(artifact.getKey().equals(original.getKey())){
+                        found1 = true;
+                        for (Map.Entry<String, Map<String, String>> originalfield1 : original.getValue().entrySet()){
+                            if(originalfield1.getValue() == null){
+                                freshTable.get(original.getKey()).remove(originalfield1.getKey());
+                            } else{
+                                boolean found2 = false;
+                                for (Map.Entry<String, Map<String, String>> artifactfield1 : artifact.getValue().entrySet()){
+                                    if(artifactfield1.getKey().equals(originalfield1.getKey())){
+                                        found2 = true;
+                                        for (Map.Entry<String, String> originalfield2 : originalfield1.getValue().entrySet()){
+                                            if(originalfield2.getValue() == null){
+                                                freshTable.get(original.getKey()).get(originalfield1.getKey()).remove(originalfield2.getKey());
+                                            } else{
+                                                for (Map.Entry<String, String> artifactfield2 : artifactfield1.getValue().entrySet()){
+                                                    if(artifactfield2.getKey().equals(originalfield2.getKey())){
+                                                        if(!artifactfield2.getValue().equals(originalfield2.getValue())){
+                                                            freshTable.get(original.getKey()).get(originalfield1.getKey()).put(originalfield2.getKey(), originalfield2.getValue());
+                                                        }
+                                                    }   
+                                                }
                                             }
-                                        }   
+                                        }
                                     }
                                 }
-                            }
+                                if(!found2){
+                                    freshTable.get(original.getKey()).put(originalfield1.getKey(), originalfield1.getValue());
+                                }  
+                            }                    
                         }
-                        if(!found2){
-                            freshTable.get(original.getKey()).put(originalfield1.getKey(), originalfield1.getValue());
-                        }                      
                     }
                 }
-            }
-            if(!found1){
-                freshTable.put(original.getKey(), original.getValue());
+                if(!found1){
+                    freshTable.put(original.getKey(), original.getValue());
+                }
             }
         }
     }
 
     public void findConflicts1( Map<String, Map<String, String>> table, Map<String, Map<String, String>>artifactTable, Map<String, Map<String, String>>freshTable ) {
         for (Map.Entry<String, Map<String, String>> original : table.entrySet()){
-            boolean found = false;
-            for (Map.Entry<String, Map<String, String>> artifact : artifactTable.entrySet()){
-                if(artifact.getKey().equals(original.getKey())){
-                    found = true;
-                    // Iterate through the fields, checking for the same values. if a value was changed then update 
-                    for (Map.Entry<String, String> originalfield : original.getValue().entrySet()){
-                        for (Map.Entry<String, String> artifactfield : artifact.getValue().entrySet()){
-                            if(artifactfield.getKey().equals(originalfield.getKey())){
-                                if(!artifactfield.getValue().equals(originalfield.getValue())){
-                                    freshTable.get(original.getKey()).put(originalfield.getKey(), originalfield.getValue());
+            System.out.println(original);
+            if(original.getValue() == null){
+                freshTable.remove(original.getKey());
+            } else{
+                boolean found = false;
+                for (Map.Entry<String, Map<String, String>> artifact : artifactTable.entrySet()){
+                    if(artifact.getKey().equals(original.getKey())){
+                        found = true;
+                        for (Map.Entry<String, String> originalfield : original.getValue().entrySet()){
+                            if(originalfield.getValue() == null){
+                                freshTable.get(original.getKey()).remove(originalfield.getKey());
+                            } else{
+                                for (Map.Entry<String, String> artifactfield : artifact.getValue().entrySet()){
+                                    if(artifactfield.getKey().equals(originalfield.getKey())){
+                                        if(!artifactfield.getValue().equals(originalfield.getValue())){
+                                            freshTable.get(original.getKey()).put(originalfield.getKey(), originalfield.getValue());
+                                        }
+                                    }   
                                 }
-                            }   
+                            }
                         }
                     }
                 }
-            }
-            if(!found){
-                freshTable.put(original.getKey(), original.getValue());
+                if(!found){
+                    freshTable.put(original.getKey(), original.getValue());
+                }
             }
         }
     }
