@@ -43,7 +43,10 @@ public class StreamingTester {
         System.out.println(testJSON);
         Gson gson = new Gson();
 
-        RosterData data = gson.fromJson(testJSON, RosterData.class);
-        System.out.println(data.getStaffNotes());
+        //RosterData does not exist, apparently. Commented out, as it was throwing an error while I was trying
+        //to test things.
+
+        //RosterData data = gson.fromJson(testJSON, RosterData.class);
+        //System.out.println(data.getStaffNotes());
     }
 }
