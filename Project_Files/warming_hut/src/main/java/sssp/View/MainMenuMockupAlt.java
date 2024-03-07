@@ -127,7 +127,7 @@ public class MainMenuMockupAlt extends JFrame {
             if(row == 1 && oldValue != null && !oldValue.equals(newValue)) {
                 String originalGuestTableKey = getGuestTableKey(oldValue);
             
-                db.database.guests.remove(originalGuestTableKey);
+                db.database.guests.put(originalGuestTableKey, null);
                 db.database.guests.put(guestTableKey, guestTableEntry);
             }
             else
