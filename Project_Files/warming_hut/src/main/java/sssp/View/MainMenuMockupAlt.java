@@ -271,20 +271,6 @@ public class MainMenuMockupAlt extends JFrame {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         String formattedDate = dateFormat.format(selectedDate);
 
-        // Parse into first and last name
-        String[] nameParts = guestName.split(" ");
-        String firstName = nameParts[0];
-        String lastName;
-
-        // If there's no last name, just use the first name
-        if (nameParts.length == 1) {
-            lastName = "";
-        }
-        else
-        {
-            lastName = nameParts[1];
-        }
-
         // Looks like "Guest_<integer>"
         String guestTableKey = getGuestTableKey(guestName);
 
