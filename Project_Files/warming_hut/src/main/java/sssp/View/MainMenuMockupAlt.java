@@ -395,7 +395,7 @@ public class MainMenuMockupAlt extends JFrame {
             // Key is based on name, so if the name changes, we must rekey the entry
             if(col == 0 && oldValue != null && !oldValue.equals(newValue)) {
 
-                // If the name changed to an already existing name-
+                // If the name changed to an already existing name, reject the change
                 if(db.database.guests.containsKey(newGuestTableKey))
                 {
                     JOptionPane.showMessageDialog(null, "There's already a guest with that name.", "Duplicate Guest", JOptionPane.WARNING_MESSAGE);
