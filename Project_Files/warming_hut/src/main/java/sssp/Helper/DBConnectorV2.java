@@ -217,29 +217,7 @@ public class DBConnectorV2{
     }
 
     public void pull() {
-        Database database = new Database();
-        
-        database.attributes = formatTable2(getTableJson("Attributes"));
-
-        database.conflicts = formatTable2(getTableJson("Conflicts"));
-        
-        database.cubeStorage = formatTable1(getTableJson("CubeStorage"));
-
-        database.dayStorage = formatTable2(getTableJson("DayStorage"));
-        
-        database.equipment = formatTable1(getTableJson("Equipment"));
-
-        database.guestRoster = formatTable2(getTableJson("GuestRoster"));
-
-        database.guests = formatTable1(getTableJson("Guests"));
-        
-        database.lockers = formatTable2(getTableJson("Lockers"));
-
-        database.unknownItems = formatTable1(getTableJson("UnknownItems"));
-
-        database.waitingList = formatTable1(getTableJson("WaitingList"));
-
-        this.database = database;
+        sortConflicts();
     }
 
     public void originalDatabasePull() {
