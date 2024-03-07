@@ -13,6 +13,7 @@ import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -97,55 +98,6 @@ public class MainMenuMockupAlt extends JFrame {
         setVisible(true);
     }
 
-    private void subscribeToDatabasePuts(Runnable subscriber) {
-        DatabaseEventListener databaseEventListener = new DatabaseEventListener("put", subscriber);
-
-        HttpStreamingManager httpStreamingManager = HttpStreamingManagerSingleton.getInstance();
-
-        httpStreamingManager.addServerEventListener(databaseEventListener);
-    }
-
-    private void onDatabasePut()
-    {
-        db.pull();
-
-        updateGuestsTable();
-    }
-
-    Action onTableCellUpdated = new AbstractAction()
-    {
-        public void actionPerformed(ActionEvent e)
-        {
-            TableCellListener tcl = (TableCellListener)e.getSource();
-            int row = tcl.getRow();
-            String oldValue = (String) tcl.getOldValue();
-            String newValue = (String) tcl.getNewValue();
-
-            String name = (String)table.getValueAt(row, 0);
-            String date = (String)table.getValueAt(row, 1);
-    
-            String guestTableKey = getGuestTableKey(name);
-    
-            Map<String,String> guestTableEntry = createGuestEntry(name, date);
-    
-            // Key is based on name, so if the name changes, we must rekey the entry
-            if(row == 1 && oldValue != null && !oldValue.equals(newValue)) {
-                String originalGuestTableKey = getGuestTableKey(oldValue);
-            
-                db.database.guests.put(originalGuestTableKey, null);
-                db.database.guests.put(guestTableKey, guestTableEntry);
-            }
-            else
-            {
-                db.database.guests.put(guestTableKey, guestTableEntry);
-            }
-
-            db.push();
-    
-            guestTableKey = null;
-        }
-    };
-
     private JPanel createCheckInPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
@@ -213,11 +165,9 @@ public class MainMenuMockupAlt extends JFrame {
         // Table Labels
         JLabel nameLabel = new JLabel("Name");
         JLabel dateLabel = new JLabel("Date");
-        JLabel editLabel = new JLabel("Edit");
         JLabel deleteLabel = new JLabel("Delete");
 
         formPanel.add(nameLabel);
-        formPanel.add(editLabel);
         formPanel.add(dateLabel);
         formPanel.add(deleteLabel);
 
@@ -229,7 +179,7 @@ public class MainMenuMockupAlt extends JFrame {
         panel.add(inputPanel, BorderLayout.NORTH);
 
         // Table Init
-        String[] columnNames = {"Name", "Date", "Edit", "Delete"};
+        String[] columnNames = {"Name", "Date", "Delete"};
         Object[][] data = {
             // Right now this just creates an empty object. You're gonna have to figure
                 // out some way to put stuff in from the backend/input field. Check the submission
@@ -241,10 +191,13 @@ public class MainMenuMockupAlt extends JFrame {
         table.getColumnModel().getColumn(0).setPreferredWidth(80);
         table.getColumnModel().getColumn(1).setPreferredWidth(80);
         table.getColumnModel().getColumn(2).setMaxWidth(50);
-        table.getColumnModel().getColumn(3).setMaxWidth(50);
 
         // register onTableCellUpdated, which must be done after table creation
         new TableCellListener(table, onTableCellUpdated);
+
+        ButtonColumn deleteButtons = new ButtonColumn(table, onDeleteRowButtonPressed, 2);
+        // hotkeys the delete key
+        deleteButtons.setMnemonic(KeyEvent.VK_D);
 
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
@@ -378,6 +331,91 @@ public class MainMenuMockupAlt extends JFrame {
     public String getGuestTableKey(String guestName) {
         return "Guest_" + guestName.hashCode();
     }
+
+    private void subscribeToDatabasePuts(Runnable subscriber) {
+        DatabaseEventListener databaseEventListener = new DatabaseEventListener("put", subscriber);
+
+        HttpStreamingManager httpStreamingManager = HttpStreamingManagerSingleton.getInstance();
+
+        httpStreamingManager.addServerEventListener(databaseEventListener);
+    }
+
+    private void onDatabasePut()
+    {
+        db.pull();
+
+        updateGuestsTable();
+    }
+
+    // Source: https://tips4java.wordpress.com/2009/07/12/table-button-column/
+    Action onDeleteRowButtonPressed = new AbstractAction() {
+        public void actionPerformed(ActionEvent e)
+        {
+            JTable table = (JTable)e.getSource();
+            int modelRow = Integer.valueOf( e.getActionCommand() );
+            Object delete = table.getModel().getValueAt(modelRow, 2);
+            Window window = SwingUtilities.windowForComponent(table);
+
+            String guestName = (String)table.getModel().getValueAt(modelRow, 0);
+
+            int result = JOptionPane.showConfirmDialog(
+                window,
+                "Are you sure you want to delete " + guestName,
+                "Delete Row Confirmation",
+                JOptionPane.YES_NO_OPTION);
+
+            if (result == JOptionPane.YES_OPTION)
+            {
+                ((DefaultTableModel)table.getModel()).removeRow(modelRow);
+
+                String toDeleteKey = getGuestTableKey(guestName);
+                db.database.guests.put(toDeleteKey, null);
+                db.push();
+            }
+        }
+    };
+
+    Action onTableCellUpdated = new AbstractAction()
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+            TableCellListener tcl = (TableCellListener)e.getSource();
+            int row = tcl.getRow();
+            int col = tcl.getColumn();
+            String oldValue = (String) tcl.getOldValue();
+            String newValue = (String) tcl.getNewValue();
+
+            String name = (String)table.getValueAt(row, 0);
+            String date = (String)table.getValueAt(row, 1);
+    
+            String newGuestTableKey = getGuestTableKey(name);
+
+            Map<String,String> guestTableEntry = createGuestEntry(name, date);
+    
+            // Key is based on name, so if the name changes, we must rekey the entry
+            if(col == 0 && oldValue != null && !oldValue.equals(newValue)) {
+
+                // If the name changed to an already existing name-
+                if(db.database.guests.containsKey(newGuestTableKey))
+                {
+                    JOptionPane.showMessageDialog(null, "There's already a guest with that name.", "Duplicate Guest", JOptionPane.WARNING_MESSAGE);
+                    table.setValueAt(oldValue, row, 0);
+                    return;
+                }
+            
+                String oldGuestTableKey = getGuestTableKey(oldValue);
+                db.database.guests.put(oldGuestTableKey, null);
+                db.push();
+                db.database.guests.put(newGuestTableKey, guestTableEntry);
+            }
+            else
+            {
+                db.database.guests.put(newGuestTableKey, guestTableEntry);
+            }
+
+            db.push();
+        }
+    };
 
     // Button stuff for switching panels
     private ActionListener createButtonActionListener(JButton button, String panelName) {
