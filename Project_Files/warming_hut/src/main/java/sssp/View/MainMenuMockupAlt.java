@@ -9,6 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.HashMap;
+
 
 import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
@@ -17,6 +20,7 @@ public class MainMenuMockupAlt extends JFrame {
     private JPanel mainPanel;
     private CardLayout cardLayout;
     private JButton activeButton;
+    private DBConnectorV2 db;
 
     public MainMenuMockupAlt() {
         setTitle("HRDC Warming Center Manager");
@@ -24,7 +28,7 @@ public class MainMenuMockupAlt extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Database Connection
-        DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
+        db = DBConnectorV2Singleton.getInstance();
 
         // Panel Switch Buttons
         JButton panel1Button = createButton("Check In");
@@ -182,9 +186,47 @@ public class MainMenuMockupAlt extends JFrame {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         String formattedDate = dateFormat.format(selectedDate);
 
+        // Parse into first and last name
+        String[] nameParts = guestName.split(" ");
+        String firstName = nameParts[0];
+        String lastName;
+
+        // If there's no last name, just use the first name
+        if (nameParts.length == 1) {
+            lastName = "";
+        }
+        else
+        {
+            lastName = nameParts[1];
+        }
+
+
+        int nameHash = guestName.hashCode();
+        String guestTableEntryTitle = "Guest_"+nameHash;
+        Map<String, String> guestTableEntry = db.database.guests.get(guestTableEntryTitle);
+
+
         // Just have this printing sample stuff for now, so here's where to start I guess
         System.out.println("Guest Name: " + guestName);
         System.out.println("Selected Date: " + formattedDate);
+
+        if (guestTableEntry != null) {
+            JOptionPane.showMessageDialog(this, "Guest already checked in.", "Duplicate Guest", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        else
+        {
+            guestTableEntry = new HashMap<String, String>();
+
+            guestTableEntry.put("FirstName", firstName);
+            guestTableEntry.put("LastName", lastName);
+            guestTableEntry.put("GuestId", Integer.toString(nameHash));
+            guestTableEntry.put("Date", formattedDate);
+
+            db.database.guests.put(guestTableEntryTitle, guestTableEntry);
+
+            db.push();
+        }
     }
 
     // Button stuff for switching panels
