@@ -20,7 +20,6 @@ public class Database {
     public Map<String, Map<String, String>> waitingList;
     
     
-    
 
     public void print() {
         if (this != null) {

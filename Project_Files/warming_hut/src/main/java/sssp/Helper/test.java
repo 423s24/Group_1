@@ -19,6 +19,12 @@ public class test {
         // Create an instance of ModuleTemplate
         DBConnectorV2 test = new DBConnectorV2(client, secret);
 
-        
+        System.out.println(test.convertToJson2(test.database.attributes));
+
+        test.database.attributes.get("GuestRoster").get("Roster_1").put("Notes", "Today was a good day!");
+
+        System.out.println(test.convertToJson2(test.database.attributes));
+        System.out.println("BREAK");
+        test.push();
     }
 }
