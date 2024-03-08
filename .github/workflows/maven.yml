@@ -27,7 +27,8 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-    - name: SANITY CHECK
+        cache-dependency-path: 'Project_Files/warming_hut/pom.xml'
+    - name: Build With Maven - altered path
       run: mvn -B clean verify
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
