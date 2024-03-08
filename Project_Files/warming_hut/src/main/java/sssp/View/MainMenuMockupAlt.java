@@ -15,6 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -109,6 +111,34 @@ public class MainMenuMockupAlt extends JFrame {
         JTextField guestNameField = new JTextField(20); // 20 columns for the text field
         inputPanel.add(guestNameLabel);
         inputPanel.add(guestNameField);
+
+        // Info Button
+        JButton createIssueButton = new JButton("Report a Bug");
+        createIssueButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new URI("https://github.com/423s24/Group_1/issues"));
+                } catch (IOException | URISyntaxException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        inputPanel.add(createIssueButton);
+
+        // Info Button
+        JButton docsButton = new JButton("Help!");
+        docsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new URI("https://docs.google.com/document/d/1NFg2_1X0lsAy_qRDhNyk6lcxtxBhPvKlntXFOtWWhFw/edit"));
+                } catch (IOException | URISyntaxException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        inputPanel.add(docsButton);
 
         // Date Picker
         JDateChooser dateChooser = new JDateChooser();
