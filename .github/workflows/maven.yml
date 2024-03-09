@@ -30,7 +30,7 @@ jobs:
         cache: maven
         cache-dependency-path: 'Project_Files/warming_hut/pom.xml'
     - name: Build With Maven - altered path
-      run: mvn -B -e clean verify
+      run: mvn -B -e clean verify --file Group_1/Project_Files/warming_hut/pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
