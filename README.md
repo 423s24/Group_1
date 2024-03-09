@@ -1,5 +1,5 @@
-# Group_1
-## HRDC Warming Center Dataview
+# HRDC Warming Center Dataview
+## Group_1
 
 This is a Java desktop application created to help the Human Resources Development Council's
 staff and volunteers manage the day-to-day work of running the HRDC Emergency Shelter and Warming Center 
