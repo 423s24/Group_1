@@ -1,5 +1,4 @@
-import junit.framework.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -7,7 +6,7 @@ public class BasicTestTests {
 
     @Test
     public void shouldMigrateASimpleTest() {
-        Assert.assertEquals("expected", "expected");
+        assertEquals("expected", "expected");
     }
 /*    @Test
     @Ignore
