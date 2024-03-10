@@ -8,9 +8,4 @@ public class BasicTestTests {
     public void shouldMigrateASimpleTest() {
         assertEquals("expected", "expected");
     }
-/*    @Test
-    @Ignore
-    public void shouldMigrateIgnoreTestToDisabledTest() {
-// This test is Ignored in JUnit 4 and should be Disabled in JUnit 5"
-    }*/
 }
