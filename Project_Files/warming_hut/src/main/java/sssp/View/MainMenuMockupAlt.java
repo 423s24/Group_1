@@ -189,6 +189,7 @@ public class MainMenuMockupAlt extends JFrame {
         inputPanel.add(submitButton);
 
         panel.add(inputPanel, BorderLayout.CENTER);
+        panel.add(EditGuestPanel.getEditGuestPanel(panel), BorderLayout.EAST);
 
         JPanel formPanel = new JPanel(new GridLayout(2, 2));
 
