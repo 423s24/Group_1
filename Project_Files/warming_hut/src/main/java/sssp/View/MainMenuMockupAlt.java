@@ -112,7 +112,7 @@ public class MainMenuMockupAlt extends JFrame {
         inputPanel.add(guestNameLabel);
         inputPanel.add(guestNameField);
 
-        // Info Button
+        // Github Issue button
         JButton createIssueButton = new JButton("Report a Bug");
         createIssueButton.addActionListener(new ActionListener() {
             @Override
@@ -126,7 +126,7 @@ public class MainMenuMockupAlt extends JFrame {
         });
         inputPanel.add(createIssueButton);
 
-        // Info Button
+        // Documentation button
         JButton docsButton = new JButton("Help!");
         docsButton.addActionListener(new ActionListener() {
             @Override
