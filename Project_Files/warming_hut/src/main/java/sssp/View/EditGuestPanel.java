@@ -19,6 +19,7 @@ public class EditGuestPanel {
 
         editGuestPanel.setPreferredSize(new Dimension(WIDTH, mainPanel.getHeight()));
 
+        editGuestPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
         editGuestPanel.add(title);
         editGuestPanel.add(getGuestDetailsPanel());
         editGuestPanel.add(getIssueTrackerPanel());
@@ -72,7 +73,7 @@ public class EditGuestPanel {
 
 
 
-    //public static final JButton openIssueTrackerButton = new JButton("Open Issue Tracker");
+    public static final JButton newIssueButton = new JButton("New Issue");
     private static JPanel getIssueTrackerPanel(){
         issueTrackerTitle.setFont(new Font("Serif", Font.PLAIN, 24));
         issueTrackerTitle.setBackground(Color.LIGHT_GRAY);
@@ -100,6 +101,8 @@ public class EditGuestPanel {
         noTrespassDetails.setPreferredSize(new Dimension(100, 20));
         suspensionDetails.setPreferredSize(new Dimension(100, 20));
         warningDetails.setPreferredSize(new Dimension(100, 20));
+        newIssueButton.setPreferredSize(new Dimension(100, 20));
+
 
         noTrespassDetails.addActionListener(e -> {
             IssueDetailsPopup.getNoTrespassDetailsPopup();
@@ -125,8 +128,11 @@ public class EditGuestPanel {
         issueTrackerPanel.setPreferredSize(new Dimension(WIDTH, 200));
 
         GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
+        c.gridx = 2;
         c.gridy = 0;
+        c.gridwidth = 1;
+        issueTrackerPanel.add(newIssueButton, c);
+        c.gridx = 0;
         c.gridwidth = 3;
         issueTrackerPanel.add(issueTrackerTitle, c);
         c.insets = new Insets(5, 10, 5, 10);
