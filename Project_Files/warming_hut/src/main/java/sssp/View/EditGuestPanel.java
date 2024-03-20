@@ -103,7 +103,9 @@ public class EditGuestPanel {
         warningDetails.setPreferredSize(new Dimension(100, 20));
         newIssueButton.setPreferredSize(new Dimension(100, 20));
 
-
+        newIssueButton.addActionListener(e -> {
+            NewIssuePopup.ShowNewIssuePopup();
+        });
         noTrespassDetails.addActionListener(e -> {
             IssueDetailsPopup.getNoTrespassDetailsPopup();
         });
