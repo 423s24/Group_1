@@ -50,7 +50,7 @@ public class MainMenuMockupAlt extends JFrame {
         db = DBConnectorV2Singleton.getInstance();
 
         // Subscribe to database events
-        subscribeToDatabasePuts(this::onDatabasePut);
+        HttpStreamingManagerSingleton.subscribeRunnable("put", this::onDatabasePut);
 
         // Start listening only AFTER events are subscribed
         HttpStreamingManagerSingleton.startListening();
@@ -378,21 +378,7 @@ public class MainMenuMockupAlt extends JFrame {
     public String getGuestTableKey(String guestName) {
         return "Guest_" + guestName.hashCode();
     }
-
-    /**
-     * The Runnable (a parameterless, returnless method) passed to this method will be added as a subscriber to the "put" event of the database.
-     * When a "put" event occurs, the Runnable will be called.
-     *
-     * @param subscriber The runnable subscriber to be notified when a "put" event occurs.
-     */
-    private void subscribeToDatabasePuts(Runnable subscriber) {
-        DatabaseEventListener databaseEventListener = new DatabaseEventListener("put", subscriber);
-
-        HttpStreamingManager httpStreamingManager = HttpStreamingManagerSingleton.getInstance();
-
-        httpStreamingManager.addServerEventListener(databaseEventListener);
-    }
-
+    
     /**
      * Pulls data from the database and updates the guests table.
      */
