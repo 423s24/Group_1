@@ -44,6 +44,8 @@ public class MainMenuMockupAlt extends JFrame {
         setSize(1366, 768);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+// region DATABASE INIT
+
         // Database Connection
         db = DBConnectorV2Singleton.getInstance();
 
@@ -52,6 +54,8 @@ public class MainMenuMockupAlt extends JFrame {
 
         // Start listening only AFTER events are subscribed
         HttpStreamingManagerSingleton.startListening();
+
+// endregion
         
         // Panel Switch Buttons
         JButton panel1Button = createButton("Check In");
@@ -310,6 +314,12 @@ public class MainMenuMockupAlt extends JFrame {
         }
     }
 
+    
+    /**
+     * Updates the guest table based on the provided filter.
+     * 
+     * @param filter the filter to apply on the guest names
+     */
     private void updateGuestsTable(String filter)
     {
         // Update the guest table
@@ -359,10 +369,22 @@ public class MainMenuMockupAlt extends JFrame {
         return guestTableEntry;
     }
 
+    /**
+     * Returns the key for the guest table based on the guest name.
+     *
+     * @param guestName the name of the guest
+     * @return the key for the guest table
+     */
     public String getGuestTableKey(String guestName) {
         return "Guest_" + guestName.hashCode();
     }
 
+    /**
+     * The Runnable (a parameterless, returnless method) passed to this method will be added as a subscriber to the "put" event of the database.
+     * When a "put" event occurs, the Runnable will be called.
+     *
+     * @param subscriber The runnable subscriber to be notified when a "put" event occurs.
+     */
     private void subscribeToDatabasePuts(Runnable subscriber) {
         DatabaseEventListener databaseEventListener = new DatabaseEventListener("put", subscriber);
 
@@ -371,6 +393,9 @@ public class MainMenuMockupAlt extends JFrame {
         httpStreamingManager.addServerEventListener(databaseEventListener);
     }
 
+    /**
+     * Pulls data from the database and updates the guests table.
+     */
     private void onDatabasePut()
     {
         db.pull();
