@@ -26,6 +26,19 @@ public class HttpStreamingManager {
         eventListeners.add(eventListener);
     }
 
+    /**
+     * Subscribes a Runnable listener to a specific database event.
+     *
+     * @param eventName the name of the event to subscribe to
+     * @param listener the Runnable listener to be executed when the event occurs
+     */
+    public void subscribeRunnable(String eventName, Runnable listener)
+    {
+        DatabaseEventListener databaseEventListener = new DatabaseEventListener(eventName, listener);
+
+        this.addServerEventListener(databaseEventListener);
+    }
+
     public HttpStreamingManager(String client, String secret, String endpoint){
         urlString = endpoint +"/"+ client + ".json?auth=" + secret;
     }
