@@ -4,6 +4,8 @@ import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class NewIssuePopup {
 
@@ -11,6 +13,8 @@ public class NewIssuePopup {
     public static int HEIGHT = 500;
 
     public static final JLabel guestNameLabel = new JLabel("Guest Name: John Doe");
+    public static final CardLayout cardLayout = new CardLayout();
+    public static JButton activeButton;
 
     public static void ShowNewIssuePopup(){
         JFrame popupFrame = new JFrame();
@@ -29,6 +33,7 @@ public class NewIssuePopup {
         guestNameLabel.setOpaque(true);
 
         header.add(guestNameLabel, BorderLayout.NORTH);
+        JPanel newIssueCardPanel = new JPanel(cardLayout);
 
         JButton newWarningBtn = new JButton("New Warning");
         JButton newSuspensionBtn = new JButton("New Suspension");
@@ -36,6 +41,13 @@ public class NewIssuePopup {
         newWarningBtn.setFont(new Font("Serif", Font.PLAIN,18));
         newSuspensionBtn.setFont(new Font("Serif", Font.PLAIN,18));
         newTrespassBtn.setFont(new Font("Serif", Font.PLAIN,18));
+
+        activeButton = newWarningBtn;
+        activeButton.setEnabled(false);
+        newWarningBtn.addActionListener(switchTabActionListener(newIssueCardPanel, newWarningBtn, "NewWarning"));
+        newSuspensionBtn.addActionListener(switchTabActionListener(newIssueCardPanel, newSuspensionBtn, "NewSuspension"));
+        newTrespassBtn.addActionListener(switchTabActionListener(newIssueCardPanel, newTrespassBtn, "NewTrespass"));
+
 
         JPanel btnTabs = new JPanel(new GridLayout(1,3));
         btnTabs.add(newWarningBtn);
@@ -45,8 +57,7 @@ public class NewIssuePopup {
         header.add(btnTabs, BorderLayout.SOUTH);
         popupFrame.add(header, BorderLayout.NORTH);
 
-        CardLayout cardLayout = new CardLayout();
-        JPanel newIssueCardPanel = new JPanel(cardLayout);
+
 
         JPanel newWarningPanel = getNewWarningPanel();
         JPanel newSuspensionPanel = new JPanel(new GridBagLayout());
@@ -111,5 +122,15 @@ public class NewIssuePopup {
         newWarningPanel.add(submitBtn, c);
 
         return newWarningPanel;
+    }
+
+    private static ActionListener switchTabActionListener(JPanel mainPanel, JButton button, String panelName) {
+        return e -> {
+            CardLayout layout = (CardLayout)(mainPanel.getLayout());
+            layout.show(mainPanel, panelName);
+            activeButton.setEnabled(true); // Enable previously active button
+            button.setEnabled(false); // Disable clicked button
+            activeButton = button;
+        };
     }
 }
