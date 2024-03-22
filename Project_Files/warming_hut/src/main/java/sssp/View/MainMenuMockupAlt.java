@@ -44,14 +44,18 @@ public class MainMenuMockupAlt extends JFrame {
         setSize(1366, 768);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+// region DATABASE INIT
+
         // Database Connection
         db = DBConnectorV2Singleton.getInstance();
 
         // Subscribe to database events
-        subscribeToDatabasePuts(this::onDatabasePut);
+        HttpStreamingManagerSingleton.subscribeRunnable("put", this::onDatabasePut);
 
         // Start listening only AFTER events are subscribed
         HttpStreamingManagerSingleton.startListening();
+
+// endregion
         
         // Panel Switch Buttons
         JButton panel1Button = createButton("Check In");
@@ -310,6 +314,12 @@ public class MainMenuMockupAlt extends JFrame {
         }
     }
 
+    
+    /**
+     * Updates the guest table based on the provided filter.
+     * 
+     * @param filter the filter to apply on the guest names
+     */
     private void updateGuestsTable(String filter)
     {
         // Update the guest table
@@ -359,18 +369,19 @@ public class MainMenuMockupAlt extends JFrame {
         return guestTableEntry;
     }
 
+    /**
+     * Returns the key for the guest table based on the guest name.
+     *
+     * @param guestName the name of the guest
+     * @return the key for the guest table
+     */
     public String getGuestTableKey(String guestName) {
         return "Guest_" + guestName.hashCode();
     }
-
-    private void subscribeToDatabasePuts(Runnable subscriber) {
-        DatabaseEventListener databaseEventListener = new DatabaseEventListener("put", subscriber);
-
-        HttpStreamingManager httpStreamingManager = HttpStreamingManagerSingleton.getInstance();
-
-        httpStreamingManager.addServerEventListener(databaseEventListener);
-    }
-
+    
+    /**
+     * Pulls data from the database and updates the guests table.
+     */
     private void onDatabasePut()
     {
         db.pull();

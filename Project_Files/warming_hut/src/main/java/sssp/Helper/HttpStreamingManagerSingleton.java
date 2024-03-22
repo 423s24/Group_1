@@ -20,6 +20,11 @@ public class HttpStreamingManagerSingleton {
         return httpStreamingManager;
     }
 
+    public static void subscribeRunnable(String eventName, Runnable listener)
+    {
+        getInstance().subscribeRunnable(eventName, listener);
+    }
+
     public static void startListening()
     {
         try {
