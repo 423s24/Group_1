@@ -230,7 +230,10 @@ public class MainMenuMockupAlt extends JFrame {
         // register onTableCellUpdated, which must be done after table creation
         new TableCellListener(table, onTableCellUpdated);
 
+        // Create column of delete buttons.
+        // Register the delete button action listener
         ButtonColumn deleteButtons = new ButtonColumn(table, onDeleteRowButtonPressed, 2);
+
         // hotkeys the delete key
         deleteButtons.setMnemonic(KeyEvent.VK_D);
 
@@ -390,6 +393,10 @@ public class MainMenuMockupAlt extends JFrame {
     }
 
     // Source: https://tips4java.wordpress.com/2009/07/12/table-button-column/
+    /**
+     * Event listener that listens for when the delete button in a row of the guest list is pressed.
+     * When the delete button is pressed, the row is removed from the table and the entry is removed from the database.
+     */
     Action onDeleteRowButtonPressed = new AbstractAction() {
         public void actionPerformed(ActionEvent e)
         {
@@ -417,6 +424,11 @@ public class MainMenuMockupAlt extends JFrame {
         }
     };
 
+    // Source: https://tips4java.wordpress.com/2009/06/07/table-cell-listener/
+    /**
+     * Event listener that listens for when a cell in the guest table is updated.
+     * When a cell is updated, the entry in the database is updated with the new value.
+     */
     Action onTableCellUpdated = new AbstractAction()
     {
         public void actionPerformed(ActionEvent e)
