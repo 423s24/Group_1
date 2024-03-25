@@ -2,6 +2,7 @@ package sssp.View;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HexFormat;
 
 public class EditGuestPanel {
 
@@ -23,6 +24,7 @@ public class EditGuestPanel {
         editGuestPanel.add(title);
         editGuestPanel.add(getGuestDetailsPanel());
         editGuestPanel.add(getIssueTrackerPanel());
+        editGuestPanel.add(getStorageTrackerPanel());
         return editGuestPanel;
     }
 
@@ -182,7 +184,145 @@ public class EditGuestPanel {
         return issueTrackerPanel;
     }
 
-    private static void issueDetailsClicked(){
 
+
+
+
+
+
+
+
+
+
+
+    public static final JLabel storageTrackerTitle = new JLabel("  Storage");
+
+    public static final JLabel reservedLegendLabel = new JLabel("Reserved is blue ");
+
+    public static final JLabel dayStorageLabel = new JLabel("Day Storage: ");
+
+    public static final JLabel dayStorage = new JLabel("A12");
+    public static final JButton dayStorageDetails = new JButton("Details");
+
+    public static final JLabel smallLockerLabel = new JLabel("Small Locker: ");
+    public static final JLabel smallLocker = new JLabel("#7");
+    public static final JButton smallLockerDetails = new JButton("Details");
+    public static final JLabel mediumLockerLabel = new JLabel("Medium Locker: ");
+    public static final JLabel mediumLocker = new JLabel("None");
+    public static final JButton mediumLockerDetails = new JButton("Details");
+    public static final JButton openStorageAssignment = new JButton("Storage Assignment");
+    private static JPanel getStorageTrackerPanel(){
+        storageTrackerTitle.setFont(new Font("Serif", Font.PLAIN, 24));
+        storageTrackerTitle.setBackground(Color.LIGHT_GRAY);
+        storageTrackerTitle.setPreferredSize(new Dimension(WIDTH, 30));
+        storageTrackerTitle.setOpaque(true);
+
+        dayStorage.setBackground(Color.green);
+        dayStorage.setOpaque(true);
+        dayStorage.setHorizontalAlignment(0);
+        dayStorage.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        dayStorage.setPreferredSize(new Dimension(120, 20));
+
+        smallLocker.setBackground(Color.CYAN);
+        smallLocker.setOpaque(true);
+        smallLocker.setHorizontalAlignment(0);
+        smallLocker.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        smallLocker.setPreferredSize(new Dimension(120, 20));
+
+        mediumLocker.setBackground(Color.white);
+        mediumLocker.setOpaque(true);
+        mediumLocker.setHorizontalAlignment(0);
+        mediumLocker.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        mediumLocker.setPreferredSize(new Dimension(120, 20));
+
+        dayStorageDetails.setPreferredSize(new Dimension(100, 20));
+        smallLockerDetails.setPreferredSize(new Dimension(100, 20));
+        mediumLockerDetails.setPreferredSize(new Dimension(100, 20));
+        openStorageAssignment.setPreferredSize(new Dimension(100, 20));
+
+        openStorageAssignment.addActionListener(e -> {
+            NewIssuePopup.ShowNewIssuePopup();
+        });
+        mediumLockerDetails.addActionListener(e -> {
+            IssueDetailsPopup.getNoTrespassDetailsPopup();
+        });
+        smallLockerDetails.addActionListener(e -> {
+            IssueDetailsPopup.getSuspensionsDetailsPopup();
+        });
+        dayStorageDetails.addActionListener(e -> {
+            IssueDetailsPopup.getWarningDetailsPopup();
+        });
+
+        dayStorageLabel.setFont(NORMAL_FONT);
+        dayStorage.setFont(NORMAL_FONT);
+        dayStorageDetails.setFont(NORMAL_FONT);
+        smallLockerLabel.setFont(NORMAL_FONT);
+        smallLocker.setFont(NORMAL_FONT);
+        smallLockerDetails.setFont(NORMAL_FONT);
+        mediumLockerLabel.setFont(NORMAL_FONT);
+        mediumLocker.setFont(NORMAL_FONT);
+        mediumLockerDetails.setFont(NORMAL_FONT);
+        reservedLegendLabel.setFont(NORMAL_FONT);
+        reservedLegendLabel.setForeground(Color.CYAN);
+        reservedLegendLabel.setHorizontalAlignment(JLabel.CENTER);
+
+        JPanel issueTrackerPanel = new JPanel(new GridBagLayout());
+        issueTrackerPanel.setPreferredSize(new Dimension(WIDTH, 200));
+
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 2;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
+        issueTrackerPanel.add(openStorageAssignment, c);
+        c.gridx = 0;
+        c.gridwidth = 3;
+        issueTrackerPanel.add(storageTrackerTitle, c);
+        c.insets = new Insets(5, 10, 5, 10);
+
+        c.gridy = 1;
+        issueTrackerPanel.add(reservedLegendLabel, c);
+
+        c.gridwidth = 1;
+        c.gridy = 2;
+        c.gridx = 0;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.2;
+        issueTrackerPanel.add(dayStorageLabel, c);
+        c.gridx = 1;
+        c.weightx = 0.6;
+        issueTrackerPanel.add(dayStorage, c);
+        c.gridx = 2;
+        c.anchor = GridBagConstraints.EAST;
+        c.weightx = 0.2;
+        issueTrackerPanel.add(dayStorageDetails, c);
+
+        c.gridy = 3;
+        c.gridx = 0;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.2;
+        issueTrackerPanel.add(smallLockerLabel, c);
+        c.gridx = 1;
+        c.weightx = 0.6;
+        issueTrackerPanel.add(smallLocker, c);
+        c.gridx = 2;
+        c.anchor = GridBagConstraints.EAST;
+        c.weightx = 0.2;
+        issueTrackerPanel.add(smallLockerDetails, c);
+
+        c.gridy = 4;
+        c.gridx = 0;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.2;
+        issueTrackerPanel.add(mediumLockerLabel, c);
+        c.gridx = 1;
+        c.weightx = 0.6;
+        issueTrackerPanel.add(mediumLocker, c);
+        c.weightx = 0.2;
+        c.gridx = 2;
+        c.anchor = GridBagConstraints.EAST;
+        issueTrackerPanel.add(mediumLockerDetails, c);
+
+        return issueTrackerPanel;
     }
 }

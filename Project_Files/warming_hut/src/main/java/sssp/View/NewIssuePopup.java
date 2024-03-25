@@ -4,7 +4,6 @@ import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class NewIssuePopup {
@@ -60,8 +59,8 @@ public class NewIssuePopup {
 
 
         JPanel newWarningPanel = getNewWarningPanel();
-        JPanel newSuspensionPanel = new JPanel(new GridBagLayout());
-        JPanel newTrespassPanel = new JPanel(new GridBagLayout());
+        JPanel newSuspensionPanel = getNewSuspensionPanel();
+        JPanel newTrespassPanel = getNewNoTrespassPanel();
 
         newIssueCardPanel.add(newWarningPanel, "NewWarning");
         newIssueCardPanel.add(newSuspensionPanel, "NewSuspension");
@@ -76,7 +75,7 @@ public class NewIssuePopup {
     private static final JLabel staffInitialsLabel = new JLabel("Staff Initials: ");
     private static final JTextField staffInitials = new JTextField();
 
-    private static final JLabel warningNotesLabel = new JLabel("Staff Initials: ");
+    private static final JLabel warningNotesLabel = new JLabel("Notes: ");
     private static final JTextArea warningNotes = new JTextArea();
 
     private static final JButton cancelBtn = new JButton("Cancel");
@@ -122,6 +121,135 @@ public class NewIssuePopup {
         newWarningPanel.add(submitBtn, c);
 
         return newWarningPanel;
+    }
+
+
+    private static final JLabel suspensionDateLabel = new JLabel("Suspension Date: ");
+    private static final JLabel expirationDateLabel = new JLabel("Expiration Date: ");
+    private static final JDateChooser suspensionDateChooser = new JDateChooser();
+    private static final JDateChooser expirationDateChooser = new JDateChooser();
+    private static final JLabel suspensionNotesLabel = new JLabel("Notes: ");
+    private static final JTextArea suspensionNotes = new JTextArea();
+    private static final JLabel suspensionsStaffInitialsLabel = new JLabel("Staff Initials: ");
+    private static final JTextField suspensionsStaffInitials = new JTextField();
+    private static final String[] suspendedFromOptions = {"Bunking", "Storage", "Showers", "Laundry", "All"};
+    private static final JLabel suspendedFromLabel = new JLabel("Suspended From: ");
+    private static final JComboBox<String> suspendedFrom = new JComboBox<>(suspendedFromOptions);
+    private static final JButton suspensionCancelBtn = new JButton("Cancel");
+    private static final JButton suspensionSubmitBtn = new JButton("Submit");
+    private static JPanel getNewSuspensionPanel(){
+        JPanel newSuspensionPanel = new JPanel(new GridBagLayout());
+
+        suspensionDateLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        expirationDateLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        suspensionsStaffInitialsLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        suspensionNotesLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        suspendedFromLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        suspensionCancelBtn.setFont(new Font("Serif", Font.PLAIN, 18));
+        suspensionSubmitBtn.setFont(new Font("Serif", Font.PLAIN, 18));
+
+        suspensionDateChooser.setPreferredSize(new Dimension(100, 30));
+        expirationDateChooser.setPreferredSize(new Dimension(100, 30));
+        suspensionsStaffInitials.setPreferredSize(new Dimension(100, 30));
+        suspensionNotes.setPreferredSize(new Dimension(300, 150));
+        suspensionCancelBtn.setPreferredSize(new Dimension(150, 40));
+        suspensionSubmitBtn.setPreferredSize(new Dimension(150, 40));
+
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.insets = new Insets(5,5,5,5);
+        newSuspensionPanel.add(suspensionDateLabel, c);
+        c.gridx = 1;
+        newSuspensionPanel.add(suspensionDateChooser, c);
+        c.gridx = 0;
+        c.gridy = 1;
+        newSuspensionPanel.add(expirationDateLabel, c);
+        c.gridx = 1;
+        newSuspensionPanel.add(expirationDateChooser, c);
+        c.gridx = 0;
+        c.gridy = 2;
+        newSuspensionPanel.add(suspendedFromLabel, c);
+        c.gridx = 1;
+        newSuspensionPanel.add(suspendedFrom, c);
+        c.gridx = 0;
+        c.gridy = 3;
+        newSuspensionPanel.add(suspensionsStaffInitialsLabel, c);
+        c.gridx = 1;
+        newSuspensionPanel.add(suspensionsStaffInitials, c);
+        c.gridx = 0;
+        c.gridy = 4;
+        newSuspensionPanel.add(suspensionNotesLabel, c);
+        c.gridx = 1;
+        newSuspensionPanel.add(suspensionNotes, c);
+        c.gridx = 0;
+        c.gridy = 5;
+        newSuspensionPanel.add(suspensionCancelBtn, c);
+        c.gridx = 1;
+        c.anchor = GridBagConstraints.EAST;
+        newSuspensionPanel.add(suspensionSubmitBtn, c);
+
+        return newSuspensionPanel;
+    }
+
+    private static final JLabel noTrespassDateLabel = new JLabel("Suspension Date: ");
+    private static final JDateChooser noTrespassDateChooser = new JDateChooser();
+    private static final JLabel noTrespassNotesLabel = new JLabel("Notes: ");
+    private static final JTextArea noTrespassNotes = new JTextArea();
+    private static final JLabel noTrespassStaffInitialsLabel = new JLabel("Staff Initials: ");
+    private static final JTextField noTrespasssStaffInitials = new JTextField();
+    private static final String[] noTrespassOptions = {"All HRDC", "Wheat Drive"};
+    private static final JLabel noTrespassFromLabel = new JLabel("Suspended From: ");
+    private static final JComboBox<String> noTrespassFrom = new JComboBox<>(noTrespassOptions);
+    private static final JButton noTrespassCancelBtn = new JButton("Cancel");
+    private static final JButton noTrespassSubmitBtn = new JButton("Submit");
+    private static JPanel getNewNoTrespassPanel(){
+        JPanel newNoTrespassPanel = new JPanel(new GridBagLayout());
+
+        noTrespassDateLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        expirationDateLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        noTrespassStaffInitialsLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        noTrespassNotesLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        noTrespassFromLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        noTrespassCancelBtn.setFont(new Font("Serif", Font.PLAIN, 18));
+        noTrespassSubmitBtn.setFont(new Font("Serif", Font.PLAIN, 18));
+
+        noTrespassDateChooser.setPreferredSize(new Dimension(100, 30));
+        noTrespasssStaffInitials.setPreferredSize(new Dimension(100, 30));
+        noTrespassNotes.setPreferredSize(new Dimension(300, 150));
+        noTrespassCancelBtn.setPreferredSize(new Dimension(150, 40));
+        noTrespassSubmitBtn.setPreferredSize(new Dimension(150, 40));
+
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.insets = new Insets(5,5,5,5);
+        newNoTrespassPanel.add(suspensionDateLabel, c);
+        c.gridx = 1;
+        newNoTrespassPanel.add(suspensionDateChooser, c);
+        c.gridx = 0;
+        c.gridy = 2;
+        newNoTrespassPanel.add(noTrespassFromLabel, c);
+        c.gridx = 1;
+        newNoTrespassPanel.add(noTrespassFrom, c);
+        c.gridx = 0;
+        c.gridy = 3;
+        newNoTrespassPanel.add(noTrespassStaffInitialsLabel, c);
+        c.gridx = 1;
+        newNoTrespassPanel.add(noTrespasssStaffInitials, c);
+        c.gridx = 0;
+        c.gridy = 4;
+        newNoTrespassPanel.add(noTrespassNotesLabel, c);
+        c.gridx = 1;
+        newNoTrespassPanel.add(noTrespassNotes, c);
+        c.gridx = 0;
+        c.gridy = 5;
+        newNoTrespassPanel.add(noTrespassCancelBtn, c);
+        c.gridx = 1;
+        c.anchor = GridBagConstraints.EAST;
+        newNoTrespassPanel.add(noTrespassSubmitBtn, c);
+
+        return newNoTrespassPanel;
     }
 
     private static ActionListener switchTabActionListener(JPanel mainPanel, JButton button, String panelName) {
