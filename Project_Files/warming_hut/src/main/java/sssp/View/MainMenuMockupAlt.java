@@ -68,7 +68,7 @@ public class MainMenuMockupAlt extends JFrame {
 
         // Panels for Tab Switching
         JPanel panel1 = createCheckInPanel();
-        JPanel panel2 = createPanel("Bunk Assignment", "Assign Bunk Location");
+        JPanel panel2 = BunkAssignmentPanel.getBunkAssignmentPanel();
         GuestDetailsPanel panel3 = new GuestDetailsPanel();
 
         // Add panels to the main panel

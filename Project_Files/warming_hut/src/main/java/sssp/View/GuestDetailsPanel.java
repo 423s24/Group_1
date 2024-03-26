@@ -38,7 +38,6 @@ public class GuestDetailsPanel extends JPanel {
 
         addStorageInfo();
 
-        //TODO:
         JPanel disciplinaryInfoPanel = getDisciplinaryInfoPanel();
         disciplinaryInfoPanel.setBorder(regBorder);
 
