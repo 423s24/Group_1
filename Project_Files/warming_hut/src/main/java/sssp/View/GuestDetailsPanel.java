@@ -7,6 +7,8 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.util.Date;
 
+import static sssp.View.DisciplinaryInfoPanel.getDisciplinaryInfoPanel;
+
 public class GuestDetailsPanel extends JPanel {
     private JLabel guestNameLabel;
     private JTextField searchField;
@@ -37,10 +39,7 @@ public class GuestDetailsPanel extends JPanel {
         addStorageInfo();
 
         //TODO:
-        JPanel disciplinaryInfoPanel = new JPanel();
-        disciplinaryInfoPanel.setLayout(new BorderLayout());
-        JLabel disciplinaryInfoLabel = new JLabel("Disciplinary Info");
-        disciplinaryInfoPanel.add(disciplinaryInfoLabel, BorderLayout.NORTH);
+        JPanel disciplinaryInfoPanel = getDisciplinaryInfoPanel();
         disciplinaryInfoPanel.setBorder(regBorder);
 
         JPanel storageInfoPanel = new JPanel();

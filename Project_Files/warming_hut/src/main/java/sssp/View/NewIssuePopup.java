@@ -56,8 +56,6 @@ public class NewIssuePopup {
         header.add(btnTabs, BorderLayout.SOUTH);
         popupFrame.add(header, BorderLayout.NORTH);
 
-
-
         JPanel newWarningPanel = getNewWarningPanel();
         JPanel newSuspensionPanel = getNewSuspensionPanel();
         JPanel newTrespassPanel = getNewNoTrespassPanel();
