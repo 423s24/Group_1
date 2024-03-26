@@ -5,7 +5,8 @@ import com.toedter.calendar.JDateChooser;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.util.Date;
+
+import javax.swing.text.AbstractDocument;
 
 public class GuestDetailsPanel extends JPanel {
     private JLabel guestNameLabel;
@@ -17,6 +18,7 @@ public class GuestDetailsPanel extends JPanel {
 
         guestNameLabel = new JLabel("Guest Name Lookup:");
         searchField = new JTextField(20);
+        ((AbstractDocument) searchField.getDocument()).setDocumentFilter(new NameAutocompleteDocumentFilter(searchField));
         searchButton = new JButton("Search");
 
         JPanel topBarPanel = new JPanel();
