@@ -36,6 +36,7 @@ public class GuestDetailsPanel extends JPanel {
 
         addStorageInfo();
 
+        //TODO:
         JPanel disciplinaryInfoPanel = new JPanel();
         disciplinaryInfoPanel.setLayout(new BorderLayout());
         JLabel disciplinaryInfoLabel = new JLabel("Disciplinary Info");
@@ -235,7 +236,6 @@ public class GuestDetailsPanel extends JPanel {
 
     private void addStorageInfo() {
         JPanel storageInfoPanel = new JPanel(new BorderLayout());
-
         JTabbedPane tabbedPane = new JTabbedPane();
 
         JPanel dayStoragePanel = createDayStoragePanel();
