@@ -8,6 +8,8 @@ import java.awt.*;
 
 import javax.swing.text.AbstractDocument;
 
+import static sssp.View.DisciplinaryInfoPanel.getDisciplinaryInfoPanel;
+
 public class GuestDetailsPanel extends JPanel {
     private JLabel guestNameLabel;
     private JTextField searchField;
@@ -38,10 +40,8 @@ public class GuestDetailsPanel extends JPanel {
 
         addStorageInfo();
 
-        JPanel disciplinaryInfoPanel = new JPanel();
-        disciplinaryInfoPanel.setLayout(new BorderLayout());
-        JLabel disciplinaryInfoLabel = new JLabel("Disciplinary Info");
-        disciplinaryInfoPanel.add(disciplinaryInfoLabel, BorderLayout.NORTH);
+        //TODO:
+        JPanel disciplinaryInfoPanel = getDisciplinaryInfoPanel();
         disciplinaryInfoPanel.setBorder(regBorder);
 
         JPanel storageInfoPanel = new JPanel();
@@ -237,7 +237,6 @@ public class GuestDetailsPanel extends JPanel {
 
     private void addStorageInfo() {
         JPanel storageInfoPanel = new JPanel(new BorderLayout());
-
         JTabbedPane tabbedPane = new JTabbedPane();
 
         JPanel dayStoragePanel = createDayStoragePanel();

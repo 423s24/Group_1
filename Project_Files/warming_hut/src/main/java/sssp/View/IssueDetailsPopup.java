@@ -8,19 +8,42 @@ public class IssueDetailsPopup {
     private static final int WIDTH = 1000;
     private static final int HEIGHT = 750;
     public static final JLabel noTrespassLabel = new JLabel("No Trespass Orders");
-    public static final JLabel guestNameLabel = new JLabel("Guest Name:   ");
-    public static final JLabel guestName = new JLabel("John Doe");
 
-    public static JFrame getNoTrespassDetailsPopup(){
+    private static void showIssueDetailsPopup(String title, JPanel panel){
         JFrame popupFrame = new JFrame();
         popupFrame.setLayout(new GridBagLayout());
         popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         popupFrame.setSize(new Dimension(WIDTH, HEIGHT));
         popupFrame.setVisible(true);
         popupFrame.setLocationRelativeTo(null);
-        popupFrame.setTitle("Suspensions");
+        popupFrame.setTitle(title);
 
-        JPanel warningDetailsPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints frameC = new GridBagConstraints();
+        frameC.fill = GridBagConstraints.HORIZONTAL;
+        frameC.weightx = 1.0;
+        frameC.weighty = 1.0;
+        frameC.gridx = 0;
+        frameC.gridy = 0;
+        frameC.anchor = GridBagConstraints.NORTH;
+        popupFrame.add(panel, frameC);
+    }
+
+    public static void getNoTrespassDetailsPopup(){
+        showIssueDetailsPopup("No Trespass Details", getNoTrespassDetailsPanel());
+    }
+    public static void getSuspensionsDetailsPopup(){
+        showIssueDetailsPopup("Suspension Details", getSuspensionsDetailsPanel());
+    }
+
+    public static void getWarningDetailsPopup(){
+        showIssueDetailsPopup("Warning Details", getWarningDetailsPanel());
+    }
+
+    public static JPanel getNoTrespassDetailsPanel(){
+        JPanel noTrespassDetailsPanel = new JPanel(new GridBagLayout());
+
+        JLabel guestNameLabel = new JLabel("Guest Name:   ");
+        JLabel guestName = new JLabel("John Doe");
 
         guestNameLabel.setBackground(Color.gray);
         guestNameLabel.setOpaque(true);
@@ -60,48 +83,33 @@ public class IssueDetailsPopup {
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 0;
         c.gridy = 0;
-        warningDetailsPanel.add(guestNameLabel, c);
+        noTrespassDetailsPanel.add(guestNameLabel, c);
         c.gridx = 1;
         c.gridwidth = 2;
         c.weightx = 1.0;
-        warningDetailsPanel.add(guestName, c);
+        noTrespassDetailsPanel.add(guestName, c);
         c.weightx = 0;
         c.gridwidth = 3;
         c.gridx = 0;
         c.gridy = 1;
-        warningDetailsPanel.add(noTrespassLabel, c);
+        noTrespassDetailsPanel.add(noTrespassLabel, c);
         c.gridx = 0;
         c.weightx = 1;
         c.gridy = 2;
-        warningDetailsPanel.add(sixMonthWarningsTable.getTableHeader(), c);
+        noTrespassDetailsPanel.add(sixMonthWarningsTable.getTableHeader(), c);
         c.gridy = 3;
-        warningDetailsPanel.add(sixMonthWarningsTable, c);
+        noTrespassDetailsPanel.add(sixMonthWarningsTable, c);
 
-        GridBagConstraints frameC = new GridBagConstraints();
-        frameC.fill = GridBagConstraints.HORIZONTAL;
-        frameC.weightx = 1.0;
-        frameC.weighty = 1.0;
-        frameC.gridx = 0;
-        frameC.gridy = 0;
-        frameC.anchor = GridBagConstraints.NORTH;
-
-        popupFrame.add(warningDetailsPanel, frameC);
-        return popupFrame;
+        return noTrespassDetailsPanel;
     }
 
-    public static final JLabel activeSuspensionsLabel = new JLabel("  Active Suspensions");
-    public static final JLabel olderSuspensionsLabel = new JLabel("  Expired Suspensions");
-    public static JFrame getSuspensionsDetailsPopup(){
-
-        JFrame popupFrame = new JFrame();
-        popupFrame.setLayout(new GridBagLayout());
-        popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        popupFrame.setSize(new Dimension(WIDTH, HEIGHT));
-        popupFrame.setVisible(true);
-        popupFrame.setLocationRelativeTo(null);
-        popupFrame.setTitle("Suspensions");
-
+    public static JPanel getSuspensionsDetailsPanel(){
         JPanel suspensionsDetailsPanel = new JPanel(new GridBagLayout());
+
+        JLabel guestNameLabel = new JLabel("Guest Name:   ");
+        JLabel guestName = new JLabel("John Doe");
+        JLabel activeSuspensionsLabel = new JLabel("  Active Suspensions");
+        JLabel olderSuspensionsLabel = new JLabel("  Expired Suspensions");
 
         guestNameLabel.setBackground(Color.gray);
         guestNameLabel.setOpaque(true);
@@ -188,16 +196,7 @@ public class IssueDetailsPopup {
         c.gridy = 6;
         suspensionsDetailsPanel.add(olderSuspensionsTable, c);
 
-        GridBagConstraints frameC = new GridBagConstraints();
-        frameC.fill = GridBagConstraints.HORIZONTAL;
-        frameC.weightx = 1.0;
-        frameC.weighty = 1.0;
-        frameC.gridx = 0;
-        frameC.gridy = 0;
-        frameC.anchor = GridBagConstraints.NORTH;
-
-        popupFrame.add(suspensionsDetailsPanel, frameC);
-        return popupFrame;
+        return suspensionsDetailsPanel;
     }
 
     public static final JLabel lastSixMonthsLabel = new JLabel("Last 6 Months");
@@ -206,17 +205,11 @@ public class IssueDetailsPopup {
     public static final JLabel olderLabel = new JLabel("Older Than 6 Months");
     public static final JLabel olderTotalLabel = new JLabel("Total: ");
     public static final JLabel olderTotal = new JLabel("4");
-    public static JFrame getWarningDetailsPopup(){
-
-        JFrame popupFrame = new JFrame();
-        popupFrame.setLayout(new GridBagLayout());
-        popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        popupFrame.setSize(new Dimension(WIDTH, HEIGHT));
-        popupFrame.setVisible(true);
-        popupFrame.setLocationRelativeTo(null);
-        popupFrame.setTitle("Warnings");
-
+    public static JPanel getWarningDetailsPanel(){
         JPanel warningDetailsPanel = new JPanel(new GridBagLayout());
+
+        JLabel guestNameLabel = new JLabel("Guest Name:   ");
+        JLabel guestName = new JLabel("John Doe");
 
         guestNameLabel.setBackground(Color.gray);
         guestNameLabel.setOpaque(true);
@@ -339,15 +332,6 @@ public class IssueDetailsPopup {
         c.gridy = 6;
         warningDetailsPanel.add(olderWarningsTable, c);
 
-        GridBagConstraints frameC = new GridBagConstraints();
-        frameC.fill = GridBagConstraints.HORIZONTAL;
-        frameC.weightx = 1.0;
-        frameC.weighty = 1.0;
-        frameC.gridx = 0;
-        frameC.gridy = 0;
-        frameC.anchor = GridBagConstraints.NORTH;
-
-        popupFrame.add(warningDetailsPanel, frameC);
-        return popupFrame;
+        return warningDetailsPanel;
     }
 }
