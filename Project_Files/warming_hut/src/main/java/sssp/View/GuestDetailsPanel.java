@@ -2,10 +2,17 @@ package sssp.View;
 
 import com.toedter.calendar.JDateChooser;
 
+import sssp.Helper.DBConnectorV2Singleton;
+import sssp.Helper.DBConnectorV2;
+
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.text.AbstractDocument;
+
 import java.awt.*;
+import java.util.Map;
 import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import static sssp.View.DisciplinaryInfoPanel.getDisciplinaryInfoPanel;
 
@@ -14,11 +21,15 @@ public class GuestDetailsPanel extends JPanel {
     private JTextField searchField;
     private JButton searchButton;
 
+    private DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
+    private String activeGuestID = null;
+
     public GuestDetailsPanel() {
         setLayout(new BorderLayout());
 
         guestNameLabel = new JLabel("Guest Name Lookup:");
         searchField = new JTextField(20);
+        ((AbstractDocument) searchField.getDocument()).setDocumentFilter(new NameAutocompleteDocumentFilter(searchField));
         searchButton = new JButton("Search");
 
         JPanel topBarPanel = new JPanel();
@@ -591,5 +602,48 @@ public class GuestDetailsPanel extends JPanel {
         add(basicDataPanel, BorderLayout.WEST);
     }
 
+    public void setActiveGuestID(String guestID)
+    {
+        this.activeGuestID = guestID;
 
+        Map<String, String> guestData = db.database.guests.get(guestID);
+
+        if(guestData == null)
+        {
+            throw new RuntimeException("The guest " + guestID + "does not exist.");
+        }
+
+        SimpleDateFormat dateParser = new SimpleDateFormat("mm/dd/yyyy");
+
+        // Populate simple text fields
+        ((JTextField) ((JPanel) getComponent(0)).getComponent(1)).setText(guestData.get("FirstName"));
+        ((JTextField) ((JPanel) getComponent(0)).getComponent(3)).setText(guestData.get("LastName"));
+        ((JTextArea) ((JScrollPane) ((JPanel) getComponent(0)).getComponent(9)).getViewport().getView()).setText(guestData.get("Notes"));
+
+        // Populate date fields
+        if(parseDate(guestData.get("FirstHoused")) != null)
+        {
+            ((JDateChooser) ((JPanel) getComponent(0)).getComponent(5)).setDate(parseDate(guestData.get("FirstHoused")));
+        }
+        if(parseDate(guestData.get("LastVisit")) != null)
+        {
+            ((JDateChooser) ((JPanel) getComponent(0)).getComponent(7)).setDate(parseDate(guestData.get("LastVisit")));
+        }
+
+        // TODO: populate rest of fields
+    }
+
+    private Date parseDate(String dateString)
+    {
+        try
+        {
+            return new SimpleDateFormat("MM/dd/yyyy").parse(dateString);
+        }
+        catch(Exception e)
+        {
+            // popup error message
+            JOptionPane.showMessageDialog(null, "Error parsing date '" + dateString + "': " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+    }
 }
