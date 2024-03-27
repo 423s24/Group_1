@@ -30,8 +30,6 @@ public class DBConnectorV2{
     private String secret;
     private String endpoint = "https://hrdc-warming-hut-db-manager-default-rtdb.firebaseio.com/clients";
 
-    private HttpStreamingManager streamingManager;
-
 
 
 
@@ -43,13 +41,17 @@ public class DBConnectorV2{
         this.artifactDatabase = null;
         this.freshDatabase = null;
         originalDatabasePull();
+
+        HttpStreamingManagerSingleton.subscribeRunnable("put", this::onDBUpdate);
     }
 
     // pushes the local database. First calls sortconflicts, and then with a conflict free database it pushes each table individually. 
     // it makes use of the pushTable method to push, and the convertToJson methods to convert the tables from the database before uploading. 
     public boolean push(){
 
+        
         this.sortConflicts();
+        
 
         pushTable("Attributes", this.convertToJson2(this.database.attributes));
         pushTable("Conflicts", this.convertToJson2(this.database.conflicts));
@@ -81,6 +83,7 @@ public class DBConnectorV2{
     public void sortConflicts(){
         // update Fresh Database from remote
         this.getFreshDatabase();
+        
 
         // merge each table into freshdatabase
         this.findConflicts2(this.database.attributes, this.artifactDatabase.attributes, this.freshDatabase.attributes);
@@ -94,6 +97,7 @@ public class DBConnectorV2{
         this.findConflicts1(this.database.unknownItems, this.artifactDatabase.unknownItems, this.freshDatabase.unknownItems);
         this.findConflicts1(this.database.waitingList, this.artifactDatabase.waitingList, this.freshDatabase.waitingList);
 
+        
         // set database and artifact database based on freshdatabase
         this.database = this.freshDatabase.deepCopy();
         this.artifactDatabase = this.database.deepCopy();
@@ -128,12 +132,17 @@ public class DBConnectorV2{
                                             if(originalfield2.getValue() == null){
                                                 freshTable.get(original.getKey()).get(originalfield1.getKey()).remove(originalfield2.getKey());
                                             } else{
+                                                boolean found3 = false;
                                                 for (Map.Entry<String, String> artifactfield2 : artifactfield1.getValue().entrySet()){
                                                     if(artifactfield2.getKey().equals(originalfield2.getKey())){
                                                         if(!artifactfield2.getValue().equals(originalfield2.getValue())){
                                                             freshTable.get(original.getKey()).get(originalfield1.getKey()).put(originalfield2.getKey(), originalfield2.getValue());
                                                         }
                                                     }   
+                                                }
+                                                if(!found3){
+                                                    freshTable.get(original.getKey()).get(originalfield1.getKey()).put(originalfield2.getKey(), originalfield2.getValue());
+                                                        
                                                 }
                                             }
                                         }
@@ -156,7 +165,6 @@ public class DBConnectorV2{
     // Much the same as findConflicts2, just works with depth schema 1 instead. 
     public void findConflicts1( Map<String, Map<String, String>> table, Map<String, Map<String, String>>artifactTable, Map<String, Map<String, String>>freshTable ) {
         for (Map.Entry<String, Map<String, String>> original : table.entrySet()){
-            System.out.println(original);
             if(original.getValue() == null){
                 freshTable.remove(original.getKey());
             } else{
@@ -165,15 +173,20 @@ public class DBConnectorV2{
                     if(artifact.getKey().equals(original.getKey())){
                         found = true;
                         for (Map.Entry<String, String> originalfield : original.getValue().entrySet()){
-                            if(originalfield.getValue() == null){
+                            if((originalfield.getValue() == null)){
                                 freshTable.get(original.getKey()).remove(originalfield.getKey());
                             } else{
+                                boolean found2 = false;
                                 for (Map.Entry<String, String> artifactfield : artifact.getValue().entrySet()){
                                     if(artifactfield.getKey().equals(originalfield.getKey())){
+                                        found2 = true;
                                         if(!artifactfield.getValue().equals(originalfield.getValue())){
                                             freshTable.get(original.getKey()).put(originalfield.getKey(), originalfield.getValue());
                                         }
-                                    }   
+                                    } 
+                                }
+                                if(!found2){
+                                    freshTable.get(original.getKey()).put(originalfield.getKey(), originalfield.getValue());
                                 }
                             }
                         }
@@ -427,7 +440,21 @@ public class DBConnectorV2{
         }
     }
 
+    List<Runnable> subscribers = new ArrayList<Runnable>();
 
-    
+    public void subscribeRunnableToDBUpdate(Runnable r){
+        subscribers.add(r);
+    }
 
+    private void notifyDBUpdate(){
+        for(Runnable r : subscribers){
+            r.run();
+        }
+    }
+
+    private void onDBUpdate()
+    {
+        this.pull();
+        this.notifyDBUpdate();
+    }
 }

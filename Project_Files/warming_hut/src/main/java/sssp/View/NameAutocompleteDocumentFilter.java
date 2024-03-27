@@ -2,10 +2,12 @@ package sssp.View;
 
 import javax.swing.*;
 import javax.swing.text.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Map;
 
 import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
@@ -24,7 +26,7 @@ public class NameAutocompleteDocumentFilter extends DocumentFilter {
         this.db = DBConnectorV2Singleton.getInstance();
         this.owner = owner;
 
-        // 
+        // Add key listener to the text field to handle up, down, and enter keys without losing focus on the field
         owner.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -71,8 +73,7 @@ public class NameAutocompleteDocumentFilter extends DocumentFilter {
         }
 
         // Get all guest names from the database
-        List<String> names = db.database.guests.values().stream()
-            .map(entry -> entry.get("FirstName") + " " + entry.get("LastName"))
+        List<Map<String, String>> guests = db.database.guests.values().stream()
             .collect(Collectors.toList());
 
         // Clear the popup menu
@@ -80,9 +81,13 @@ public class NameAutocompleteDocumentFilter extends DocumentFilter {
         selectedMenuItemIndex = -1;
 
         // Add all names that start with the current text to the popup menu
-        for (String completion : names) {
-            if (completion.toLowerCase().startsWith(text.toLowerCase())) {
-                JMenuItem menuItem = new JMenuItem(completion);
+        for (Map<String, String> guest : guests) {
+            String firstName = guest.get("FirstName");
+            String lastName = guest.get("LastName");
+            String fullName = firstName + " " + lastName;
+
+            if (firstName.toLowerCase().startsWith(text.toLowerCase()) || lastName.toLowerCase().startsWith(text.toLowerCase())) {
+                JMenuItem menuItem = new JMenuItem(fullName);
                 menuItem.addActionListener(e -> {
                     try {
                         fb.replace(0, fb.getDocument().getLength(), menuItem.getText(), null);

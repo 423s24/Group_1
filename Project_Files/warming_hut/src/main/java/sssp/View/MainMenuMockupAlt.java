@@ -35,26 +35,13 @@ public class MainMenuMockupAlt extends JFrame {
     private JPanel mainPanel;
     private CardLayout cardLayout;
     private JButton activeButton;
-    private DBConnectorV2 db;
+    private DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
     private JTable table;
 
     public MainMenuMockupAlt() {
         setTitle("HRDC Warming Center Manager");
         setSize(1366, 768);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-// region DATABASE INIT
-
-        // Database Connection
-        db = DBConnectorV2Singleton.getInstance();
-
-        // Subscribe to database events
-        HttpStreamingManagerSingleton.subscribeRunnable("put", this::onDatabasePut);
-
-        // Start listening only AFTER events are subscribed
-        HttpStreamingManagerSingleton.startListening();
-
-// endregion
         
         // Panel Switch Buttons
         JButton panel1Button = createButton("Check In");
@@ -96,6 +83,14 @@ public class MainMenuMockupAlt extends JFrame {
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(sidePanel, BorderLayout.WEST);
         getContentPane().add(mainPanel, BorderLayout.CENTER);
+
+// region DATABASE INIT - panels should be initialized before this is done
+        // Subscribe to database events
+        db.subscribeRunnableToDBUpdate(this::onDatabasePut);
+
+        // Start listening only AFTER db has been instantiated
+        HttpStreamingManagerSingleton.startListening();
+// endregion
 
         // Centers Window
         setLocationRelativeTo(null);
@@ -315,7 +310,6 @@ public class MainMenuMockupAlt extends JFrame {
             tableModel.addRow(rowData);
         }
     }
-
     
     /**
      * Updates the guest table based on the provided filter.
