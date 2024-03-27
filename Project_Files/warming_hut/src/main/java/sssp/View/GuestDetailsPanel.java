@@ -89,23 +89,7 @@ public class GuestDetailsPanel extends JPanel {
 
         add(topBarPanel, BorderLayout.NORTH);
 
-
         add(disciplinaryInfoPanel, BorderLayout.CENTER);
-
-        firstNameField.addActionListener(e -> putActiveGuestValue("FirstName", firstNameField.getText()));
-        lastNameField.addActionListener(e -> putActiveGuestValue("LastName", lastNameField.getText()));
-
-        notesTextArea.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {
-                putActiveGuestValue("Notes", notesTextArea.getText());
-            }
-            public void removeUpdate(DocumentEvent e) {
-                putActiveGuestValue("Notes", notesTextArea.getText());
-            }
-            public void insertUpdate(DocumentEvent e) {
-                putActiveGuestValue("Notes", notesTextArea.getText());
-            }
-        });
     
         // Add listeners for text fields
         firstNameField.addActionListener(e -> storeTextFieldState(firstNameField, "FirstName"));
