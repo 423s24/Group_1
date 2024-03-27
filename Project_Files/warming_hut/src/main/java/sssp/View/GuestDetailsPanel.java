@@ -890,7 +890,6 @@ public class GuestDetailsPanel extends JPanel {
         {
             return;
         }
-
         activeGuestData.put(key, value);
         db.database.guests.put(activeGuestID, activeGuestData);
         db.push();
