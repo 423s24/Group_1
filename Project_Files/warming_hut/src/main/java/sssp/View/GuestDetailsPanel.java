@@ -11,6 +11,9 @@ import javax.swing.border.Border;
 import javax.swing.text.AbstractDocument;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import java.awt.*;
 import java.util.Map;
@@ -129,18 +132,7 @@ public class GuestDetailsPanel extends JPanel {
         firstNameField.addActionListener(e -> storeTextFieldState(firstNameField, "FirstName"));
         lastNameField.addActionListener(e -> storeTextFieldState(lastNameField, "LastName"));
     
-        // Add listeners for text areas
-        notesTextArea.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {
-                storeTextAreaState(notesTextArea, "Notes");
-            }
-            public void removeUpdate(DocumentEvent e) {
-                storeTextAreaState(notesTextArea, "Notes");
-            }
-            public void insertUpdate(DocumentEvent e) {
-                storeTextAreaState(notesTextArea, "Notes");
-            }
-        });
+        addDelayedUpdateListener(notesTextArea, "Notes");
 
         // Add property change listeners for date choosers
         guestSinceDate.addPropertyChangeListener(e-> storeDateState(guestSinceDate, "FirstHoused"));
@@ -175,65 +167,15 @@ public class GuestDetailsPanel extends JPanel {
         medlockerAssigningStaffField.addActionListener(e -> storeTextFieldState(medlockerAssigningStaffField, "MediumLockerAssigningStaff"));
 
         // Add listeners for text areas
-        smLockerNotesTextArea.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {
-                storeTextAreaState(smLockerNotesTextArea, "SmallLockerNotes");
-            }
-            public void removeUpdate(DocumentEvent e) {
-                storeTextAreaState(smLockerNotesTextArea, "SmallLockerNotes");
-            }
-            public void insertUpdate(DocumentEvent e) {
-                storeTextAreaState(smLockerNotesTextArea, "SmallLockerNotes");
-            }
-        });
+        addDelayedUpdateListener(smLockerNotesTextArea, "SmallLockerNotes");
 
-        dayStorageContainerDescriptionTextArea.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {
-                storeTextAreaState(dayStorageContainerDescriptionTextArea, "DayStorageDescription");
-            }
-            public void removeUpdate(DocumentEvent e) {
-                storeTextAreaState(dayStorageContainerDescriptionTextArea, "DayStorageDescription");
-            }
-            public void insertUpdate(DocumentEvent e) {
-                storeTextAreaState(dayStorageContainerDescriptionTextArea, "DayStorageDescription");
-            }
-        });
+        addDelayedUpdateListener(dayStorageContainerDescriptionTextArea, "DayStorageDescription");
 
-        csReasonForMoveTextArea.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {
-                storeTextAreaState(csReasonForMoveTextArea, "CubeStorageReasonForMove");
-            }
-            public void removeUpdate(DocumentEvent e) {
-                storeTextAreaState(csReasonForMoveTextArea, "CubeStorageReasonForMove");
-            }
-            public void insertUpdate(DocumentEvent e) {
-                storeTextAreaState(csReasonForMoveTextArea, "CubeStorageReasonForMove");
-            }
-        });
+        addDelayedUpdateListener(csReasonForMoveTextArea, "CubeStorageReasonForMove");
 
-        csContainerDescriptionTextArea.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {
-                storeTextAreaState(csContainerDescriptionTextArea, "CubeStorageDescription");
-            }
-            public void removeUpdate(DocumentEvent e) {
-                storeTextAreaState(csContainerDescriptionTextArea, "CubeStorageDescription");
-            }
-            public void insertUpdate(DocumentEvent e) {
-                storeTextAreaState(csContainerDescriptionTextArea, "CubeStorageDescription");
-            }
-        });
+        addDelayedUpdateListener(csContainerDescriptionTextArea, "CubeStorageDescription");
 
-        medlockerNotesTextArea.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {
-                storeTextAreaState(medlockerNotesTextArea, "MediumLockerNotes");
-            }
-            public void removeUpdate(DocumentEvent e) {
-                storeTextAreaState(medlockerNotesTextArea, "MediumLockerNotes");
-            }
-            public void insertUpdate(DocumentEvent e) {
-                storeTextAreaState(medlockerNotesTextArea, "MediumLockerNotes");
-            }
-        });
+        addDelayedUpdateListener(medlockerNotesTextArea, "MediumLockerNotes");
 
         // Add property change listeners for date choosers
         smLockerStartDate.addPropertyChangeListener(e-> storeDateState(smLockerStartDate, "SmallLockerStartDate"));
@@ -799,6 +741,41 @@ public class GuestDetailsPanel extends JPanel {
         basicDataPanel.setBorder(BorderFactory.createTitledBorder("Basic Guest Data"));
 
         add(basicDataPanel, BorderLayout.WEST);
+    }
+
+    public void addDelayedUpdateListener(JTextArea textArea, String stateName) {
+        // Define the delay (in milliseconds)
+        int delay = 2000; // 2 seconds
+
+        // Create a Timer that calls your method
+        Timer timer = new Timer(delay, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                storeTextAreaState(textArea, stateName);
+            }
+        });
+        timer.setRepeats(false); // Make sure the timer only runs once
+
+        // Add listeners for text areas
+        textArea.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                resetTimer();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                resetTimer();
+            }
+            public void insertUpdate(DocumentEvent e) {
+                resetTimer();
+            }
+
+            private void resetTimer() {
+                if (timer.isRunning()) {
+                    timer.restart();
+                } else {
+                    timer.start();
+                }
+            }
+        });
     }
 
     public void setActiveGuestID(String guestID) {
