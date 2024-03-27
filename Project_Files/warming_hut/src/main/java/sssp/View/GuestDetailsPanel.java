@@ -3,16 +3,21 @@ package sssp.View;
 import com.toedter.calendar.JDateChooser;
 
 import sssp.Helper.DBConnectorV2Singleton;
+import sssp.Helper.HttpStreamingManagerSingleton;
 import sssp.Helper.DBConnectorV2;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.text.AbstractDocument;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import java.awt.*;
 import java.util.Map;
 import java.util.Date;
+import java.util.HashMap;
 import java.text.SimpleDateFormat;
+
 
 import static sssp.View.DisciplinaryInfoPanel.getDisciplinaryInfoPanel;
 
@@ -21,8 +26,31 @@ public class GuestDetailsPanel extends JPanel {
     private JTextField searchField;
     private JButton searchButton;
 
+    // data fields in the Basic Guest Data panel
+    private JTextField firstNameField;
+    private JTextField lastNameField;
+    private JTextArea notesTextArea;
+    private JDateChooser guestSinceDate;
+    private JDateChooser lastVisitDate;
+
+    // data fields in the Guest Info Checks panel
+    private JCheckBox caseCheckBox;
+    private JCheckBox HMISCheckBox;
+    private JCheckBox sleepingBagBox;
+    private JDateChooser sleepingBagDate;
+    private JCheckBox tentBox;
+    private JDateChooser tentDate;
+    private JCheckBox backpackBox;
+    private JDateChooser backpackDate;
+    private JCheckBox outreachBackpackBox;
+    private JDateChooser outreachBackpackDate;
+    private JCheckBox sleepingPadBox;
+    private JDateChooser sleepingPadDate;
+
     private DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
+
     private String activeGuestID = null;
+    private Map<String, String> activeGuestData = null;
 
     public GuestDetailsPanel() {
         setLayout(new BorderLayout());
@@ -63,6 +91,71 @@ public class GuestDetailsPanel extends JPanel {
 
 
         add(disciplinaryInfoPanel, BorderLayout.CENTER);
+
+        firstNameField.addActionListener(e -> putActiveGuestValue("FirstName", firstNameField.getText()));
+        lastNameField.addActionListener(e -> putActiveGuestValue("LastName", lastNameField.getText()));
+
+        notesTextArea.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                putActiveGuestValue("Notes", notesTextArea.getText());
+            }
+            public void removeUpdate(DocumentEvent e) {
+                putActiveGuestValue("Notes", notesTextArea.getText());
+            }
+            public void insertUpdate(DocumentEvent e) {
+                putActiveGuestValue("Notes", notesTextArea.getText());
+            }
+        });
+    
+        // Add listeners for text fields
+        firstNameField.addActionListener(e -> storeTextFieldState(firstNameField, "FirstName"));
+        lastNameField.addActionListener(e -> storeTextFieldState(lastNameField, "LastName"));
+    
+        // Add listeners for text areas
+        notesTextArea.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                storeTextAreaState(notesTextArea, "Notes");
+            }
+            public void removeUpdate(DocumentEvent e) {
+                storeTextAreaState(notesTextArea, "Notes");
+            }
+            public void insertUpdate(DocumentEvent e) {
+                storeTextAreaState(notesTextArea, "Notes");
+            }
+        });
+
+        // Add property change listeners for date choosers
+        guestSinceDate.addPropertyChangeListener(e-> storeDateState(guestSinceDate, "FirstHoused"));
+        lastVisitDate.addPropertyChangeListener(e-> storeDateState(lastVisitDate, "LastVisit"));
+    
+        // Add action listeners for checkboxes
+        caseCheckBox.addActionListener(e -> storeCheckboxState(caseCheckBox, "CaseCheck"));
+        HMISCheckBox.addActionListener(e -> storeCheckboxState(HMISCheckBox, "HMISCheck"));
+        sleepingBagBox.addActionListener(e -> storeCheckboxState(sleepingBagBox, "SleepingBagCheck"));
+        tentBox.addActionListener(e -> storeCheckboxState(tentBox, "TentCheck"));
+        backpackBox.addActionListener(e -> storeCheckboxState(backpackBox, "BackpackCheck"));
+        outreachBackpackBox.addActionListener(e -> storeCheckboxState(outreachBackpackBox, "OutreachBackpackCheck"));
+        sleepingPadBox.addActionListener(e -> storeCheckboxState(sleepingPadBox, "SleepingPadCheck"));
+    
+        // Add property change listeners for date choosers associated with checkboxes
+        sleepingBagDate.addPropertyChangeListener(e -> storeDateState(sleepingBagDate, "SleepingBagDate"));
+        tentDate.addPropertyChangeListener(e -> storeDateState(tentDate, "TentDate"));
+        backpackDate.addPropertyChangeListener(e -> storeDateState(backpackDate, "BackpackDate"));
+        outreachBackpackDate.addPropertyChangeListener(e -> storeDateState(outreachBackpackDate, "OutreachBackpackDate"));
+        sleepingPadDate.addPropertyChangeListener(e -> storeDateState(sleepingPadDate, "SleepingPadDate"));
+
+        // Add action listeners for the search button and search field
+        searchButton.addActionListener(e -> {
+            String key = getGuestTableKey(searchField.getText());
+            setActiveGuestID(key);}
+        );
+
+        searchField.addActionListener(e -> {
+            String key = getGuestTableKey(searchField.getText());
+            setActiveGuestID(key);
+        });
+
+        db.subscribeRunnableToDBUpdate(this::onDBUpdate);
     }
 
     private static void addSeparator(JPanel panel, GridBagConstraints gbc) {
@@ -97,7 +190,7 @@ public class GuestDetailsPanel extends JPanel {
         infoChecksPanel.add(caseCheckLabel, gbc);
 
         gbc.gridx++;
-        JCheckBox caseCheckBox = new JCheckBox();
+        caseCheckBox = new JCheckBox();
         infoChecksPanel.add(caseCheckBox, gbc);
 
         gbc.gridx++;
@@ -105,7 +198,7 @@ public class GuestDetailsPanel extends JPanel {
         infoChecksPanel.add(HMISCheckLabel, gbc);
 
         gbc.gridx++;
-        JCheckBox HMISCheckBox = new JCheckBox();
+        HMISCheckBox = new JCheckBox();
         infoChecksPanel.add(HMISCheckBox, gbc);
 
         addVertSeparator(infoChecksPanel, gbc);
@@ -115,11 +208,11 @@ public class GuestDetailsPanel extends JPanel {
         infoChecksPanel.add(sleepingBagLabel, gbc);
 
         gbc.gridx++;
-        JCheckBox sleepingBagBox = new JCheckBox();
+        sleepingBagBox = new JCheckBox();
         infoChecksPanel.add(sleepingBagBox, gbc);
 
         gbc.gridx++;
-        JDateChooser sleepingBagDate = new JDateChooser();
+        sleepingBagDate = new JDateChooser();
         sleepingBagDate.setDateFormatString("MM/dd/yyyy");
         sleepingBagDate.setVisible(false); // Start hidden
         infoChecksPanel.add(sleepingBagDate, gbc);
@@ -141,11 +234,11 @@ public class GuestDetailsPanel extends JPanel {
         infoChecksPanel.add(tentLabel, gbc);
 
         gbc.gridx++;
-        JCheckBox tentBox = new JCheckBox();
+        tentBox = new JCheckBox();
         infoChecksPanel.add(tentBox, gbc);
 
         gbc.gridx++;
-        JDateChooser tentDate = new JDateChooser();
+        tentDate = new JDateChooser();
         tentDate.setDateFormatString("MM/dd/yyyy");
         tentDate.setVisible(false);
         infoChecksPanel.add(tentDate, gbc);
@@ -167,11 +260,11 @@ public class GuestDetailsPanel extends JPanel {
         infoChecksPanel.add(backpackLabel, gbc);
 
         gbc.gridx++;
-        JCheckBox backpackBox = new JCheckBox();
+        backpackBox = new JCheckBox();
         infoChecksPanel.add(backpackBox, gbc);
 
         gbc.gridx++;
-        JDateChooser backpackDate = new JDateChooser();
+        backpackDate = new JDateChooser();
         backpackDate.setDateFormatString("MM/dd/yyyy");
         backpackDate.setVisible(false);
         infoChecksPanel.add(backpackDate, gbc);
@@ -194,11 +287,11 @@ public class GuestDetailsPanel extends JPanel {
         infoChecksPanel.add(outreachBackpackLabel, gbc);
 
         gbc.gridx++;
-        JCheckBox outreachBackpackBox = new JCheckBox();
+        outreachBackpackBox = new JCheckBox();
         infoChecksPanel.add(outreachBackpackBox, gbc);
 
         gbc.gridx++;
-        JDateChooser outreachBackpackDate = new JDateChooser();
+        outreachBackpackDate = new JDateChooser();
         outreachBackpackDate.setDateFormatString("MM/dd/yyyy");
         outreachBackpackDate.setVisible(false); // Start hidden
         infoChecksPanel.add(outreachBackpackDate, gbc);
@@ -220,11 +313,11 @@ public class GuestDetailsPanel extends JPanel {
         infoChecksPanel.add(sleepingPadLabel, gbc);
 
         gbc.gridx++;
-        JCheckBox sleepingPadBox = new JCheckBox();
+        sleepingPadBox = new JCheckBox();
         infoChecksPanel.add(sleepingPadBox, gbc);
 
         gbc.gridx++;
-        JDateChooser sleepingPadDate = new JDateChooser();
+        sleepingPadDate = new JDateChooser();
         sleepingPadDate.setDateFormatString("MM/dd/yyyy");
         sleepingPadDate.setVisible(false);
         infoChecksPanel.add(sleepingPadDate, gbc);
@@ -553,7 +646,7 @@ public class GuestDetailsPanel extends JPanel {
         basicDataPanel.add(firstNameLabel, gbc);
 
         gbc.gridy++;
-        JTextField firstNameField = new JTextField(20);
+        firstNameField = new JTextField(20);
         basicDataPanel.add(firstNameField, gbc);
 
         gbc.gridy++;
@@ -561,7 +654,7 @@ public class GuestDetailsPanel extends JPanel {
         basicDataPanel.add(lastNameLabel, gbc);
 
         gbc.gridy++;
-        JTextField lastNameField = new JTextField(20);
+        lastNameField = new JTextField(20);
         basicDataPanel.add(lastNameField, gbc);
 
         addSeparator(basicDataPanel, gbc);
@@ -571,7 +664,7 @@ public class GuestDetailsPanel extends JPanel {
         basicDataPanel.add(firstHousedLabel, gbc);
 
         gbc.gridy++;
-        JDateChooser guestSinceDate = new JDateChooser();
+        guestSinceDate = new JDateChooser();
         guestSinceDate.setDateFormatString("MM/dd/yyyy");
         basicDataPanel.add(guestSinceDate, gbc);
 
@@ -580,7 +673,7 @@ public class GuestDetailsPanel extends JPanel {
         basicDataPanel.add(lastVisitLabel, gbc);
 
         gbc.gridy++;
-        JDateChooser lastVisitDate = new JDateChooser();
+        lastVisitDate = new JDateChooser();
         lastVisitDate.setDateFormatString("MM/dd/yyyy");
         basicDataPanel.add(lastVisitDate, gbc);
 
@@ -591,7 +684,7 @@ public class GuestDetailsPanel extends JPanel {
         basicDataPanel.add(notesLabel, gbc);
 
         gbc.gridy++;
-        JTextArea notesTextArea = new JTextArea(10, 20);
+        notesTextArea = new JTextArea(10, 20);
         notesTextArea.setLineWrap(true);
         notesTextArea.setWrapStyleWord(true);
         JScrollPane notesScrollPane = new JScrollPane(notesTextArea);
@@ -602,35 +695,104 @@ public class GuestDetailsPanel extends JPanel {
         add(basicDataPanel, BorderLayout.WEST);
     }
 
-    public void setActiveGuestID(String guestID)
-    {
+    public void setActiveGuestID(String guestID) {
         this.activeGuestID = guestID;
 
-        Map<String, String> guestData = db.database.guests.get(guestID);
+        this.activeGuestData = db.database.guests.get(guestID);
 
-        if(guestData == null)
-        {
-            throw new RuntimeException("The guest " + guestID + "does not exist.");
+        if(activeGuestData == null) {
+            // Show error window
+            JOptionPane.showMessageDialog(null, "Error: The guest " + guestID + " does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
-        SimpleDateFormat dateParser = new SimpleDateFormat("mm/dd/yyyy");
+        updateFieldsFromActiveGuest();
+    }
 
+    private void updateFieldsFromActiveGuest() {
         // Populate simple text fields
-        ((JTextField) ((JPanel) getComponent(0)).getComponent(1)).setText(guestData.get("FirstName"));
-        ((JTextField) ((JPanel) getComponent(0)).getComponent(3)).setText(guestData.get("LastName"));
-        ((JTextArea) ((JScrollPane) ((JPanel) getComponent(0)).getComponent(9)).getViewport().getView()).setText(guestData.get("Notes"));
+        retrieveTextFieldState(firstNameField, "FirstName");
+        retrieveTextFieldState(lastNameField, "LastName");
+        retrieveTextAreaState(notesTextArea, "Notes");
 
         // Populate date fields
-        if(parseDate(guestData.get("FirstHoused")) != null)
+        retrieveDateState(guestSinceDate, "FirstHoused");
+        retrieveDateState(lastVisitDate, "LastVisit");
+
+        // Populate checkboxes and their corresponding dates
+        retrieveCheckboxState(caseCheckBox, "CaseCheck");
+        retrieveCheckboxState(HMISCheckBox, "HMISCheck");
+
+        retrieveCheckboxState(sleepingBagBox, "SleepingBagCheck");
+        retrieveDateState(sleepingBagDate, "SleepingBagDate");
+    
+        retrieveCheckboxState(tentBox, "TentCheck");
+        retrieveDateState(tentDate, "TentDate");
+    
+        retrieveCheckboxState(backpackBox, "BackpackCheck");
+        retrieveDateState(backpackDate, "BackpackDate");
+    
+        retrieveCheckboxState(outreachBackpackBox, "OutreachBackpackCheck");
+        retrieveDateState(outreachBackpackDate, "OutreachBackpackDate");
+    
+        retrieveCheckboxState(sleepingPadBox, "SleepingPadCheck");
+        retrieveDateState(sleepingPadDate, "SleepingPadDate");
+    }
+
+    private String getValueFromActiveGuest(String key)
+    {
+        return activeGuestData.get(key);
+    }
+
+    private void putActiveGuestValue(String key, String value)
+    {
+        if (activeGuestData == null)
         {
-            ((JDateChooser) ((JPanel) getComponent(0)).getComponent(5)).setDate(parseDate(guestData.get("FirstHoused")));
-        }
-        if(parseDate(guestData.get("LastVisit")) != null)
-        {
-            ((JDateChooser) ((JPanel) getComponent(0)).getComponent(7)).setDate(parseDate(guestData.get("LastVisit")));
+            activeGuestData = new HashMap<>();
         }
 
-        // TODO: populate rest of fields
+        if(activeGuestID == null)
+        {
+            return;
+        }
+
+        activeGuestData.put(key, value);
+        db.database.guests.put(activeGuestID, activeGuestData);
+        db.push();
+    }
+
+    private void storeCheckboxState(JCheckBox toStore, String stateKey) {
+        putActiveGuestValue(stateKey, Boolean.toString(toStore.isSelected()));
+    }
+
+    private void retrieveCheckboxState(JCheckBox toSet, String stateKey) {
+        toSet.setSelected(Boolean.parseBoolean(getValueFromActiveGuest(stateKey)));
+    }
+
+    private void storeDateState(JDateChooser toStore, String stateKey) {
+        putActiveGuestValue(stateKey, formatDate(toStore.getDate()));
+    }
+    
+    private void retrieveDateState(JDateChooser toSet, String stateKey) {
+        if(parseDate(activeGuestData.get(stateKey)) != null) {
+            toSet.setDate(parseDate(getValueFromActiveGuest(stateKey)));
+        }
+    }
+
+    private void storeTextFieldState(JTextField toStore, String stateKey) {
+        putActiveGuestValue(stateKey, toStore.getText());
+    }
+
+    private void retrieveTextFieldState(JTextField toSet, String stateKey) {
+        toSet.setText(getValueFromActiveGuest(stateKey));
+    }
+
+    private void storeTextAreaState(JTextArea toStore, String stateKey) {
+        putActiveGuestValue(stateKey, toStore.getText());
+    }
+
+    private void retrieveTextAreaState(JTextArea toSet, String stateKey) {
+        toSet.setText(getValueFromActiveGuest(stateKey));
     }
 
     private Date parseDate(String dateString)
@@ -641,9 +803,30 @@ public class GuestDetailsPanel extends JPanel {
         }
         catch(Exception e)
         {
-            // popup error message
-            JOptionPane.showMessageDialog(null, "Error parsing date '" + dateString + "': " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             return null;
         }
+    }
+
+    private String formatDate(Date date) {
+        if (date == null) {
+            return "";
+        }
+
+        return new SimpleDateFormat("MM/dd/yyyy").format(date);
+    }
+
+    /**
+     * Returns the key for the guest table based on the guest name.
+     *
+     * @param guestName the name of the guest
+     * @return the key for the guest table
+     */
+    public String getGuestTableKey(String guestName) {
+        return "Guest_" + guestName.hashCode();
+    }
+
+    public void onDBUpdate()
+    {
+        updateFieldsFromActiveGuest();
     }
 }
