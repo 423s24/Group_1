@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -103,6 +104,15 @@ public class BunkAssignmentPanel {
         });
         bunkAssignmentCombo.setPreferredSize(new Dimension(225, 30));
         bunkAssignmentCombo.setSelectedItem(null);
+        bunkAssignmentCombo.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(Arrays.stream(bunkHeaders).toList().contains((String)bunkAssignmentCombo.getSelectedItem()) && e.getStateChange() == ItemEvent.SELECTED){
+                    String item = bunkAssignmentCombo.getItemAt(bunkAssignmentCombo.getSelectedIndex() + 1);
+                    bunkAssignmentCombo.setSelectedItem(item);
+                }
+            }
+        });
         bunkComboBoxes.add(bunkAssignmentCombo);
 
         c.gridy = rowNum;
@@ -123,7 +133,13 @@ public class BunkAssignmentPanel {
 
 
     private static final ArrayList<JComboBox<String>> bunkComboBoxes = new ArrayList<>();
-    private static final ArrayList<String> allBunks = new ArrayList<String>(List.of(new String[]{"Bunk 1", "Bunk 2", "Bunk 3", "Bunk 4", "Bunk 5"})) ;
+
+    private static final ArrayList<String> mensBunks = new ArrayList<>(List.of(new String[]{"Bunk 1 A", "Bunk 1 B", "Bunk 2 A", "Bunk 2 B", "Bunk 3 A", "Bunk 3 B"}));
+    private static final ArrayList<String> womansBunks = new ArrayList<>(List.of(new String[]{"Bunk 4 A", "Bunk 4 B", "Bunk 5 A", "Bunk 5 B"}));
+    private static final ArrayList<String> observationArea = new ArrayList<>(List.of(new String[]{"Bunk 6 A", "Bunk 6 B"}));
+    private static final ArrayList<String>[] allBunkLists = new ArrayList[] {mensBunks, womansBunks, observationArea};
+    private static final String[] bunkHeaders = new String[] {"Men's Bunks: ", "Woman's Bunks: ", "Observation Area: "};
+
     private static ArrayList<String> getAvailableBunks(){
         DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
 
@@ -133,10 +149,19 @@ public class BunkAssignmentPanel {
         }
 
         ArrayList<String> availableBunks = new ArrayList<>();
-        for(String bunk : allBunks){
-            if(!assignedBunks.contains(bunk)){
-                availableBunks.add(bunk);
+        int bunkListType = 0;
+        for(List<String> bunkList : allBunkLists){
+            switch (bunkListType) {
+                case 0 -> availableBunks.add(bunkHeaders[0]);
+                case 1 -> availableBunks.add(bunkHeaders[1]);
+                default -> availableBunks.add(bunkHeaders[2]);
             }
+            for(String bunk : bunkList){
+                if(!assignedBunks.contains(bunk)){
+                    availableBunks.add(bunk);
+                }
+            }
+            bunkListType++;
         }
         return availableBunks;
     }
