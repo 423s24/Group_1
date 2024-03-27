@@ -47,6 +47,40 @@ public class GuestDetailsPanel extends JPanel {
     private JCheckBox sleepingPadBox;
     private JDateChooser sleepingPadDate;
 
+    // data fields in the Storage Info panel
+
+    // small lockers
+    private JTextField smLockerLockerNumberField;
+    private JDateChooser smLockerStartDate;
+    private JDateChooser smLockerLastAccessedDate;
+    private JTextArea smLockerNotesTextArea;
+    private JTextField smLockerAssigningStaffField;
+
+    // day storage
+    private JTextField dayStorageShelfField;
+    private JTextField dayStorageSlotField;
+    private JDateChooser dayStorageStartDate;
+    private JDateChooser dayStorageExpirationDate;
+    private JTextArea dayStorageContainerDescriptionTextArea;
+    private JTextField dayStorageStaffInitialsField;
+    private JCheckBox dayStorageContractBox;
+
+    // cube storage
+    private JTextField csPreviousLocationField;
+    private JTextArea csReasonForMoveTextArea;
+    private JTextArea csContainerDescriptionTextArea;
+    private JDateChooser csStartDate;
+    private JDateChooser csExpirationDate;
+    private JCheckBox csGuestNotifiedBox;
+
+    // medium lockers
+    private JTextField medlockerNumberField;
+    private JTextField medlockerAccommodationLinkField;
+    private JDateChooser medlockerStartDate;
+    private JDateChooser medlockerLastAccessedDate;
+    private JTextArea medlockerNotesTextArea;
+    private JTextField medlockerAssigningStaffField;
+
     private DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
 
     private String activeGuestID = null;
@@ -127,6 +161,94 @@ public class GuestDetailsPanel extends JPanel {
         backpackDate.addPropertyChangeListener(e -> storeDateState(backpackDate, "BackpackDate"));
         outreachBackpackDate.addPropertyChangeListener(e -> storeDateState(outreachBackpackDate, "OutreachBackpackDate"));
         sleepingPadDate.addPropertyChangeListener(e -> storeDateState(sleepingPadDate, "SleepingPadDate"));
+
+// region STORAGE INFO LISTENERS
+        // Add listeners for storage info
+        smLockerLockerNumberField.addActionListener(e -> storeTextFieldState(smLockerLockerNumberField, "SmallLockerNumber"));
+        smLockerAssigningStaffField.addActionListener(e -> storeTextFieldState(smLockerAssigningStaffField, "SmallLockerAssigningStaff"));
+        dayStorageShelfField.addActionListener(e -> storeTextFieldState(dayStorageShelfField, "DayStorageShelf"));
+        dayStorageSlotField.addActionListener(e -> storeTextFieldState(dayStorageSlotField, "DayStorageSlot"));
+        dayStorageStaffInitialsField.addActionListener(e -> storeTextFieldState(dayStorageStaffInitialsField, "DayStorageStaffInitials"));
+        csPreviousLocationField.addActionListener(e -> storeTextFieldState(csPreviousLocationField, "CubeStoragePreviousLocation"));
+        medlockerNumberField.addActionListener(e -> storeTextFieldState(medlockerNumberField, "MediumLockerNumber"));
+        medlockerAccommodationLinkField.addActionListener(e -> storeTextFieldState(medlockerAccommodationLinkField, "MediumLockerAccommodationLink"));
+        medlockerAssigningStaffField.addActionListener(e -> storeTextFieldState(medlockerAssigningStaffField, "MediumLockerAssigningStaff"));
+
+        // Add listeners for text areas
+        smLockerNotesTextArea.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                storeTextAreaState(smLockerNotesTextArea, "SmallLockerNotes");
+            }
+            public void removeUpdate(DocumentEvent e) {
+                storeTextAreaState(smLockerNotesTextArea, "SmallLockerNotes");
+            }
+            public void insertUpdate(DocumentEvent e) {
+                storeTextAreaState(smLockerNotesTextArea, "SmallLockerNotes");
+            }
+        });
+
+        dayStorageContainerDescriptionTextArea.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                storeTextAreaState(dayStorageContainerDescriptionTextArea, "DayStorageDescription");
+            }
+            public void removeUpdate(DocumentEvent e) {
+                storeTextAreaState(dayStorageContainerDescriptionTextArea, "DayStorageDescription");
+            }
+            public void insertUpdate(DocumentEvent e) {
+                storeTextAreaState(dayStorageContainerDescriptionTextArea, "DayStorageDescription");
+            }
+        });
+
+        csReasonForMoveTextArea.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                storeTextAreaState(csReasonForMoveTextArea, "CubeStorageReasonForMove");
+            }
+            public void removeUpdate(DocumentEvent e) {
+                storeTextAreaState(csReasonForMoveTextArea, "CubeStorageReasonForMove");
+            }
+            public void insertUpdate(DocumentEvent e) {
+                storeTextAreaState(csReasonForMoveTextArea, "CubeStorageReasonForMove");
+            }
+        });
+
+        csContainerDescriptionTextArea.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                storeTextAreaState(csContainerDescriptionTextArea, "CubeStorageDescription");
+            }
+            public void removeUpdate(DocumentEvent e) {
+                storeTextAreaState(csContainerDescriptionTextArea, "CubeStorageDescription");
+            }
+            public void insertUpdate(DocumentEvent e) {
+                storeTextAreaState(csContainerDescriptionTextArea, "CubeStorageDescription");
+            }
+        });
+
+        medlockerNotesTextArea.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                storeTextAreaState(medlockerNotesTextArea, "MediumLockerNotes");
+            }
+            public void removeUpdate(DocumentEvent e) {
+                storeTextAreaState(medlockerNotesTextArea, "MediumLockerNotes");
+            }
+            public void insertUpdate(DocumentEvent e) {
+                storeTextAreaState(medlockerNotesTextArea, "MediumLockerNotes");
+            }
+        });
+
+        // Add property change listeners for date choosers
+        smLockerStartDate.addPropertyChangeListener(e-> storeDateState(smLockerStartDate, "SmallLockerStartDate"));
+        smLockerLastAccessedDate.addPropertyChangeListener(e-> storeDateState(smLockerLastAccessedDate, "SmallLockerLastAccessedDate"));
+        dayStorageStartDate.addPropertyChangeListener(e-> storeDateState(dayStorageStartDate, "DayStorageStartDate"));
+        dayStorageExpirationDate.addPropertyChangeListener(e-> storeDateState(dayStorageExpirationDate, "DayStorageExpirationDate"));
+        csStartDate.addPropertyChangeListener(e-> storeDateState(csStartDate, "CubeStorageStartDate"));
+        csExpirationDate.addPropertyChangeListener(e-> storeDateState(csExpirationDate, "CubeStorageExpirationDate"));
+        medlockerStartDate.addPropertyChangeListener(e-> storeDateState(medlockerStartDate, "MediumLockerStartDate"));
+        medlockerLastAccessedDate.addPropertyChangeListener(e-> storeDateState(medlockerLastAccessedDate, "MediumLockerLastAccessedDate"));
+
+        // Add action listeners for checkboxes
+        dayStorageContractBox.addActionListener(e -> storeCheckboxState(dayStorageContractBox, "DayStorageContract"));
+        csGuestNotifiedBox.addActionListener(e -> storeCheckboxState(csGuestNotifiedBox, "CubeStorageGuestNotified"));
+// endregion
 
         // Add action listeners for the search button and search field
         searchButton.addActionListener(e -> {
@@ -349,71 +471,71 @@ public class GuestDetailsPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(5, 20, 5, 20);
 
-        JLabel firstNameLabel = new JLabel("Shelf:");
-        panel.add(firstNameLabel, gbc);
+        JLabel shelfLabel = new JLabel("Shelf:");
+        panel.add(shelfLabel, gbc);
 
         gbc.gridy++;
-        JTextField firstNameField = new JTextField(20);
-        panel.add(firstNameField, gbc);
+        dayStorageShelfField = new JTextField(20);
+        panel.add(dayStorageShelfField, gbc);
 
         gbc.gridy++;
-        JLabel lastNameLabel = new JLabel("Slot:");
-        panel.add(lastNameLabel, gbc);
+        JLabel slotLabel = new JLabel("Slot:");
+        panel.add(slotLabel, gbc);
 
         gbc.gridy++;
-        JTextField lastNameField = new JTextField(20);
-        panel.add(lastNameField, gbc);
+        dayStorageSlotField = new JTextField(20);
+        panel.add(dayStorageSlotField, gbc);
 
         addSeparator(panel, gbc);
 
         gbc.gridy++;
-        JLabel firstHousedLabel = new JLabel("Start Date:");
-        panel.add(firstHousedLabel, gbc);
+        JLabel dayStorageStartDateLabel = new JLabel("Start Date:");
+        panel.add(dayStorageStartDateLabel, gbc);
 
         gbc.gridy++;
-        JDateChooser guestSinceDate = new JDateChooser();
-        guestSinceDate.setDateFormatString("MM/dd/yyyy");
-        panel.add(guestSinceDate, gbc);
+        dayStorageStartDate = new JDateChooser();
+        dayStorageStartDate.setDateFormatString("MM/dd/yyyy");
+        panel.add(dayStorageStartDate, gbc);
 
         gbc.gridy++;
-        JLabel lastVisitLabel = new JLabel("Expiration Date:");
-        panel.add(lastVisitLabel, gbc);
+        JLabel expirationDateLabel = new JLabel("Expiration Date:");
+        panel.add(expirationDateLabel, gbc);
 
         gbc.gridy++;
-        JDateChooser lastVisitDate = new JDateChooser();
-        lastVisitDate.setDateFormatString("MM/dd/yyyy");
-        panel.add(lastVisitDate, gbc);
+        dayStorageExpirationDate = new JDateChooser();
+        dayStorageExpirationDate.setDateFormatString("MM/dd/yyyy");
+        panel.add(dayStorageExpirationDate, gbc);
 
         addSeparator(panel, gbc);
 
         gbc.gridy++;
-        JLabel notesLabel = new JLabel("Container Description:");
-        panel.add(notesLabel, gbc);
+        JLabel containerDescriptionLabel = new JLabel("Container Description:");
+        panel.add(containerDescriptionLabel, gbc);
 
         gbc.gridy++;
-        JTextArea notesTextArea = new JTextArea(5, 20);
-        notesTextArea.setLineWrap(true);
-        notesTextArea.setWrapStyleWord(true);
-        JScrollPane notesScrollPane = new JScrollPane(notesTextArea);
+        dayStorageContainerDescriptionTextArea = new JTextArea(5, 20);
+        dayStorageContainerDescriptionTextArea.setLineWrap(true);
+        dayStorageContainerDescriptionTextArea.setWrapStyleWord(true);
+        JScrollPane notesScrollPane = new JScrollPane(dayStorageContainerDescriptionTextArea);
         panel.add(notesScrollPane, gbc);
 
         addSeparator(panel, gbc);
 
         gbc.gridy++;
-        JLabel staffIDLabel = new JLabel("Staff Initials:");
-        panel.add(staffIDLabel, gbc);
+        JLabel staffInitialsLabel = new JLabel("Staff Initials:");
+        panel.add(staffInitialsLabel, gbc);
 
         gbc.gridy++;
-        JTextField staffIDField = new JTextField(5);
-        panel.add(staffIDField, gbc);
+        dayStorageStaffInitialsField = new JTextField(5);
+        panel.add(dayStorageStaffInitialsField, gbc);
 
         gbc.gridy++;
         JLabel contractLabel = new JLabel("Contract Signed?");
         panel.add(contractLabel, gbc);
 
         gbc.gridy++;
-        JCheckBox contractBox = new JCheckBox();
-        panel.add(contractBox, gbc);
+        dayStorageContractBox = new JCheckBox();
+        panel.add(dayStorageContractBox, gbc);
 
         return panel;
     }
@@ -426,40 +548,40 @@ public class GuestDetailsPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(5, 20, 5, 20);
 
-        JLabel firstNameLabel = new JLabel("Locker Number:");
-        panel.add(firstNameLabel, gbc);
+        JLabel lockerNumberLabel = new JLabel("Locker Number:");
+        panel.add(lockerNumberLabel, gbc);
 
         gbc.gridy++;
-        JTextField firstNameField = new JTextField(20);
-        panel.add(firstNameField, gbc);
+        medlockerNumberField = new JTextField(20);
+        panel.add(medlockerNumberField, gbc);
 
         gbc.gridy++;
-        JLabel lastNameLabel = new JLabel("Approved Accommodation Link:");
-        panel.add(lastNameLabel, gbc);
+        JLabel accommodationLinkLabel = new JLabel("Approved Accommodation Link:");
+        panel.add(accommodationLinkLabel, gbc);
 
         gbc.gridy++;
-        JTextField lastNameField = new JTextField(20);
-        panel.add(lastNameField, gbc);
+        medlockerAccommodationLinkField = new JTextField(20);
+        panel.add(medlockerAccommodationLinkField, gbc);
 
         addSeparator(panel, gbc);
 
         gbc.gridy++;
-        JLabel firstHousedLabel = new JLabel("Start Date:");
-        panel.add(firstHousedLabel, gbc);
+        JLabel startDateLabel = new JLabel("Start Date:");
+        panel.add(startDateLabel, gbc);
 
         gbc.gridy++;
-        JDateChooser guestSinceDate = new JDateChooser();
-        guestSinceDate.setDateFormatString("MM/dd/yyyy");
-        panel.add(guestSinceDate, gbc);
+        medlockerStartDate = new JDateChooser();
+        medlockerStartDate.setDateFormatString("MM/dd/yyyy");
+        panel.add(medlockerStartDate, gbc);
 
         gbc.gridy++;
-        JLabel lastVisitLabel = new JLabel("Date Last Accessed:");
-        panel.add(lastVisitLabel, gbc);
+        JLabel lastAccessedLabel = new JLabel("Date Last Accessed:");
+        panel.add(lastAccessedLabel, gbc);
 
         gbc.gridy++;
-        JDateChooser lastVisitDate = new JDateChooser();
-        lastVisitDate.setDateFormatString("MM/dd/yyyy");
-        panel.add(lastVisitDate, gbc);
+        medlockerLastAccessedDate = new JDateChooser();
+        medlockerLastAccessedDate.setDateFormatString("MM/dd/yyyy");
+        panel.add(medlockerLastAccessedDate, gbc);
 
         addSeparator(panel, gbc);
 
@@ -468,21 +590,21 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(notesLabel, gbc);
 
         gbc.gridy++;
-        JTextArea notesTextArea = new JTextArea(5, 20);
-        notesTextArea.setLineWrap(true);
-        notesTextArea.setWrapStyleWord(true);
-        JScrollPane notesScrollPane = new JScrollPane(notesTextArea);
+        medlockerNotesTextArea = new JTextArea(5, 20);
+        medlockerNotesTextArea.setLineWrap(true);
+        medlockerNotesTextArea.setWrapStyleWord(true);
+        JScrollPane notesScrollPane = new JScrollPane(medlockerNotesTextArea);
         panel.add(notesScrollPane, gbc);
 
         addSeparator(panel, gbc);
 
         gbc.gridy++;
-        JLabel staffIDLabel = new JLabel("Assigning Staff Member:");
-        panel.add(staffIDLabel, gbc);
+        JLabel assigningStaffLabel = new JLabel("Assigning Staff Member:");
+        panel.add(assigningStaffLabel, gbc);
 
         gbc.gridy++;
-        JTextField staffIDField = new JTextField(5);
-        panel.add(staffIDField, gbc);
+        medlockerAssigningStaffField = new JTextField(5);
+        panel.add(medlockerAssigningStaffField, gbc);
 
         return panel;
     }
@@ -495,55 +617,55 @@ public class GuestDetailsPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(5, 20, 5, 20);
 
-        JLabel firstNameLabel = new JLabel("Locker Number:");
-        panel.add(firstNameLabel, gbc);
+        JLabel smLockerLockerNumberLabel = new JLabel("Locker Number:");
+        panel.add(smLockerLockerNumberLabel, gbc);
 
         gbc.gridy++;
-        JTextField firstNameField = new JTextField(20);
-        panel.add(firstNameField, gbc);
+        smLockerLockerNumberField = new JTextField(20);
+        panel.add(smLockerLockerNumberField, gbc);
 
         addSeparator(panel, gbc);
 
         gbc.gridy++;
-        JLabel firstHousedLabel = new JLabel("Start Date:");
-        panel.add(firstHousedLabel, gbc);
+        JLabel smLockerStartDateLabel = new JLabel("Start Date:");
+        panel.add(smLockerStartDateLabel, gbc);
 
         gbc.gridy++;
-        JDateChooser guestSinceDate = new JDateChooser();
-        guestSinceDate.setDateFormatString("MM/dd/yyyy");
-        panel.add(guestSinceDate, gbc);
+        smLockerStartDate = new JDateChooser();
+        smLockerStartDate.setDateFormatString("MM/dd/yyyy");
+        panel.add(smLockerStartDate, gbc);
 
         gbc.gridy++;
-        JLabel lastVisitLabel = new JLabel("Date Last Accessed:");
-        panel.add(lastVisitLabel, gbc);
+        JLabel smLockerLastAccessedLabel = new JLabel("Date Last Accessed:");
+        panel.add(smLockerLastAccessedLabel, gbc);
 
         gbc.gridy++;
-        JDateChooser lastVisitDate = new JDateChooser();
-        lastVisitDate.setDateFormatString("MM/dd/yyyy");
-        panel.add(lastVisitDate, gbc);
+        smLockerLastAccessedDate = new JDateChooser();
+        smLockerLastAccessedDate.setDateFormatString("MM/dd/yyyy");
+        panel.add(smLockerLastAccessedDate, gbc);
 
         addSeparator(panel, gbc);
 
         gbc.gridy++;
-        JLabel notesLabel = new JLabel("Notes:");
-        panel.add(notesLabel, gbc);
+        JLabel smLockerNotesLabel = new JLabel("Notes:");
+        panel.add(smLockerNotesLabel, gbc);
 
         gbc.gridy++;
-        JTextArea notesTextArea = new JTextArea(5, 20);
-        notesTextArea.setLineWrap(true);
-        notesTextArea.setWrapStyleWord(true);
-        JScrollPane notesScrollPane = new JScrollPane(notesTextArea);
-        panel.add(notesScrollPane, gbc);
+        smLockerNotesTextArea = new JTextArea(5, 20);
+        smLockerNotesTextArea.setLineWrap(true);
+        smLockerNotesTextArea.setWrapStyleWord(true);
+        JScrollPane smLockerNotesScrollPane = new JScrollPane(smLockerNotesTextArea);
+        panel.add(smLockerNotesScrollPane, gbc);
 
         addSeparator(panel, gbc);
 
         gbc.gridy++;
-        JLabel staffIDLabel = new JLabel("Assigning Staff Member:");
-        panel.add(staffIDLabel, gbc);
+        JLabel smLockerAssigningStaffLabel = new JLabel("Assigning Staff Member:");
+        panel.add(smLockerAssigningStaffLabel, gbc);
 
         gbc.gridy++;
-        JTextField staffIDField = new JTextField(5);
-        panel.add(staffIDField, gbc);
+        smLockerAssigningStaffField = new JTextField(5);
+        panel.add(smLockerAssigningStaffField, gbc);
 
         return panel;
     }
@@ -556,64 +678,64 @@ public class GuestDetailsPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(5, 20, 5, 20);
 
-        JLabel firstNameLabel = new JLabel("Previous Location:");
-        panel.add(firstNameLabel, gbc);
+        JLabel csPreviousLocationLabel = new JLabel("Previous Location:");
+        panel.add(csPreviousLocationLabel, gbc);
 
         gbc.gridy++;
-        JTextField firstNameField = new JTextField(20);
-        panel.add(firstNameField, gbc);
+        csPreviousLocationField = new JTextField(20);
+        panel.add(csPreviousLocationField, gbc);
 
         gbc.gridy++;
-        JLabel notesLabel = new JLabel("Reason for Move:");
-        panel.add(notesLabel, gbc);
+        JLabel csReasonForMoveLabel = new JLabel("Reason for Move:");
+        panel.add(csReasonForMoveLabel, gbc);
 
         gbc.gridy++;
-        JTextArea notesTextArea = new JTextArea(5, 20);
-        notesTextArea.setLineWrap(true);
-        notesTextArea.setWrapStyleWord(true);
-        JScrollPane notesScrollPane = new JScrollPane(notesTextArea);
-        panel.add(notesScrollPane, gbc);
+        csReasonForMoveTextArea = new JTextArea(5, 20);
+        csReasonForMoveTextArea.setLineWrap(true);
+        csReasonForMoveTextArea.setWrapStyleWord(true);
+        JScrollPane csReasonForMoveScrollPane = new JScrollPane(csReasonForMoveTextArea);
+        panel.add(csReasonForMoveScrollPane, gbc);
 
         gbc.gridy++;
-        JLabel notesLabel2 = new JLabel("Container Description:");
-        panel.add(notesLabel2, gbc);
+        JLabel csContainerDescriptionLabel = new JLabel("Container Description:");
+        panel.add(csContainerDescriptionLabel, gbc);
 
         gbc.gridy++;
-        JTextArea notesTextArea2 = new JTextArea(5, 20);
-        notesTextArea2.setLineWrap(true);
-        notesTextArea2.setWrapStyleWord(true);
-        JScrollPane notesScrollPane2 = new JScrollPane(notesTextArea2);
-        panel.add(notesScrollPane2, gbc);
+        csContainerDescriptionTextArea = new JTextArea(5, 20);
+        csContainerDescriptionTextArea.setLineWrap(true);
+        csContainerDescriptionTextArea.setWrapStyleWord(true);
+        JScrollPane csContainerDescriptionScrollPane = new JScrollPane(csContainerDescriptionTextArea);
+        panel.add(csContainerDescriptionScrollPane, gbc);
 
         addSeparator(panel, gbc);
 
         gbc.gridy++;
-        JLabel firstHousedLabel = new JLabel("Start Date:");
-        panel.add(firstHousedLabel, gbc);
+        JLabel csStartDateLabel = new JLabel("Start Date:");
+        panel.add(csStartDateLabel, gbc);
 
         gbc.gridy++;
-        JDateChooser guestSinceDate = new JDateChooser();
-        guestSinceDate.setDateFormatString("MM/dd/yyyy");
-        panel.add(guestSinceDate, gbc);
+        csStartDate = new JDateChooser();
+        csStartDate.setDateFormatString("MM/dd/yyyy");
+        panel.add(csStartDate, gbc);
 
         gbc.gridy++;
-        JLabel lastVisitLabel = new JLabel("Expiration Date:");
-        panel.add(lastVisitLabel, gbc);
+        JLabel csExpirationDateLabel = new JLabel("Expiration Date:");
+        panel.add(csExpirationDateLabel, gbc);
 
         gbc.gridy++;
-        JDateChooser lastVisitDate = new JDateChooser();
-        lastVisitDate.setDateFormatString("MM/dd/yyyy");
-        panel.add(lastVisitDate, gbc);
+        csExpirationDate = new JDateChooser();
+        csExpirationDate.setDateFormatString("MM/dd/yyyy");
+        panel.add(csExpirationDate, gbc);
 
         addSeparator(panel, gbc);
 
         gbc.gridy++;
-        JLabel contractLabel = new JLabel("Guest Notified?");
-        panel.add(contractLabel, gbc);
+        JLabel csGuestNotifiedLabel = new JLabel("Guest Notified?");
+        panel.add(csGuestNotifiedLabel, gbc);
 
         gbc.gridy++;
-        JCheckBox contractBox = new JCheckBox();
-        panel.add(contractBox, gbc);
+        csGuestNotifiedBox = new JCheckBox();
+        panel.add(csGuestNotifiedBox, gbc);
 
         return panel;
     }
@@ -709,18 +831,47 @@ public class GuestDetailsPanel extends JPanel {
 
         retrieveCheckboxState(sleepingBagBox, "SleepingBagCheck");
         retrieveDateState(sleepingBagDate, "SleepingBagDate");
-    
+
         retrieveCheckboxState(tentBox, "TentCheck");
         retrieveDateState(tentDate, "TentDate");
-    
+
         retrieveCheckboxState(backpackBox, "BackpackCheck");
         retrieveDateState(backpackDate, "BackpackDate");
-    
+
         retrieveCheckboxState(outreachBackpackBox, "OutreachBackpackCheck");
         retrieveDateState(outreachBackpackDate, "OutreachBackpackDate");
-    
+
         retrieveCheckboxState(sleepingPadBox, "SleepingPadCheck");
         retrieveDateState(sleepingPadDate, "SleepingPadDate");
+
+        // Populate the fields for the Storage Info panel
+        retrieveTextFieldState(smLockerLockerNumberField, "SmallLockerNumber");
+        retrieveDateState(smLockerStartDate, "SmallLockerStartDate");
+        retrieveDateState(smLockerLastAccessedDate, "SmallLockerLastAccessedDate");
+        retrieveTextAreaState(smLockerNotesTextArea, "SmallLockerNotes");
+        retrieveTextFieldState(smLockerAssigningStaffField, "SmallLockerAssigningStaff");
+
+        retrieveTextFieldState(dayStorageShelfField, "DayStorageShelf");
+        retrieveTextFieldState(dayStorageSlotField, "DayStorageSlot");
+        retrieveDateState(dayStorageStartDate, "DayStorageStartDate");
+        retrieveDateState(dayStorageExpirationDate, "DayStorageExpirationDate");
+        retrieveTextAreaState(dayStorageContainerDescriptionTextArea, "DayStorageDescription");
+        retrieveTextFieldState(dayStorageStaffInitialsField, "DayStorageStaffInitials");
+        retrieveCheckboxState(dayStorageContractBox, "DayStorageContract");
+
+        retrieveTextFieldState(csPreviousLocationField, "CubeStoragePreviousLocation");
+        retrieveTextAreaState(csReasonForMoveTextArea, "CubeStorageReasonForMove");
+        retrieveTextAreaState(csContainerDescriptionTextArea, "CubeStorageDescription");
+        retrieveDateState(csStartDate, "CubeStorageStartDate");
+        retrieveDateState(csExpirationDate, "CubeStorageExpirationDate");
+        retrieveCheckboxState(csGuestNotifiedBox, "CubeStorageGuestNotified");
+
+        retrieveTextFieldState(medlockerNumberField, "MediumLockerNumber");
+        retrieveTextFieldState(medlockerAccommodationLinkField, "MediumLockerAccommodationLink");
+        retrieveDateState(medlockerStartDate, "MediumLockerStartDate");
+        retrieveDateState(medlockerLastAccessedDate, "MediumLockerLastAccessedDate");
+        retrieveTextAreaState(medlockerNotesTextArea, "MediumLockerNotes");
+        retrieveTextFieldState(medlockerAssigningStaffField, "MediumLockerAssigningStaff");
     }
 
     private String getValueFromActiveGuest(String key)
