@@ -35,7 +35,7 @@ public class MainMenuMockupAlt extends JFrame {
     private JPanel mainPanel;
     private CardLayout cardLayout;
     private JButton activeButton;
-    private DBConnectorV2 db;
+    private DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
     private JTable table;
 
     public MainMenuMockupAlt() {
@@ -85,10 +85,6 @@ public class MainMenuMockupAlt extends JFrame {
         getContentPane().add(mainPanel, BorderLayout.CENTER);
 
 // region DATABASE INIT - panels should be initialized before this is done
-
-        // Database Connection
-        db = DBConnectorV2Singleton.getInstance();
-
         // Subscribe to database events
         db.subscribeRunnableToDBUpdate(this::onDatabasePut);
 
