@@ -30,8 +30,6 @@ public class DBConnectorV2{
     private String secret;
     private String endpoint = "https://hrdc-warming-hut-db-manager-default-rtdb.firebaseio.com/clients";
 
-    private HttpStreamingManager streamingManager;
-
 
 
 
@@ -43,6 +41,8 @@ public class DBConnectorV2{
         this.artifactDatabase = null;
         this.freshDatabase = null;
         originalDatabasePull();
+
+        HttpStreamingManagerSingleton.subscribeRunnable("put", this::onDBUpdate);
     }
 
     // pushes the local database. First calls sortconflicts, and then with a conflict free database it pushes each table individually. 
@@ -427,7 +427,21 @@ public class DBConnectorV2{
         }
     }
 
+    List<Runnable> subscribers = new ArrayList<Runnable>();
 
-    
+    public void subscribeRunnableToDBUpdate(Runnable r){
+        subscribers.add(r);
+    }
 
+    private void notifyDBUpdate(){
+        for(Runnable r : subscribers){
+            r.run();
+        }
+    }
+
+    private void onDBUpdate()
+    {
+        this.pull();
+        this.notifyDBUpdate();
+    }
 }
