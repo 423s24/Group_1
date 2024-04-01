@@ -75,12 +75,18 @@ public class BunkAssignmentPanel {
 
         JLabel guestNameLabel = new JLabel(guest.get("FirstName") + " " + guest.get("LastName"));
         JLabel reservedLabel = new JLabel("None");
-        JLabel lastAssignedLabel = new JLabel("Bunk 2");
+        JLabel lastAssignedLabel = new JLabel("Bunk 1 A");
         JLabel[] labels = {guestNameLabel, reservedLabel, lastAssignedLabel};
 
         for (JLabel label : labels) {
             label.setFont(new Font("Serif", Font.PLAIN, 18));
             label.setHorizontalAlignment(SwingConstants.CENTER);
+        }
+
+        if(rowNum == 2){
+            reservedLabel.setText("Bunk 2 B");
+            reservedLabel.setOpaque(true);
+            reservedLabel.setBackground(Color.YELLOW);
         }
 
         JComboBox<String> bunkAssignmentCombo = new JComboBox<>(new DefaultComboBoxModel<>(getAvailableBunks().toArray(new String[0])));
@@ -175,8 +181,10 @@ public class BunkAssignmentPanel {
         @Override
         public Component getListCellRendererComponent(JList<? extends String> list, String value, int index, boolean isSelected, boolean cellHasFocus) {
             selectionBackgroundColor = Color.white;
-            if("Bunk 3".equals(value)){
-                selectionBackgroundColor = Color.red;
+            if("Bunk 2 B".equals(value)){
+                selectionBackgroundColor = Color.YELLOW;
+            } else if(Arrays.stream(bunkHeaders).toList().contains(value)) {
+                selectionBackgroundColor = Color.lightGray;
             } else {
                 selectionBackgroundColor = Color.white;
             }
