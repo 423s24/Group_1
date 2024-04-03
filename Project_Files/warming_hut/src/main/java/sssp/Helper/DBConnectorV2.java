@@ -99,7 +99,7 @@ public class DBConnectorV2{
 
         
         // set database and artifact database based on freshdatabase
-        this.database = this.freshDatabase.deepCopy();
+        this.database.deepReplace(this.freshDatabase);
         this.artifactDatabase = this.database.deepCopy();
         
     }
@@ -326,7 +326,7 @@ public class DBConnectorV2{
 
         database.waitingList = formatTable1(getTableJson("WaitingList"));
 
-        this.database = database;
+        this.database.deepReplace(database);
         this.artifactDatabase = this.database.deepCopy();
         this.freshDatabase = this.database.deepCopy();
     }

@@ -71,6 +71,41 @@ public class Database {
         return copy;
     }
 
+
+    // Method to update values based on another table's values
+    public void deepReplace(Database db) {
+        this.attributes.clear();
+        this.attributes.putAll(deepCopyMap2(db.attributes));
+
+        this.conflicts.clear();
+        this.conflicts.putAll(deepCopyMap2(db.conflicts));
+
+        this.cubeStorage.clear();
+        this.cubeStorage.putAll(deepCopyMap1(db.cubeStorage));
+
+        this.dayStorage.clear();
+        this.dayStorage.putAll(deepCopyMap2(db.dayStorage));
+
+        this.equipment.clear();
+        this.equipment.putAll(deepCopyMap1(db.equipment));
+
+        this.guestRoster.clear();
+        this.guestRoster.putAll(deepCopyMap2(db.guestRoster));
+
+        this.guests.clear();
+        this.guests.putAll(deepCopyMap1(db.guests));
+
+        this.lockers.clear();
+        this.lockers.putAll(deepCopyMap2(db.lockers));
+        
+        this.unknownItems.clear();
+        this.unknownItems.putAll(deepCopyMap1(db.unknownItems));
+        
+        this.waitingList.clear();
+        this.waitingList.putAll(deepCopyMap1(db.waitingList));
+    }
+
+
     // Helper method for deep copying a map
     private Map<String, Map<String, String>> deepCopyMap1(Map<String, Map<String, String>> original) {
         Map<String, Map<String, String>> copy = new HashMap<>();
