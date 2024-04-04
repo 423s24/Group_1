@@ -37,7 +37,7 @@ public class DBConnectorV2{
     public DBConnectorV2(String client, String secret){
         this.client = client;
         this.secret = secret;
-        this.database = null;
+        this.database = new Database();
         this.artifactDatabase = null;
         this.freshDatabase = null;
         originalDatabasePull();
