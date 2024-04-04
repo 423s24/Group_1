@@ -75,6 +75,7 @@ public class DBConnectorV2{
     }
 
 
+
     // This method is one of the most important methods in this class, sortConflicts begins by pulling a database copy from 
     // firebase, and then based on that. THe current working values in database, and the previous pull from artifactDatabase, it 
     // calculates which values we changed since the last pull, and overwrites the freshdatabase values with those values when a conflict 
