@@ -8,16 +8,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Database {
-    public Map<String, Map<String, Map<String, String>>> attributes;
-    public Map<String, Map<String, Map<String, String>>> conflicts;
-    public Map<String, Map<String, String>> cubeStorage;
-    public Map<String, Map<String, Map<String, String>>> dayStorage;
-    public Map<String, Map<String, String>> equipment;
-    public Map<String, Map<String, Map<String, String>>> guestRoster;
-    public Map<String, Map<String, String>> guests;
-    public Map<String, Map<String, Map<String, String>>> lockers;
-    public Map<String, Map<String, String>> unknownItems;
-    public Map<String, Map<String, String>> waitingList;
+    public Map<String, Map<String, Map<String, String>>> attributes = new HashMap<>();
+    public Map<String, Map<String, Map<String, String>>> conflicts = new HashMap<>();
+    public Map<String, Map<String, String>> cubeStorage = new HashMap<>();
+    public Map<String, Map<String, Map<String, String>>> dayStorage = new HashMap<>();
+    public Map<String, Map<String, String>> equipment = new HashMap<>();
+    public Map<String, Map<String, Map<String, String>>> guestRoster = new HashMap<>();
+    public Map<String, Map<String, String>> guests = new HashMap<>();
+    public Map<String, Map<String, Map<String, String>>> lockers = new HashMap<>();
+    public Map<String, Map<String, String>> unknownItems = new HashMap<>();
+    public Map<String, Map<String, String>> waitingList = new HashMap<>();
     
     
 
