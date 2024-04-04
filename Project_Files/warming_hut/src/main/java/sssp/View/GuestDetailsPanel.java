@@ -3,7 +3,7 @@ package sssp.View;
 import com.toedter.calendar.JDateChooser;
 
 import sssp.Helper.DBConnectorV2Singleton;
-import sssp.Helper.HttpStreamingManagerSingleton;
+import sssp.View.components.DBSyncedCheckBox;
 import sssp.Helper.DBConnectorV2;
 
 import javax.swing.*;
@@ -37,7 +37,7 @@ public class GuestDetailsPanel extends JPanel {
     private JDateChooser lastVisitDate;
 
     // data fields in the Guest Info Checks panel
-    private JCheckBox caseCheckBox;
+    private DBSyncedCheckBox caseCheckBox;
     private JCheckBox HMISCheckBox;
     private JCheckBox sleepingBagBox;
     private JDateChooser sleepingBagDate;
@@ -139,7 +139,6 @@ public class GuestDetailsPanel extends JPanel {
         lastVisitDate.addPropertyChangeListener(e-> storeDateState(lastVisitDate, "LastVisit"));
     
         // Add action listeners for checkboxes
-        caseCheckBox.addActionListener(e -> storeCheckboxState(caseCheckBox, "CaseCheck"));
         HMISCheckBox.addActionListener(e -> storeCheckboxState(HMISCheckBox, "HMISCheck"));
         sleepingBagBox.addActionListener(e -> storeCheckboxState(sleepingBagBox, "SleepingBagCheck"));
         tentBox.addActionListener(e -> storeCheckboxState(tentBox, "TentCheck"));
@@ -238,7 +237,7 @@ public class GuestDetailsPanel extends JPanel {
         infoChecksPanel.add(caseCheckLabel, gbc);
 
         gbc.gridx++;
-        caseCheckBox = new JCheckBox();
+        caseCheckBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, "Caseworthy");
         infoChecksPanel.add(caseCheckBox, gbc);
 
         gbc.gridx++;
@@ -789,10 +788,12 @@ public class GuestDetailsPanel extends JPanel {
             return;
         }
 
-        updateFieldsFromActiveGuest();
+        onActiveGuestChanged();
     }
 
-    private void updateFieldsFromActiveGuest() {
+    private void onActiveGuestChanged() {
+        caseCheckBox.setObjKey(activeGuestID);
+
         // Populate simple text fields
         retrieveTextFieldState(firstNameField, "FirstName");
         retrieveTextFieldState(lastNameField, "LastName");
@@ -803,7 +804,6 @@ public class GuestDetailsPanel extends JPanel {
         retrieveDateState(lastVisitDate, "LastVisit");
 
         // Populate checkboxes and their corresponding dates
-        retrieveCheckboxState(caseCheckBox, "CaseCheck");
         retrieveCheckboxState(HMISCheckBox, "HMISCheck");
 
         retrieveCheckboxState(sleepingBagBox, "SleepingBagCheck");
@@ -938,6 +938,6 @@ public class GuestDetailsPanel extends JPanel {
 
     public void onDBUpdate()
     {
-        updateFieldsFromActiveGuest();
+        onActiveGuestChanged();
     }
 }
