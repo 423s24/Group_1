@@ -4,6 +4,7 @@ import javax.swing.JCheckBox;
 import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
 import java.util.Map;
+import java.awt.event.ActionListener;
 
 /**
  * This class extends the JCheckBox class to create a checkbox that is synced with the database.
@@ -36,6 +37,12 @@ public class DBSyncedCheckBox extends JCheckBox {
 
     DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
 
+    ActionListener allChangesListener = new ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+            onToggled();
+        }
+    };
+
     /**
      * Represents a checkbox component that is synchronized with the database.
      * This component extends the functionality of the standard checkbox by synchronizing its state with a corresponding value in the database.
@@ -54,11 +61,7 @@ public class DBSyncedCheckBox extends JCheckBox {
         this.objKey = objKey;
         this.fieldKey = fieldKey;
 
-        // Triggered when the checkbox is clicked
-        super.addActionListener(e -> this.onToggled());
-
-        // Triggered when the DB updates
-        db.subscribeRunnableToDBUpdate(this::onDBUpdate);
+        init();
     }
 
     /**
@@ -77,11 +80,7 @@ public class DBSyncedCheckBox extends JCheckBox {
         this.objKey = objKey;
         this.fieldKey = fieldKey;
 
-        // Triggered when the checkbox is clicked
-        super.addActionListener(e -> this.onToggled());
-
-        // Triggered when the DB updates
-        db.subscribeRunnableToDBUpdate(this::onDBUpdate);
+        init();
     }
 
     
@@ -102,11 +101,7 @@ public class DBSyncedCheckBox extends JCheckBox {
         this.objKey = objKey;
         this.fieldKey = fieldKey;
 
-        // Triggered when the checkbox is clicked
-        super.addActionListener(e -> this.onToggled());
-
-        // Triggered when the DB updates
-        db.subscribeRunnableToDBUpdate(this::onDBUpdate);
+        init();
     }
 
     /**
@@ -128,8 +123,19 @@ public class DBSyncedCheckBox extends JCheckBox {
         this.objKey = objKey;
         this.fieldKey = fieldKey;
 
+        init();
+    }
+
+    /**
+     * Initializes the DBSyncedCheckBox component.
+     * This method sets up the necessary event listeners and subscriptions for the checkbox.
+     * 
+     * @see ActionListener
+     * @see DB
+     */
+    private void init() {
         // Triggered when the checkbox is clicked
-        super.addActionListener(e -> this.onToggled());
+        super.addActionListener(actionListener);
 
         // Triggered when the DB updates
         db.subscribeRunnableToDBUpdate(this::onDBUpdate);
@@ -163,13 +169,14 @@ public class DBSyncedCheckBox extends JCheckBox {
      */
     private void onToggled()
     {
-        if(objKey == null || fieldKey == null || table == null)
+        if(!fieldAssigned() || !tableAssigned())
         {
             return;
         }
 
-        // Update the DB with the checkbox state
-        table.get(objKey).put(fieldKey, Boolean.toString(this.isSelected()));
+        Map<String, String> targetObj = table != null ? table.get(objKey) : superTable.get(tableKey).get(objKey);
+
+        targetObj.put(fieldKey, String.valueOf(this.isSelected()));
 
         db.push();
     }
@@ -188,11 +195,37 @@ public class DBSyncedCheckBox extends JCheckBox {
      */
     private void pullState()
     {
-        if(objKey == null || fieldKey == null)
+        if(!fieldAssigned() || !tableAssigned())
         {
             return;
         }
 
-        this.setSelected(Boolean.parseBoolean(table.get(objKey).get(fieldKey)));
+        // Necessary to avoid calling the action listener when setting the checkbox state
+        super.removeActionListener(actionListener);
+
+        // Get our target object from the database
+        Map<String, String> targetObj = table != null ? table.get(objKey) : superTable.get(tableKey).get(objKey);
+
+        // Set the checkbox state based on the corresponding field in the database
+        this.setSelected(Boolean.parseBoolean(targetObj.get(fieldKey)));
+
+        // Re-add the action listener
+        super.addActionListener(actionListener);
+    }
+
+    /**
+     * Checks if a table is accessible for the checkbox.
+     * @return True if a table is accessible, false otherwise.
+     */
+    private boolean tableAssigned() {
+        return table != null || (superTable != null && tableKey != null);
+    }
+
+    /**
+     * Checks if a field is accessible for the checkbox.
+     * @return True if a field is accessible, false otherwise.
+     */
+    private boolean fieldAssigned() {
+        return objKey != null && fieldKey != null;
     }
 }
