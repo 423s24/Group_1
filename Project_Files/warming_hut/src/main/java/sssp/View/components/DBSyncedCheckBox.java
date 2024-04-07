@@ -22,21 +22,27 @@ public class DBSyncedCheckBox extends JCheckBox {
 
     /**
      * The key of the table in the database that corresponds to the checkbox state.
+     * Can be null if the table is not being retrieved from a super-table.
      */
     private String tableKey;
 
     /**
      * The database table containing the checkbox state.
+     * Can be null if the table is being retrieved from a super-table.
      */
     private Map<String, Map<String, String>> table;
 
     /**
      * The database table-of-tables containing the checkbox state.
+     * Can be null if the table is not being retrieved from a super-table.
      */
     private Map<String, Map<String, Map<String, String>>> superTable;    
 
     DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
 
+    /**
+     * Triggered when the checkbox is clicked.
+     */
     ActionListener allChangesListener = new ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent e) {
             onToggled();
@@ -44,8 +50,7 @@ public class DBSyncedCheckBox extends JCheckBox {
     };
 
     /**
-     * Represents a checkbox component that is synchronized with the database.
-     * This component extends the functionality of the standard checkbox by synchronizing its state with a corresponding value in the database.
+     * A JCheckBox equivalent that is synchronized with the database.
      *
      * @param superTable The super table containing the field to be synchronized.
      * @param tableKey The key of the table containing the field to be synchronized.
@@ -65,8 +70,7 @@ public class DBSyncedCheckBox extends JCheckBox {
     }
 
     /**
-     * A checkbox component that is synchronized with a database.
-     * This component extends the functionality of the standard checkbox by synchronizing its state with a corresponding value in the database.
+     * A JCheckBox equivalent that is synchronized with the database.
      *
      * @param table    The database table containing the checkbox data.
      * @param objKey   The key of the object in the table.
@@ -82,11 +86,9 @@ public class DBSyncedCheckBox extends JCheckBox {
 
         init();
     }
-
     
     /**
-     * A checkbox component that is synchronized with a database.
-     * This component extends the functionality of the standard checkbox by synchronizing its state with a corresponding value in the database.
+     * A JCheckBox equivalent that is synchronized with the database.
      *
      * @param text The text to be displayed next to the checkbox.
      * @param table The database table containing the checkbox value.
@@ -105,8 +107,7 @@ public class DBSyncedCheckBox extends JCheckBox {
     }
 
     /**
-     * Represents a checkbox component that is synchronized with a database.
-     * This component extends the functionality of the standard checkbox by synchronizing its state with a corresponding value in the database.
+     * A JCheckBox equivalent that is synchronized with the database.
      *
      * @param text      The text to be displayed next to the checkbox.
      * @param superTable The super table containing the database information.
@@ -127,11 +128,9 @@ public class DBSyncedCheckBox extends JCheckBox {
     }
 
     /**
-     * Initializes the DBSyncedCheckBox component.
-     * This method sets up the necessary event listeners and subscriptions for the checkbox.
+     * This method sets up the event subscriptions needed by the class.
      * 
-     * @see ActionListener
-     * @see DB
+     * @see DBConnectorV2
      */
     private void init() {
         // Triggered when the checkbox is clicked
@@ -154,7 +153,7 @@ public class DBSyncedCheckBox extends JCheckBox {
     }
 
     /**
-     * Sets the database field key. This changes what value in the database the checkbox corresponds to.
+     * Sets the database field key. This changes what value in the database that the checkbox corresponds to.
      * @param fieldKey The new database field key.
      */
     public void setFieldKey(String fieldKey) {
@@ -165,7 +164,16 @@ public class DBSyncedCheckBox extends JCheckBox {
     }
 
     /**
-     * Called when the checkbox is toggled.
+     * Updates the UI element when the DB is changed.
+     */
+    private void onDBUpdate()
+    {
+        // Pull the state from the database just incase it's changed
+        this.pullState();
+    }
+
+    /**
+     * Updates the DB when the checkbox is toggled.
      */
     private void onToggled()
     {
@@ -179,15 +187,6 @@ public class DBSyncedCheckBox extends JCheckBox {
         targetObj.put(fieldKey, String.valueOf(this.isSelected()));
 
         db.push();
-    }
-
-    /**
-     * Called when the database updates.
-     */
-    private void onDBUpdate()
-    {
-        // Pull the state from the database just incase it's changed
-        this.pullState();
     }
 
     /**
@@ -214,16 +213,16 @@ public class DBSyncedCheckBox extends JCheckBox {
     }
 
     /**
-     * Checks if a table is accessible for the checkbox.
-     * @return True if a table is accessible, false otherwise.
+     * Checks if a table is assigned for the checkbox.
+     * @return True if a table is assigned, false otherwise.
      */
     private boolean tableAssigned() {
         return table != null || (superTable != null && tableKey != null);
     }
 
     /**
-     * Checks if a field is accessible for the checkbox.
-     * @return True if a field is accessible, false otherwise.
+     * Checks if a field is assigned for the checkbox.
+     * @return True if a field is assigned, false otherwise.
      */
     private boolean fieldAssigned() {
         return objKey != null && fieldKey != null;
