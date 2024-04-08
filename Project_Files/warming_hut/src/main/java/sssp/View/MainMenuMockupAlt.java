@@ -3,6 +3,9 @@ package sssp.View;
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.TableModelEvent;
@@ -79,8 +82,40 @@ public class MainMenuMockupAlt extends JFrame {
         sidePanel.add(panel2Button);
         sidePanel.add(panel3Button);
 
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        Border border = BorderFactory.createEtchedBorder();
+        // Documentation button
+        JButton docsButton = new JButton("Help!");
+        docsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new URI("https://docs.google.com/document/d/1NFg2_1X0lsAy_qRDhNyk6lcxtxBhPvKlntXFOtWWhFw/edit"));
+                } catch (IOException | URISyntaxException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        topPanel.add(docsButton);
+        // Github Issue button
+        JButton createIssueButton = new JButton("Report a Bug");
+        createIssueButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new URI("https://github.com/423s24/Group_1/issues"));
+                } catch (IOException | URISyntaxException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        topPanel.add(createIssueButton);
+        topPanel.setBorder(border);
+
         // Main + Side Panels
         getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(topPanel, BorderLayout.NORTH);
         getContentPane().add(sidePanel, BorderLayout.WEST);
         getContentPane().add(mainPanel, BorderLayout.CENTER);
 
@@ -110,33 +145,9 @@ public class MainMenuMockupAlt extends JFrame {
         inputPanel.add(guestNameLabel);
         inputPanel.add(guestNameField);
 
-        // Github Issue button
-        JButton createIssueButton = new JButton("Report a Bug");
-        createIssueButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    Desktop.getDesktop().browse(new URI("https://github.com/423s24/Group_1/issues"));
-                } catch (IOException | URISyntaxException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-        inputPanel.add(createIssueButton);
 
-        // Documentation button
-        JButton docsButton = new JButton("Help!");
-        docsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    Desktop.getDesktop().browse(new URI("https://docs.google.com/document/d/1NFg2_1X0lsAy_qRDhNyk6lcxtxBhPvKlntXFOtWWhFw/edit"));
-                } catch (IOException | URISyntaxException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-        inputPanel.add(docsButton);
+
+
 
         // Date Picker
         JDateChooser dateChooser = new JDateChooser();
