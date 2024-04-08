@@ -37,7 +37,7 @@ public class DBConnectorV2{
     public DBConnectorV2(String client, String secret){
         this.client = client;
         this.secret = secret;
-        this.database = null;
+        this.database = new Database();
         this.artifactDatabase = null;
         this.freshDatabase = null;
         originalDatabasePull();
@@ -76,6 +76,7 @@ public class DBConnectorV2{
     }
 
 
+
     // This method is one of the most important methods in this class, sortConflicts begins by pulling a database copy from 
     // firebase, and then based on that. THe current working values in database, and the previous pull from artifactDatabase, it 
     // calculates which values we changed since the last pull, and overwrites the freshdatabase values with those values when a conflict 
@@ -100,7 +101,7 @@ public class DBConnectorV2{
         this.findConflicts1(this.database.bunkList, this.artifactDatabase.bunkList, this.freshDatabase.bunkList);
         
         // set database and artifact database based on freshdatabase
-        this.database = this.freshDatabase.deepCopy();
+        this.database.deepReplace(this.freshDatabase);
         this.artifactDatabase = this.database.deepCopy();
         
     }
@@ -332,7 +333,9 @@ public class DBConnectorV2{
 
         database.bunkList = formatTable1(getTableJson("BunkList"));
 
-        this.database = database;
+        database.bunkList = formatTable1(getTableJson("BunkList"));
+
+        this.database.deepReplace(database);
         this.artifactDatabase = this.database.deepCopy();
         this.freshDatabase = this.database.deepCopy();
     }

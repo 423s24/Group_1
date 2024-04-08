@@ -25,3 +25,5 @@ Click the link above to access our project documentation.
 Documentation for both Dataview users and interested developers can both be found at the link above.
 ## [Product Website](https://423s24.github.io/Group_1/)
 Click the link above to access our product website.
+## [Report a Bug](https://github.com/423s24/Group_1/issues/new)
+Click the link above to create a bug report. Please include steps to reproduce the issue when creating a report.

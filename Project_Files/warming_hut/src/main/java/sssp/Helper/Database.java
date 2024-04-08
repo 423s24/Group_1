@@ -8,17 +8,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Database {
-    public Map<String, Map<String, Map<String, String>>> attributes;
-    public Map<String, Map<String, Map<String, String>>> conflicts;
-    public Map<String, Map<String, String>> cubeStorage;
-    public Map<String, Map<String, Map<String, String>>> dayStorage;
-    public Map<String, Map<String, String>> equipment;
-    public Map<String, Map<String, Map<String, String>>> guestRoster;
-    public Map<String, Map<String, String>> guests;
-    public Map<String, Map<String, Map<String, String>>> lockers;
-    public Map<String, Map<String, String>> unknownItems;
-    public Map<String, Map<String, String>> waitingList;
-    public Map<String, Map<String, String>> bunkList;
+    public Map<String, Map<String, Map<String, String>>> attributes = new HashMap<>();
+    public Map<String, Map<String, Map<String, String>>> conflicts = new HashMap<>();
+    public Map<String, Map<String, String>> cubeStorage = new HashMap<>();
+    public Map<String, Map<String, Map<String, String>>> dayStorage = new HashMap<>();
+    public Map<String, Map<String, String>> equipment = new HashMap<>();
+    public Map<String, Map<String, Map<String, String>>> guestRoster = new HashMap<>();
+    public Map<String, Map<String, String>> guests = new HashMap<>();
+    public Map<String, Map<String, Map<String, String>>> lockers = new HashMap<>();
+    public Map<String, Map<String, String>> unknownItems = new HashMap<>();
+    public Map<String, Map<String, String>> waitingList = new HashMap<>();
+    public Map<String, Map<String, String>> bunkList = new HashMap<>();
     
 
     public void print() {
@@ -74,6 +74,41 @@ public class Database {
         copy.bunkList = deepCopyMap1(this.bunkList);
         return copy;
     }
+
+
+    // Method to update values based on another table's values
+    public void deepReplace(Database db) {
+        this.attributes.clear();
+        this.attributes.putAll(deepCopyMap2(db.attributes));
+
+        this.conflicts.clear();
+        this.conflicts.putAll(deepCopyMap2(db.conflicts));
+
+        this.cubeStorage.clear();
+        this.cubeStorage.putAll(deepCopyMap1(db.cubeStorage));
+
+        this.dayStorage.clear();
+        this.dayStorage.putAll(deepCopyMap2(db.dayStorage));
+
+        this.equipment.clear();
+        this.equipment.putAll(deepCopyMap1(db.equipment));
+
+        this.guestRoster.clear();
+        this.guestRoster.putAll(deepCopyMap2(db.guestRoster));
+
+        this.guests.clear();
+        this.guests.putAll(deepCopyMap1(db.guests));
+
+        this.lockers.clear();
+        this.lockers.putAll(deepCopyMap2(db.lockers));
+        
+        this.unknownItems.clear();
+        this.unknownItems.putAll(deepCopyMap1(db.unknownItems));
+        
+        this.waitingList.clear();
+        this.waitingList.putAll(deepCopyMap1(db.waitingList));
+    }
+
 
     // Helper method for deep copying a map
     private Map<String, Map<String, String>> deepCopyMap1(Map<String, Map<String, String>> original) {
