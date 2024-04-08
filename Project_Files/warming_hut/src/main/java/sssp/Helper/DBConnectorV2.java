@@ -63,6 +63,7 @@ public class DBConnectorV2{
         pushTable("Lockers", this.convertToJson2(this.database.lockers));
         pushTable("UnknownItems", this.convertToJson1(this.database.unknownItems));
         pushTable("WaitingList", this.convertToJson1(this.database.waitingList));
+        pushTable("BunkList", this.convertToJson1(this.database.bunkList));
 
         return true;
     }
@@ -96,7 +97,7 @@ public class DBConnectorV2{
         this.findConflicts2(this.database.lockers, this.artifactDatabase.lockers, this.freshDatabase.lockers);
         this.findConflicts1(this.database.unknownItems, this.artifactDatabase.unknownItems, this.freshDatabase.unknownItems);
         this.findConflicts1(this.database.waitingList, this.artifactDatabase.waitingList, this.freshDatabase.waitingList);
-
+        this.findConflicts1(this.database.bunkList, this.artifactDatabase.bunkList, this.freshDatabase.bunkList);
         
         // set database and artifact database based on freshdatabase
         this.database = this.freshDatabase.deepCopy();
@@ -230,6 +231,7 @@ public class DBConnectorV2{
         this.killOldValues2(database.lockers);
         this.killOldValues1(database.unknownItems);
         this.killOldValues1(database.waitingList);
+        this.killOldValues1(database.bunkList);
     }
 
 
@@ -298,6 +300,8 @@ public class DBConnectorV2{
 
         database.waitingList = formatTable1(getTableJson("WaitingList"));
 
+        database.bunkList = formatTable1(getTableJson("BunkList"));
+
         this.freshDatabase = database;
     }
 
@@ -325,6 +329,8 @@ public class DBConnectorV2{
         database.unknownItems = formatTable1(getTableJson("UnknownItems"));
 
         database.waitingList = formatTable1(getTableJson("WaitingList"));
+
+        database.bunkList = formatTable1(getTableJson("BunkList"));
 
         this.database = database;
         this.artifactDatabase = this.database.deepCopy();

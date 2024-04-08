@@ -29,6 +29,11 @@ public class BunkAssignmentPanel {
         JLabel ReservationLabel = new JLabel("Reservation");
         JLabel PreviouslyAssignedLabel = new JLabel("Previously Assigned");
         JLabel[] labels = {GuestLabel, BunkLabel, ReservationLabel, PreviouslyAssignedLabel};
+        JButton bunkEditPopup = new JButton("Edit Bunks");
+
+        bunkEditPopup.addActionListener(e -> {
+            BunkEditorPopup.showBunkEditorPopup();
+        });
 
         for (JLabel label : labels) {
             label.setFont(new Font("Serif", Font.BOLD, 24));
@@ -36,8 +41,15 @@ public class BunkAssignmentPanel {
         }
 
         GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
+
+        c.gridx = 3;
         c.gridy = 0;
+        c.weightx = 1;
+        c.insets = new Insets(0,0,5,10);
+        c.anchor = GridBagConstraints.EAST;
+        bunkPanel.add(bunkEditPopup, c);
+        c.gridx = 0;
+        c.gridy = 1;
         c.weightx = 1;
         c.anchor = GridBagConstraints.NORTH;
         c.ipady = 20;
@@ -51,7 +63,7 @@ public class BunkAssignmentPanel {
         c.ipady = 0;
 
         DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
-        int rowNum = 1;
+        int rowNum = 2;
         for (Map.Entry<String, Map<String, String>> entry : db.database.guests.entrySet()) {
             Map<String, String> guest = entry.getValue();
             addGuestRow(bunkPanel, c, guest, rowNum);
@@ -141,10 +153,10 @@ public class BunkAssignmentPanel {
     private static final ArrayList<JComboBox<String>> bunkComboBoxes = new ArrayList<>();
 
     private static final ArrayList<String> mensBunks = new ArrayList<>(List.of(new String[]{"Bunk 1 A", "Bunk 1 B", "Bunk 2 A", "Bunk 2 B", "Bunk 3 A", "Bunk 3 B"}));
-    private static final ArrayList<String> womansBunks = new ArrayList<>(List.of(new String[]{"Bunk 4 A", "Bunk 4 B", "Bunk 5 A", "Bunk 5 B"}));
+    private static final ArrayList<String> womensBunks = new ArrayList<>(List.of(new String[]{"Bunk 4 A", "Bunk 4 B", "Bunk 5 A", "Bunk 5 B"}));
     private static final ArrayList<String> observationArea = new ArrayList<>(List.of(new String[]{"Bunk 6 A", "Bunk 6 B"}));
-    private static final ArrayList<String>[] allBunkLists = new ArrayList[] {mensBunks, womansBunks, observationArea};
-    private static final String[] bunkHeaders = new String[] {"Men's Bunks: ", "Woman's Bunks: ", "Observation Area: "};
+    private static final ArrayList<String>[] allBunkLists = new ArrayList[] {mensBunks, womensBunks, observationArea};
+    private static final String[] bunkHeaders = new String[] {"Men's Bunks: ", "Women's Bunks: ", "Observation Area: "};
 
     private static ArrayList<String> getAvailableBunks(){
         DBConnectorV2 db = DBConnectorV2Singleton.getInstance();

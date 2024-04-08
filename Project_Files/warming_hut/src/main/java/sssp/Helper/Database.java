@@ -18,7 +18,7 @@ public class Database {
     public Map<String, Map<String, Map<String, String>>> lockers;
     public Map<String, Map<String, String>> unknownItems;
     public Map<String, Map<String, String>> waitingList;
-    
+    public Map<String, Map<String, String>> bunkList;
     
 
     public void print() {
@@ -52,6 +52,9 @@ public class Database {
     
             System.out.println("\nWaiting List:");
             printMap1(this.waitingList);
+
+            System.out.println("\nBunk List:");
+            printMap1(this.bunkList);
         }
     }
 
@@ -68,6 +71,7 @@ public class Database {
         copy.lockers = deepCopyMap2(this.lockers);
         copy.unknownItems = deepCopyMap1(this.unknownItems);
         copy.waitingList = deepCopyMap1(this.waitingList);
+        copy.bunkList = deepCopyMap1(this.bunkList);
         return copy;
     }
 

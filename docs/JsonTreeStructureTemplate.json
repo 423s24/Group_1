@@ -155,6 +155,13 @@
             "DateAdded": "2/27/2024",
             "GuestId": 100
           }
+        },
+        "BunkLists": {
+            "Bunk_1": {
+                "BunkNum": "1",
+                "BunkType": "B",
+                "BunkArea": "Mens/Womens/Observation"
+            }
         }
       }
     }

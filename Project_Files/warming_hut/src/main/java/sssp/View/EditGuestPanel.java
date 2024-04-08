@@ -11,7 +11,7 @@ public class EditGuestPanel {
     public static final Font NORMAL_FONT = new Font("Serif", Font.PLAIN, 17);
 
     public static final JPanel editGuestPanel = new JPanel(new FlowLayout());
-    public static final JLabel title = new JLabel("Guest Details");
+    public static final JLabel title = new JLabel("Guest Overview");
 
     public static JPanel getEditGuestPanel(JPanel mainPanel){
         //This is testing for the Edit Guest panel:
@@ -28,7 +28,7 @@ public class EditGuestPanel {
         return editGuestPanel;
     }
 
-    public static final JTextField nameField = new JFormattedTextField();
+    public static final JLabel nameField = new JLabel();
     public static final JLabel nameLabel = new JLabel("Guest Name:");
     public static final JLabel lastCheckedInLabel = new JLabel("Last Checked In: ");
     public static final JLabel lastCheckedIn = new JLabel("");
