@@ -4,14 +4,8 @@ import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
+import javax.swing.text.AbstractDocument;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -23,16 +17,11 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import java.util.Optional;
 import java.util.HashMap;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.DocumentEvent;
 
 import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
-import sssp.Helper.HttpStreamingManager;
 import sssp.Helper.HttpStreamingManagerSingleton;
-import sssp.Helper.DatabaseEventListener;
 
 public class MainMenuMockupAlt extends JFrame {
     private JPanel mainPanel;
@@ -168,32 +157,12 @@ public class MainMenuMockupAlt extends JFrame {
         };
 
         // Submit ActionListener
-        submitButton.addActionListener(submitAction);
+        //submitButton.addActionListener(submitAction);
 
         // Enter Key Functionality
-        guestNameField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                submitAction.actionPerformed(e);
-            }
-        });
+        //guestNameField.addActionListener(submitAction);
 
-        guestNameField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                onGuestNameFieldChanged(e);
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                onGuestNameFieldChanged(e);
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                onGuestNameFieldChanged(e);
-            }
-        });
+        ((AbstractDocument) guestNameField.getDocument()).setDocumentFilter(new NameAutocompleteDocumentFilter(guestNameField));
 
         inputPanel.add(submitButton);
 
@@ -288,21 +257,6 @@ public class MainMenuMockupAlt extends JFrame {
         }
     }
 
-    public void onGuestNameFieldChanged(DocumentEvent e)
-    {
-        Document field = e.getDocument();
-
-        try
-        {
-            this.updateGuestsTable(field.getText(0, field.getLength()));
-        }
-        catch(BadLocationException ex)
-        {
-            // uh oh!
-            throw new RuntimeException(ex.getMessage());
-        }
-    }
-
     /**
      * Updates the guest table with the latest data from the database.
      */
@@ -327,7 +281,7 @@ public class MainMenuMockupAlt extends JFrame {
      * 
      * @param filter the filter to apply on the guest names
      */
-    private void updateGuestsTable(String filter)
+    private void filterTable(String filter, JTable table)
     {
         // Update the guest table
         DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
