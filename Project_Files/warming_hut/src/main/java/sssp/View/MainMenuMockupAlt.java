@@ -157,10 +157,10 @@ public class MainMenuMockupAlt extends JFrame {
         };
 
         // Submit ActionListener
-        //submitButton.addActionListener(submitAction);
+        submitButton.addActionListener(submitAction);
 
         // Enter Key Functionality
-        //guestNameField.addActionListener(submitAction);
+        guestNameField.addActionListener(submitAction);
 
         ((AbstractDocument) guestNameField.getDocument()).setDocumentFilter(new NameAutocompleteDocumentFilter(guestNameField));
 
