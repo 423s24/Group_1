@@ -26,12 +26,18 @@ public class SetDBSecretPopup {
         frameC.gridx = 0;
         frameC.gridy = 0;
         frameC.anchor = GridBagConstraints.NORTH;
-        //secretPopupFrame.add(, frameC);
+        secretPopupFrame.add(getDBSecretPopup(), frameC);
     }
 
     public static JPanel getDBSecretPopup() {
         JPanel popup = new JPanel();
         // TODO add popup content
+        JLabel secretExplanation1 = new JLabel("Use the box below to set the key for the database.");
+        JLabel secretExplanation2 = new JLabel("Just input database key and press 'Enter'");
+        //secretExplanation.setHorizontalAlignment(SwingConstants.LEFT);
+
+        popup.add(secretExplanation1);
+        popup.add(secretExplanation2);
         return popup;
     }
 }

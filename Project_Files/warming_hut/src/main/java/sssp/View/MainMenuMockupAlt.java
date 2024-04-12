@@ -108,8 +108,7 @@ public class MainMenuMockupAlt extends JFrame {
         });
         topPanel.add(createIssueButton);
 
-        //Global Settings Button
-        // TODO create button to set DB secret
+        // Button to set DB secret Key
         JButton createDBSecretButton = new JButton("Set Database Key");
         createDBSecretButton.addActionListener(new ActionListener() {
             @Override
