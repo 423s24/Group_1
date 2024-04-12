@@ -39,6 +39,7 @@ public class MainMenuMockupAlt extends JFrame {
         JButton panel1Button = createButton("Check In");
         JButton panel2Button = createButton("Bunk Assignment");
         JButton panel3Button = createButton("Guest Details");
+        JButton panel4Button = createButton("HMIS + CW Reporting");
 
         // Main Panel
         mainPanel = new JPanel();
@@ -49,11 +50,13 @@ public class MainMenuMockupAlt extends JFrame {
         JPanel panel1 = createCheckInPanel();
         JPanel panel2 = BunkAssignmentPanel.getBunkAssignmentPanel();
         GuestDetailsPanel panel3 = new GuestDetailsPanel();
+        ExternalDataReportingPanel panel4 = new ExternalDataReportingPanel();
 
         // Add panels to the main panel
         mainPanel.add(panel1, "Panel 1");
         mainPanel.add(panel2, "Panel 2");
         mainPanel.add(panel3, "Panel 3");
+        mainPanel.add(panel4.createExternalDataReportingPanel(), "Panel 4");
 
         // Initialize Active Button
         activeButton = panel1Button;
@@ -63,13 +66,15 @@ public class MainMenuMockupAlt extends JFrame {
         panel1Button.addActionListener(createButtonActionListener(panel1Button, "Panel 1"));
         panel2Button.addActionListener(createButtonActionListener(panel2Button, "Panel 2"));
         panel3Button.addActionListener(createButtonActionListener(panel3Button, "Panel 3"));
+        panel4Button.addActionListener(createButtonActionListener(panel4Button,"Panel 4"));
 
         // Side Panel for Buttons
         JPanel sidePanel = new JPanel();
-        sidePanel.setLayout(new GridLayout(3, 1));
+        sidePanel.setLayout(new GridLayout(4, 1));
         sidePanel.add(panel1Button);
         sidePanel.add(panel2Button);
         sidePanel.add(panel3Button);
+        sidePanel.add(panel4Button);
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -133,10 +138,6 @@ public class MainMenuMockupAlt extends JFrame {
         JTextField guestNameField = new JTextField(20); // 20 columns for the text field
         inputPanel.add(guestNameLabel);
         inputPanel.add(guestNameField);
-
-
-
-
 
         // Date Picker
         JDateChooser dateChooser = new JDateChooser();

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 /*
  * THESE TESTS ARE JUST SIMPLE TOY EXAMPLES THAT ARE BEING USED TO
- * SET UP AUTOMATED TESTING AND FOR EXPERIMENTING JUnit FEATURES
+ * SET UP AUTOMATED TESTING AND FOR EXPERIMENTING WITH JUnit 5 FEATURES
  */
 class CalculatorTest {
 
