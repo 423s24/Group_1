@@ -49,14 +49,13 @@ public class BunkEditorPopup {
 
         for(String key : db.bunkList.keySet()){
             String bunkNum = db.bunkList.get(key).get("BunkNum");
-            String bunkType = db.bunkList.get(key).get("BunkType");
 
             if(db.bunkList.get(key).get("BunkArea").equals(bunkAreas[0])){
-                mensBunkList.add(new String[]{"Bunk " + bunkNum + " " + bunkType, key});
+                mensBunkList.add(new String[]{"Bunk " + bunkNum , key});
             } else if(db.bunkList.get(key).get("BunkArea").equals(bunkAreas[1])){
-                womensBunkList.add(new String[]{"Bunk " + bunkNum + " " + bunkType, key});
+                womensBunkList.add(new String[]{"Bunk " + bunkNum, key});
             } else {
-                observationBunkList.add(new String[]{"Bunk " + bunkNum + " " + bunkType, key});
+                observationBunkList.add(new String[]{"Bunk " + bunkNum , key});
             }
         }
 
@@ -148,8 +147,6 @@ public class BunkEditorPopup {
     private static final JTextField bunkNumField = new JTextField();
     private static final String[] bunkAreas = {"Mens", "Womens", "Observational"};
     private static final JComboBox<String> bunkAreaField = new JComboBox<>(bunkAreas);
-    private static final String[] bunkTypes = {"A", "B"};
-    private static final JComboBox<String> bunkTypeField = new JComboBox<>(bunkTypes);
 
     private static void deleteBunk(){
         DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
@@ -168,15 +165,12 @@ public class BunkEditorPopup {
         Map<String, String> bunk = db.database.bunkList.get(selectedBunkList.getSelectedValue()[1]);
         bunk.put("BunkArea", Objects.requireNonNull(bunkAreaField.getSelectedItem()).toString());
         bunk.put("BunkNum", bunkNumField.getText());
-        bunk.put("BunkType", Objects.requireNonNull(bunkTypeField.getSelectedItem()).toString());
         db.database.bunkList.put(selectedBunkList.getSelectedValue()[1], bunk);
         db.push();
         updateBunkList();
     }
-    private static void setValues(String bunkNum, String bunkType, String bunkArea){
+    private static void setValues(String bunkNum, String bunkArea){
         bunkNumField.setText(bunkNum);
-        int bunkTypeIndex = (bunkType.equals("A")) ? 0 : 1;
-        bunkTypeField.setSelectedIndex(bunkTypeIndex);
         int bunkAreaIndex = (bunkArea.equals("Mens")) ? 0 : (bunkArea.equals("Womens")) ? 1 : 2;
         bunkAreaField.setSelectedIndex(bunkAreaIndex);
     }
@@ -192,7 +186,7 @@ public class BunkEditorPopup {
         }
         DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
         Map<String, String> selectedBunk = db.database.bunkList.get(selectedList.getSelectedValue()[1]);
-        setValues(selectedBunk.get("BunkNum"),selectedBunk.get("BunkType"),selectedBunk.get("BunkArea"));
+        setValues(selectedBunk.get("BunkNum"),selectedBunk.get("BunkArea"));
         selectedBunkList = selectedList;
     }
 
@@ -207,7 +201,6 @@ public class BunkEditorPopup {
         JLabel bunkNumLabel = new JLabel("Bunk Number: ");
         JLabel bunkAreaLabel = new JLabel("Bunk Area");
 
-        JLabel bunkTypeLabel = new JLabel("Bunk Type");
         JButton saveChangesBtn = new JButton("Save Changes");
         saveChangesBtn.setFont(new Font("Serif", Font.PLAIN, 18));
         saveChangesBtn.setPreferredSize(new Dimension(MENU_WIDTH, 25));
@@ -216,7 +209,7 @@ public class BunkEditorPopup {
             saveValues();
         });
 
-        JLabel[] labels = {bunkNumLabel, bunkAreaLabel, bunkTypeLabel};
+        JLabel[] labels = {bunkNumLabel, bunkAreaLabel};
         for (JLabel label : labels) {
             label.setFont(new Font("Serif", Font.PLAIN, 22));
         }
@@ -257,14 +250,10 @@ public class BunkEditorPopup {
         panel.add(bunkNumField, c);
         c.insets = new Insets(10,0,0,0);
         c.gridy = 2;
-        panel.add(bunkTypeLabel, c);
-        c.gridy = 3;
-        panel.add(bunkTypeField, c);
-        c.gridy = 4;
         panel.add(bunkAreaLabel, c);
-        c.gridy = 5;
+        c.gridy = 3;
         panel.add(bunkAreaField, c);
-        c.gridy = 6;
+        c.gridy = 4;
         panel.add(saveChangesBtn, c);
 
         return panel;
@@ -275,7 +264,6 @@ public class BunkEditorPopup {
         Map<String, String> newBunk = new HashMap<>();
         newBunk.put("BunkArea", "Mens");
         newBunk.put("BunkNum", "NEW");
-        newBunk.put("BunkType", "A");
         String bunkName = "Bunk_" + UUIDGenerator.getNewUUID();
         db.database.bunkList.put(bunkName, newBunk);
         db.push();

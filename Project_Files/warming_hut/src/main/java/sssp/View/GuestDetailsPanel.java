@@ -669,7 +669,7 @@ public class GuestDetailsPanel extends JPanel {
         add(basicDataPanel, BorderLayout.WEST);
     }
 
-    public void setActiveGuestID(String guestID) {
+    public boolean setActiveGuestID(String guestID) {
         this.activeGuestID = guestID;
 
         this.activeGuestData = db.database.guests.get(guestID);
@@ -677,10 +677,12 @@ public class GuestDetailsPanel extends JPanel {
         if(activeGuestData == null) {
             // Show error window
             JOptionPane.showMessageDialog(null, "Error: The guest " + guestID + " does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+            return false;
         }
 
         onActiveGuestChanged();
+
+        return true;
     }
 
     private void onActiveGuestChanged() {

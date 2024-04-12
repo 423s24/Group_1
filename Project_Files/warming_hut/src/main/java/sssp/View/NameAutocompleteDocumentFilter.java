@@ -86,7 +86,7 @@ public class NameAutocompleteDocumentFilter extends DocumentFilter {
             String lastName = guest.get("LastName");
             String fullName = firstName + " " + lastName;
 
-            if (firstName.toLowerCase().startsWith(text.toLowerCase()) || lastName.toLowerCase().startsWith(text.toLowerCase())) {
+            if (autocompleteMatch(text, firstName, lastName)) {
                 JMenuItem menuItem = new JMenuItem(fullName);
                 menuItem.addActionListener(e -> {
                     try {
@@ -108,6 +108,13 @@ public class NameAutocompleteDocumentFilter extends DocumentFilter {
         {
             popupMenu.setVisible(false);
         }
+    }
+
+    private boolean autocompleteMatch(String text, String firstName, String lastName) {
+        boolean matchesFirst = firstName.toLowerCase().startsWith(text.toLowerCase());
+        boolean matchesLast = lastName.toLowerCase().startsWith(text.toLowerCase());
+        boolean matchesFull = (firstName + " " + lastName).toLowerCase().startsWith(text.toLowerCase());
+        return matchesFirst || matchesLast || matchesFull;
     }
 
     private void selectNextMenuItem() {
@@ -141,7 +148,9 @@ public class NameAutocompleteDocumentFilter extends DocumentFilter {
 
     public void resetPopupMenu()
     {
+        popupMenu.setVisible(false);
         popupMenu = new JPopupMenu();
         popupMenu.setFocusable(false);
+        popupMenu.setVisible(true);
     }
 }

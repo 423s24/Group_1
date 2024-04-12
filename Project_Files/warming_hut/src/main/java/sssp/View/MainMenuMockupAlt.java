@@ -10,6 +10,8 @@ import javax.swing.text.AbstractDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URI;
@@ -29,6 +31,8 @@ public class MainMenuMockupAlt extends JFrame {
     private JButton activeButton;
     private DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
     private JTable table;
+    private GuestDetailsPanel guestDetailsPanel;
+    private JButton guestDetailsPanelButton;
 
     public MainMenuMockupAlt() {
         setTitle("HRDC Warming Center Manager");
@@ -36,10 +40,10 @@ public class MainMenuMockupAlt extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // Panel Switch Buttons
-        JButton panel1Button = createButton("Check In");
-        JButton panel2Button = createButton("Bunk Assignment");
-        JButton panel3Button = createButton("Guest Details");
-        JButton panel4Button = createButton("HMIS + CW Reporting");
+        JButton checkinPanelButton = createButton("Check In");
+        JButton bunkAssignmentPanelButton = createButton("Bunk Assignment");
+        guestDetailsPanelButton = createButton("Guest Details");
+        JButton externalDataReportingPanelButton = createButton("HMIS + CW Reporting");
 
         // Main Panel
         mainPanel = new JPanel();
@@ -47,34 +51,34 @@ public class MainMenuMockupAlt extends JFrame {
         mainPanel.setLayout(cardLayout);
 
         // Panels for Tab Switching
-        JPanel panel1 = createCheckInPanel();
-        JPanel panel2 = BunkAssignmentPanel.getBunkAssignmentPanel();
-        GuestDetailsPanel panel3 = new GuestDetailsPanel();
-        ExternalDataReportingPanel panel4 = new ExternalDataReportingPanel();
+        JPanel checkInPanel = createCheckInPanel();
+        JPanel bunkAssignmentPanel = BunkAssignmentPanel.getBunkAssignmentPanel();
+        guestDetailsPanel = new GuestDetailsPanel();
+        ExternalDataReportingPanel externalDataReportingPanel = new ExternalDataReportingPanel();
 
         // Add panels to the main panel
-        mainPanel.add(panel1, "Panel 1");
-        mainPanel.add(panel2, "Panel 2");
-        mainPanel.add(panel3, "Panel 3");
-        mainPanel.add(panel4.createExternalDataReportingPanel(), "Panel 4");
+        mainPanel.add(checkInPanel, "Panel 1");
+        mainPanel.add(bunkAssignmentPanel, "Panel 2");
+        mainPanel.add(guestDetailsPanel, "Panel 3");
+        mainPanel.add(externalDataReportingPanel.createExternalDataReportingPanel(), "Panel 4");
 
         // Initialize Active Button
-        activeButton = panel1Button;
+        activeButton = checkinPanelButton;
         activeButton.setEnabled(false); // Darkens active button
 
         // Panel Switching Action Listeners
-        panel1Button.addActionListener(createButtonActionListener(panel1Button, "Panel 1"));
-        panel2Button.addActionListener(createButtonActionListener(panel2Button, "Panel 2"));
-        panel3Button.addActionListener(createButtonActionListener(panel3Button, "Panel 3"));
-        panel4Button.addActionListener(createButtonActionListener(panel4Button,"Panel 4"));
+        checkinPanelButton.addActionListener(createButtonActionListener(checkinPanelButton, "Panel 1"));
+        bunkAssignmentPanelButton.addActionListener(createButtonActionListener(bunkAssignmentPanelButton, "Panel 2"));
+        guestDetailsPanelButton.addActionListener(createButtonActionListener(guestDetailsPanelButton, "Panel 3"));
+        externalDataReportingPanelButton.addActionListener(createButtonActionListener(externalDataReportingPanelButton,"Panel 4"));
 
         // Side Panel for Buttons
         JPanel sidePanel = new JPanel();
         sidePanel.setLayout(new GridLayout(4, 1));
-        sidePanel.add(panel1Button);
-        sidePanel.add(panel2Button);
-        sidePanel.add(panel3Button);
-        sidePanel.add(panel4Button);
+        sidePanel.add(checkinPanelButton);
+        sidePanel.add(bunkAssignmentPanelButton);
+        sidePanel.add(guestDetailsPanelButton);
+        sidePanel.add(externalDataReportingPanelButton);
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -203,8 +207,30 @@ public class MainMenuMockupAlt extends JFrame {
                 // out some way to put stuff in from the backend/input field. Check the submission
                 // method below for some more info.
         };
-        DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
+
+        DefaultTableModel tableModel = new DefaultTableModel(data, columnNames) {
+            // Disable cell editing
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         table = new JTable(tableModel);
+
+        table.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    JTable target = (JTable)e.getSource();
+                    int row = target.getSelectedRow();
+                    String guestID = getGuestTableKey(target.getValueAt(row, 0).toString());
+                    if(guestDetailsPanel.setActiveGuestID(guestID))
+                    {
+                        guestDetailsPanelButton.doClick();
+                    }
+                }
+            }
+        });
+
         // Label Sizing
         table.getColumnModel().getColumn(0).setPreferredWidth(70);
         table.getColumnModel().getColumn(1).setPreferredWidth(15);

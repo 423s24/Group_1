@@ -129,6 +129,18 @@ public class DBConnectorV2{
         return values;
     }
 
+    public static List<Map<String,String>> joinOnKey(Map<String, Map<String, String>> table, String joinColumn, String joinValue)
+    {
+        List<Map<String,String>> joinedRows = new ArrayList<>();
+        for(Map.Entry<String, Map<String, String>> row : table.entrySet())
+        {
+            if(row.getValue().containsKey(joinColumn) && row.getValue().get(joinColumn).equals(joinValue))
+            {
+                joinedRows.add(row.getValue());
+            }
+        }
+        return joinedRows;
+    }
 
 
     // This method is one of the most important methods in this class, sortConflicts begins by pulling a database copy from 
