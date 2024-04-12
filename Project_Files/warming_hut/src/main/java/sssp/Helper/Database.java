@@ -107,6 +107,9 @@ public class Database {
         
         this.waitingList.clear();
         this.waitingList.putAll(deepCopyMap1(db.waitingList));
+
+        this.bunkList.clear();
+        this.bunkList.putAll(deepCopyMap1(db.bunkList));
     }
 
 
