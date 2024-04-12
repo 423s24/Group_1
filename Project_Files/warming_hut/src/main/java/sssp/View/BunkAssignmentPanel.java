@@ -104,25 +104,9 @@ public class BunkAssignmentPanel {
             reservedLabel.setBackground(Color.YELLOW);
         }
 
-        JComboBox<String[]> bunkAssignmentCombo = new JComboBox<>(new DefaultComboBoxModel<>(getAvailableBunks().toArray(new String[0][0])));
+        JComboBox<String[]> bunkAssignmentCombo = new JComboBox<>(new DefaultComboBoxModel<>(getAvailableBunks(bedSlot).toArray(new String[0][0])));
         bunkAssignmentCombo.setRenderer(new ComboBoxRenderer());
-        bunkAssignmentCombo.addPopupMenuListener(new PopupMenuListener() {
-            @Override
-            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                String[] assignedBunk = (String[]) bunkAssignmentCombo.getSelectedItem();
-                bunkAssignmentCombo.removeAllItems();
-                for(String[] bunk : getAvailableBunks()){
-                    bunkAssignmentCombo.addItem(bunk);
-                }
-                bunkAssignmentCombo.setSelectedItem(assignedBunk);
-            }
-
-            @Override
-            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
-
-            @Override
-            public void popupMenuCanceled(PopupMenuEvent e) {}
-        });
+        bunkAssignmentCombo.addPopupMenuListener(new MyPopupMenuListener(bedSlot, bunkAssignmentCombo));
         bunkAssignmentCombo.setPreferredSize(new Dimension(225, 30));
         bunkAssignmentCombo.setSelectedItem(null);
         bunkAssignmentCombo.addItemListener(new ItemListener() {
@@ -137,7 +121,9 @@ public class BunkAssignmentPanel {
             }
         });
         bunkAssignmentCombo.setSelectedIndex(-1);
-        bunkComboBoxes.add(bunkAssignmentCombo);
+        bedSlot.addPopupMenuListener( new MyPopupMenuListener(bedSlot, bunkAssignmentCombo));
+
+        bunkAssignmentRows.add(new BunkAssignmentRow(bedSlot, bunkAssignmentCombo));
 
         c.gridy = rowNum;
         c.gridx = 0;
@@ -157,7 +143,7 @@ public class BunkAssignmentPanel {
         panel.add(lastAssignedLabel, c);
     }
 
-    private static final ArrayList<JComboBox<String[]>> bunkComboBoxes = new ArrayList<>();
+    private static final ArrayList<BunkAssignmentRow> bunkAssignmentRows = new ArrayList<>();
 
     private static final ArrayList<String[]> mensBunkList = new ArrayList<>();
     private static final ArrayList<String[]> womensBunkList = new ArrayList<>();
@@ -168,7 +154,7 @@ public class BunkAssignmentPanel {
 
     private static ArrayList<String[]> getAvailableBunks(JComboBox<String> bedSlotCombo){
         Database db = DBConnectorV2Singleton.getInstance().database;
-        Boolean topBunk = Objects.equals(bedSlotCombo.getSelectedItem(), "A");
+        boolean bunkSlotA = Objects.equals(bedSlotCombo.getSelectedItem(), "A");
 
         mensBunkList.clear();
         womensBunkList.clear();
@@ -186,10 +172,16 @@ public class BunkAssignmentPanel {
             }
         }
 
-        ArrayList<String> assignedBunks = new ArrayList<>();
-        for(JComboBox<String[]> comboBox : bunkComboBoxes){
-            if(comboBox.getSelectedItem() != null){
-                assignedBunks.add(((String[])(comboBox.getSelectedItem()))[1]);
+        ArrayList<String> assignedBunksA = new ArrayList<>();
+        ArrayList<String> assignedBunksB = new ArrayList<>();
+
+        for(BunkAssignmentRow bunkRow : bunkAssignmentRows){
+            if(bunkRow.getBunkAssignment().getSelectedItem() != null){
+                if(bunkRow.getBunkSlot().getSelectedItem().equals("A")){
+                    assignedBunksA.add(((String[])(bunkRow.getBunkAssignment().getSelectedItem()))[1]);
+                } else {
+                    assignedBunksB.add(((String[])(bunkRow.getBunkAssignment().getSelectedItem()))[1]);
+                }
             }
         }
 
@@ -202,8 +194,14 @@ public class BunkAssignmentPanel {
                 default -> availableBunks.add(new String[]{bunkHeaders[2]});
             }
             for(String[] bunk : bunkList){
-                if(!assignedBunks.contains(bunk[1])){
-                    availableBunks.add(new String[]{bunk[0], bunk[1]});
+                if(bunkSlotA){
+                    if(!assignedBunksA.contains(bunk[1])){
+                        availableBunks.add(new String[]{bunk[0], bunk[1]});
+                    }
+                } else {
+                    if(!assignedBunksB.contains(bunk[1])){
+                        availableBunks.add(new String[]{bunk[0], bunk[1]});
+                    }
                 }
             }
             bunkListType++;
@@ -246,6 +244,46 @@ public class BunkAssignmentPanel {
         @Override
         public Color getBackground() {
             return selectionBackgroundColor == null ? super.getBackground() : selectionBackgroundColor;
+        }
+    }
+
+    private static class MyPopupMenuListener implements PopupMenuListener {
+
+        private final JComboBox<String[]> bunkAssignmentCombo;
+        private final JComboBox<String> bedSlotCombo;
+        public MyPopupMenuListener(JComboBox<String> bedSlotCombo, JComboBox<String[]> bunkAssignmentCombo){
+            this.bedSlotCombo = bedSlotCombo;
+            this.bunkAssignmentCombo = bunkAssignmentCombo;
+        }
+        @Override
+        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+            String[] assignedBunk = (String[]) bunkAssignmentCombo.getSelectedItem();
+            bunkAssignmentCombo.removeAllItems();
+            for(String[] bunk : getAvailableBunks(bedSlotCombo)){
+                bunkAssignmentCombo.addItem(bunk);
+            }
+            bunkAssignmentCombo.setSelectedItem(assignedBunk);
+        }
+
+        @Override
+        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
+
+        @Override
+        public void popupMenuCanceled(PopupMenuEvent e) {}
+    }
+
+    private static class BunkAssignmentRow {
+        private JComboBox<String> bunkSlot;
+        private JComboBox<String[]> bunkAssignment;
+        public JComboBox<String> getBunkSlot() {
+            return bunkSlot;
+        }
+        public JComboBox<String[]> getBunkAssignment() {
+            return bunkAssignment;
+        }
+        public BunkAssignmentRow(JComboBox<String> bunkSlot, JComboBox<String[]> bunkAssignment){
+            this.bunkSlot = bunkSlot;
+            this.bunkAssignment = bunkAssignment;
         }
     }
 }
