@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -68,11 +69,64 @@ public class DBConnectorV2{
         return true;
     }
 
+    // push but asynchronous
+    public CompletableFuture<Boolean> asyncPush() {
+        return CompletableFuture.supplyAsync(() ->{
+            this.sortConflicts();
+
+            pushTable("Attributes", this.convertToJson2(this.database.attributes));
+            pushTable("Conflicts", this.convertToJson2(this.database.conflicts));
+            pushTable("CubeStorage", this.convertToJson1(this.database.cubeStorage));
+            pushTable("DayStorage", this.convertToJson2(this.database.dayStorage));
+            pushTable("Equipment", this.convertToJson1(this.database.equipment));
+            pushTable("GuestRoster", this.convertToJson2(this.database.guestRoster));
+            pushTable("Guests", this.convertToJson1(this.database.guests));
+            pushTable("Lockers", this.convertToJson2(this.database.lockers));
+            pushTable("UnknownItems", this.convertToJson1(this.database.unknownItems));
+            pushTable("WaitingList", this.convertToJson1(this.database.waitingList));
+            pushTable("BunkList", this.convertToJson1(this.database.bunkList));
+
+            return true;
+        });
+    }
+
     // pulls from the global database, mostly just a wrapper class as sortconflicts does all the work. 
     public boolean pull() {
         sortConflicts();
 
         return true;
+    }
+
+    // pull but asynchronous
+    public CompletableFuture<Boolean> asyncPull() {
+        return CompletableFuture.supplyAsync(() ->{
+            sortConflicts();
+            return true;
+        });
+    }
+
+
+    // look up value in the a table
+    public static Map<String, String> getValuesForKey(Map<String, Map<String, String>> table, String key) {
+        if (table.containsKey(key)) {
+            return table.get(key);
+        } else {
+            return null;
+        }
+    }
+
+    // look up a list of values in a table. 
+    public static List<String> getValuesForKeys(Map<String, Map<String, String>> table, List<String> keys) {
+        List<String> values = new ArrayList<>();
+        for (String key : keys) {
+            for (Map.Entry<String, Map<String, String>> entry : table.entrySet()) {
+                Map<String, String> innerMap = entry.getValue();
+                if (innerMap.containsKey(key)) {
+                    values.add(innerMap.get(key));
+                }
+            }
+        }
+        return values;
     }
 
 
