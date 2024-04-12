@@ -174,11 +174,19 @@ public class MainMenuMockupAlt extends JFrame {
 
         // Table Labels
         JLabel nameLabel = new JLabel("Name");
-        JLabel dateLabel = new JLabel("Date");
+        JLabel lockerLabel = new JLabel("Locker");
+        JLabel dayStorageLabel = new JLabel("D. Storage");
+        JLabel bunkAssignLabel = new JLabel("Bunk Assign.");
+        JLabel behaviorFlagsLabel = new JLabel("Behavior Flags");
+        //JLabel dateLabel = new JLabel("Date");
         JLabel deleteLabel = new JLabel("Delete");
 
         formPanel.add(nameLabel);
-        formPanel.add(dateLabel);
+        formPanel.add(lockerLabel);
+        formPanel.add(dayStorageLabel);
+        formPanel.add(bunkAssignLabel);
+        formPanel.add(behaviorFlagsLabel);
+        //formPanel.add(dateLabel);
         formPanel.add(deleteLabel);
 
         inputPanel.add(guestNameLabel, BorderLayout.WEST);
@@ -189,7 +197,7 @@ public class MainMenuMockupAlt extends JFrame {
         panel.add(inputPanel, BorderLayout.NORTH);
 
         // Table Init
-        String[] columnNames = {"Name", "Date", "Delete"};
+        String[] columnNames = {"Name", "Locker", "Storage", "Bunk Assign.", "Issues", "Delete"};
         Object[][] data = {
             // Right now this just creates an empty object. You're gonna have to figure
                 // out some way to put stuff in from the backend/input field. Check the submission
@@ -198,16 +206,19 @@ public class MainMenuMockupAlt extends JFrame {
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
         table = new JTable(tableModel);
         // Label Sizing
-        table.getColumnModel().getColumn(0).setPreferredWidth(80);
-        table.getColumnModel().getColumn(1).setPreferredWidth(80);
-        table.getColumnModel().getColumn(2).setMaxWidth(50);
+        table.getColumnModel().getColumn(0).setPreferredWidth(70);
+        table.getColumnModel().getColumn(1).setPreferredWidth(15);
+        table.getColumnModel().getColumn(2).setPreferredWidth(15);
+        table.getColumnModel().getColumn(3).setPreferredWidth(15);
+        table.getColumnModel().getColumn(4).setPreferredWidth(15);
+        table.getColumnModel().getColumn(5).setMaxWidth(50);
 
         // register onTableCellUpdated, which must be done after table creation
         new TableCellListener(table, onTableCellUpdated);
 
         // Create column of delete buttons.
         // Register the delete button action listener
-        ButtonColumn deleteButtons = new ButtonColumn(table, onDeleteRowButtonPressed, 2);
+        ButtonColumn deleteButtons = new ButtonColumn(table, onDeleteRowButtonPressed, 5);
 
         // hotkeys the delete key
         deleteButtons.setMnemonic(KeyEvent.VK_D);
@@ -272,7 +283,7 @@ public class MainMenuMockupAlt extends JFrame {
         // Add the updated data
         for (Map.Entry<String, Map<String, String>> entry : db.database.guests.entrySet()) {
             Map<String, String> guest = entry.getValue();
-            String[] rowData = {guest.get("FirstName") + " " + guest.get("LastName"), guest.get("Date")};
+            String[] rowData = {guest.get("FirstName") + " " + guest.get("LastName")};
             tableModel.addRow(rowData);
         }
     }
