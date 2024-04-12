@@ -39,6 +39,7 @@ public class MainMenuMockupAlt extends JFrame {
         JButton panel1Button = createButton("Check In");
         JButton panel2Button = createButton("Bunk Assignment");
         JButton panel3Button = createButton("Guest Details");
+        JButton panel4Button = createButton("HMIS + CW Reporting");
 
         // Main Panel
         mainPanel = new JPanel();
@@ -49,11 +50,13 @@ public class MainMenuMockupAlt extends JFrame {
         JPanel panel1 = createCheckInPanel();
         JPanel panel2 = BunkAssignmentPanel.getBunkAssignmentPanel();
         GuestDetailsPanel panel3 = new GuestDetailsPanel();
+        ExternalDataReportingPanel panel4 = new ExternalDataReportingPanel();
 
         // Add panels to the main panel
         mainPanel.add(panel1, "Panel 1");
         mainPanel.add(panel2, "Panel 2");
         mainPanel.add(panel3, "Panel 3");
+        mainPanel.add(panel4.createExternalDataReportingPanel(), "Panel 4");
 
         // Initialize Active Button
         activeButton = panel1Button;
@@ -63,13 +66,15 @@ public class MainMenuMockupAlt extends JFrame {
         panel1Button.addActionListener(createButtonActionListener(panel1Button, "Panel 1"));
         panel2Button.addActionListener(createButtonActionListener(panel2Button, "Panel 2"));
         panel3Button.addActionListener(createButtonActionListener(panel3Button, "Panel 3"));
+        panel4Button.addActionListener(createButtonActionListener(panel4Button,"Panel 4"));
 
         // Side Panel for Buttons
         JPanel sidePanel = new JPanel();
-        sidePanel.setLayout(new GridLayout(3, 1));
+        sidePanel.setLayout(new GridLayout(4, 1));
         sidePanel.add(panel1Button);
         sidePanel.add(panel2Button);
         sidePanel.add(panel3Button);
+        sidePanel.add(panel4Button);
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -134,10 +139,6 @@ public class MainMenuMockupAlt extends JFrame {
         inputPanel.add(guestNameLabel);
         inputPanel.add(guestNameField);
 
-
-
-
-
         // Date Picker
         JDateChooser dateChooser = new JDateChooser();
         dateChooser.setDate(new Date()); // Set default date to current date
@@ -173,11 +174,19 @@ public class MainMenuMockupAlt extends JFrame {
 
         // Table Labels
         JLabel nameLabel = new JLabel("Name");
-        JLabel dateLabel = new JLabel("Date");
+        JLabel lockerLabel = new JLabel("Locker");
+        JLabel dayStorageLabel = new JLabel("D. Storage");
+        JLabel bunkAssignLabel = new JLabel("Bunk Assign.");
+        JLabel behaviorFlagsLabel = new JLabel("Behavior Flags");
+        //JLabel dateLabel = new JLabel("Date");
         JLabel deleteLabel = new JLabel("Delete");
 
         formPanel.add(nameLabel);
-        formPanel.add(dateLabel);
+        formPanel.add(lockerLabel);
+        formPanel.add(dayStorageLabel);
+        formPanel.add(bunkAssignLabel);
+        formPanel.add(behaviorFlagsLabel);
+        //formPanel.add(dateLabel);
         formPanel.add(deleteLabel);
 
         inputPanel.add(guestNameLabel, BorderLayout.WEST);
@@ -188,7 +197,7 @@ public class MainMenuMockupAlt extends JFrame {
         panel.add(inputPanel, BorderLayout.NORTH);
 
         // Table Init
-        String[] columnNames = {"Name", "Date", "Delete"};
+        String[] columnNames = {"Name", "Locker", "Storage", "Bunk Assign.", "Issues", "Delete"};
         Object[][] data = {
             // Right now this just creates an empty object. You're gonna have to figure
                 // out some way to put stuff in from the backend/input field. Check the submission
@@ -197,16 +206,19 @@ public class MainMenuMockupAlt extends JFrame {
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
         table = new JTable(tableModel);
         // Label Sizing
-        table.getColumnModel().getColumn(0).setPreferredWidth(80);
-        table.getColumnModel().getColumn(1).setPreferredWidth(80);
-        table.getColumnModel().getColumn(2).setMaxWidth(50);
+        table.getColumnModel().getColumn(0).setPreferredWidth(70);
+        table.getColumnModel().getColumn(1).setPreferredWidth(15);
+        table.getColumnModel().getColumn(2).setPreferredWidth(15);
+        table.getColumnModel().getColumn(3).setPreferredWidth(15);
+        table.getColumnModel().getColumn(4).setPreferredWidth(15);
+        table.getColumnModel().getColumn(5).setMaxWidth(50);
 
         // register onTableCellUpdated, which must be done after table creation
         new TableCellListener(table, onTableCellUpdated);
 
         // Create column of delete buttons.
         // Register the delete button action listener
-        ButtonColumn deleteButtons = new ButtonColumn(table, onDeleteRowButtonPressed, 2);
+        ButtonColumn deleteButtons = new ButtonColumn(table, onDeleteRowButtonPressed, 5);
 
         // hotkeys the delete key
         deleteButtons.setMnemonic(KeyEvent.VK_D);
@@ -271,7 +283,7 @@ public class MainMenuMockupAlt extends JFrame {
         // Add the updated data
         for (Map.Entry<String, Map<String, String>> entry : db.database.guests.entrySet()) {
             Map<String, String> guest = entry.getValue();
-            String[] rowData = {guest.get("FirstName") + " " + guest.get("LastName"), guest.get("Date")};
+            String[] rowData = {guest.get("FirstName") + " " + guest.get("LastName")};
             tableModel.addRow(rowData);
         }
     }
