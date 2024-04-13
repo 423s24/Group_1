@@ -3,7 +3,7 @@ package sssp.View;
 import sssp.Helper.DBConnectorV2Singleton;
 import sssp.View.components.*;
 import sssp.Helper.DBConnectorV2;
-import sssp.Model.DBKeys;
+import sssp.Model.GuestDBKeys;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -11,9 +11,6 @@ import javax.swing.text.AbstractDocument;
 
 import java.awt.*;
 import java.util.Map;
-
-
-import static sssp.View.DisciplinaryInfoPanel.getDisciplinaryInfoPanel;
 
 public class GuestDetailsPanel extends JPanel {
     private JLabel guestNameLabel;
@@ -75,6 +72,9 @@ public class GuestDetailsPanel extends JPanel {
     private DBSyncedTextArea medlockerNotesTextArea;
     private DBSyncedTextField medlockerAssigningStaffField;
 
+    // disciplinary info panel
+    private DisciplinaryInfoPanel disciplinaryInfoPanel;
+
     private DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
 
     private String activeGuestID = null;
@@ -105,7 +105,7 @@ public class GuestDetailsPanel extends JPanel {
 
         addStorageInfo();
 
-        JPanel disciplinaryInfoPanel = getDisciplinaryInfoPanel();
+        disciplinaryInfoPanel = new DisciplinaryInfoPanel();
         disciplinaryInfoPanel.setBorder(regBorder);
 
         JPanel storageInfoPanel = new JPanel();
@@ -172,7 +172,7 @@ public class GuestDetailsPanel extends JPanel {
         infoChecksPanel.add(HMISCheckLabel, gbc);
 
         gbc.gridx++;
-        HMISCheckBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, DBKeys.HMIS_CHECK.getKey());
+        HMISCheckBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, GuestDBKeys.HMIS_CHECK.getKey());
         infoChecksPanel.add(HMISCheckBox, gbc);
 
         addVertSeparator(infoChecksPanel, gbc);
@@ -182,11 +182,11 @@ public class GuestDetailsPanel extends JPanel {
         infoChecksPanel.add(sleepingBagLabel, gbc);
 
         gbc.gridx++;
-        sleepingBagBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, DBKeys.SLEEPING_BAG_CHECK.getKey());
+        sleepingBagBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, GuestDBKeys.SLEEPING_BAG_CHECK.getKey());
         infoChecksPanel.add(sleepingBagBox, gbc);
 
         gbc.gridx++;
-        sleepingBagDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, DBKeys.SLEEPING_BAG_DATE.getKey());
+        sleepingBagDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, GuestDBKeys.SLEEPING_BAG_DATE.getKey());
         sleepingBagDate.setDateFormatString("MM/dd/yyyy");
         sleepingBagDate.setVisible(false); // Start hidden
         infoChecksPanel.add(sleepingBagDate, gbc);
@@ -208,11 +208,11 @@ public class GuestDetailsPanel extends JPanel {
         infoChecksPanel.add(tentLabel, gbc);
 
         gbc.gridx++;
-        tentBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, DBKeys.TENT_CHECK.getKey());
+        tentBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, GuestDBKeys.TENT_CHECK.getKey());
         infoChecksPanel.add(tentBox, gbc);
 
         gbc.gridx++;
-        tentDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, DBKeys.TENT_DATE.getKey());
+        tentDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, GuestDBKeys.TENT_DATE.getKey());
         tentDate.setDateFormatString("MM/dd/yyyy");
         tentDate.setVisible(false);
         infoChecksPanel.add(tentDate, gbc);
@@ -234,11 +234,11 @@ public class GuestDetailsPanel extends JPanel {
         infoChecksPanel.add(backpackLabel, gbc);
 
         gbc.gridx++;
-        backpackBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, DBKeys.BACKPACK_CHECK.getKey());
+        backpackBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, GuestDBKeys.BACKPACK_CHECK.getKey());
         infoChecksPanel.add(backpackBox, gbc);
 
         gbc.gridx++;
-        backpackDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, DBKeys.BACKPACK_DATE.getKey());
+        backpackDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, GuestDBKeys.BACKPACK_DATE.getKey());
         backpackDate.setDateFormatString("MM/dd/yyyy");
         backpackDate.setVisible(false);
         infoChecksPanel.add(backpackDate, gbc);
@@ -261,11 +261,11 @@ public class GuestDetailsPanel extends JPanel {
         infoChecksPanel.add(outreachBackpackLabel, gbc);
 
         gbc.gridx++;
-        outreachBackpackBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, DBKeys.OUTREACH_BACKPACK_CHECK.getKey());
+        outreachBackpackBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, GuestDBKeys.OUTREACH_BACKPACK_CHECK.getKey());
         infoChecksPanel.add(outreachBackpackBox, gbc);
 
         gbc.gridx++;
-        outreachBackpackDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, DBKeys.OUTREACH_BACKPACK_DATE.getKey());
+        outreachBackpackDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, GuestDBKeys.OUTREACH_BACKPACK_DATE.getKey());
         outreachBackpackDate.setDateFormatString("MM/dd/yyyy");
         outreachBackpackDate.setVisible(false); // Start hidden
         infoChecksPanel.add(outreachBackpackDate, gbc);
@@ -287,11 +287,11 @@ public class GuestDetailsPanel extends JPanel {
         infoChecksPanel.add(sleepingPadLabel, gbc);
 
         gbc.gridx++;
-        sleepingPadBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, DBKeys.SLEEPING_PAD_CHECK.getKey());
+        sleepingPadBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, GuestDBKeys.SLEEPING_PAD_CHECK.getKey());
         infoChecksPanel.add(sleepingPadBox, gbc);
 
         gbc.gridx++;
-        sleepingPadDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, DBKeys.SLEEPING_PAD_DATE.getKey());
+        sleepingPadDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, GuestDBKeys.SLEEPING_PAD_DATE.getKey());
         sleepingPadDate.setDateFormatString("MM/dd/yyyy");
         sleepingPadDate.setVisible(false);
         infoChecksPanel.add(sleepingPadDate, gbc);
@@ -343,7 +343,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(shelfLabel, gbc);
 
         gbc.gridy++;
-        dayStorageShelfField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, DBKeys.DAY_STORAGE_SHELF.getKey());
+        dayStorageShelfField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, GuestDBKeys.DAY_STORAGE_SHELF.getKey());
         panel.add(dayStorageShelfField, gbc);
 
         gbc.gridy++;
@@ -351,7 +351,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(slotLabel, gbc);
 
         gbc.gridy++;
-        dayStorageSlotField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, DBKeys.DAY_STORAGE_SLOT.getKey());
+        dayStorageSlotField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, GuestDBKeys.DAY_STORAGE_SLOT.getKey());
         panel.add(dayStorageSlotField, gbc);
 
         addSeparator(panel, gbc);
@@ -361,7 +361,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(dayStorageStartDateLabel, gbc);
 
         gbc.gridy++;
-        dayStorageStartDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, DBKeys.DAY_STORAGE_START_DATE.getKey());
+        dayStorageStartDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, GuestDBKeys.DAY_STORAGE_START_DATE.getKey());
         dayStorageStartDate.setDateFormatString("MM/dd/yyyy");
         panel.add(dayStorageStartDate, gbc);
 
@@ -370,7 +370,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(expirationDateLabel, gbc);
 
         gbc.gridy++;
-        dayStorageExpirationDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, DBKeys.DAY_STORAGE_EXPIRATION_DATE.getKey());
+        dayStorageExpirationDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, GuestDBKeys.DAY_STORAGE_EXPIRATION_DATE.getKey());
         dayStorageExpirationDate.setDateFormatString("MM/dd/yyyy");
         panel.add(dayStorageExpirationDate, gbc);
 
@@ -381,7 +381,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(containerDescriptionLabel, gbc);
 
         gbc.gridy++;
-        dayStorageContainerDescriptionTextArea = new DBSyncedTextArea(5, 20, db.database.guests, this.activeGuestID, DBKeys.DAY_STORAGE_CONTAINER_DESCRIPTION.getKey());
+        dayStorageContainerDescriptionTextArea = new DBSyncedTextArea(5, 20, db.database.guests, this.activeGuestID, GuestDBKeys.DAY_STORAGE_CONTAINER_DESCRIPTION.getKey());
         dayStorageContainerDescriptionTextArea.setLineWrap(true);
         dayStorageContainerDescriptionTextArea.setWrapStyleWord(true);
         JScrollPane notesScrollPane = new JScrollPane(dayStorageContainerDescriptionTextArea);
@@ -394,7 +394,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(staffInitialsLabel, gbc);
 
         gbc.gridy++;
-        dayStorageStaffInitialsField = new DBSyncedTextField(5, db.database.guests, this.activeGuestID, DBKeys.DAY_STORAGE_STAFF_INITIALS.getKey());
+        dayStorageStaffInitialsField = new DBSyncedTextField(5, db.database.guests, this.activeGuestID, GuestDBKeys.DAY_STORAGE_STAFF_INITIALS.getKey());
         panel.add(dayStorageStaffInitialsField, gbc);
 
         gbc.gridy++;
@@ -402,7 +402,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(contractLabel, gbc);
 
         gbc.gridy++;
-        dayStorageContractBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, DBKeys.DAY_STORAGE_CONTRACT_CHECK.getKey());
+        dayStorageContractBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, GuestDBKeys.DAY_STORAGE_CONTRACT_CHECK.getKey());
         panel.add(dayStorageContractBox, gbc);
 
         return panel;
@@ -420,7 +420,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(lockerNumberLabel, gbc);
 
         gbc.gridy++;
-        medlockerNumberField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, DBKeys.MED_LOCKER_NUMBER.getKey());
+        medlockerNumberField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, GuestDBKeys.MED_LOCKER_NUMBER.getKey());
         panel.add(medlockerNumberField, gbc);
 
         gbc.gridy++;
@@ -428,7 +428,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(accommodationLinkLabel, gbc);
 
         gbc.gridy++;
-        medlockerAccommodationLinkField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, DBKeys.MED_LOCKER_ACCOMMODATION_LINK.getKey());
+        medlockerAccommodationLinkField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, GuestDBKeys.MED_LOCKER_ACCOMMODATION_LINK.getKey());
         panel.add(medlockerAccommodationLinkField, gbc);
 
         addSeparator(panel, gbc);
@@ -438,7 +438,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(startDateLabel, gbc);
 
         gbc.gridy++;
-        medlockerStartDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, DBKeys.MED_LOCKER_START_DATE.getKey());
+        medlockerStartDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, GuestDBKeys.MED_LOCKER_START_DATE.getKey());
         medlockerStartDate.setDateFormatString("MM/dd/yyyy");
         panel.add(medlockerStartDate, gbc);
 
@@ -447,7 +447,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(lastAccessedLabel, gbc);
 
         gbc.gridy++;
-        medlockerLastAccessedDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, DBKeys.MED_LOCKER_LAST_ACCESSED_DATE.getKey());
+        medlockerLastAccessedDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, GuestDBKeys.MED_LOCKER_LAST_ACCESSED_DATE.getKey());
         medlockerLastAccessedDate.setDateFormatString("MM/dd/yyyy");
         panel.add(medlockerLastAccessedDate, gbc);
 
@@ -458,7 +458,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(notesLabel, gbc);
 
         gbc.gridy++;
-        medlockerNotesTextArea = new DBSyncedTextArea(5, 20, db.database.guests, this.activeGuestID, DBKeys.MED_LOCKER_NOTES.getKey());
+        medlockerNotesTextArea = new DBSyncedTextArea(5, 20, db.database.guests, this.activeGuestID, GuestDBKeys.MED_LOCKER_NOTES.getKey());
         medlockerNotesTextArea.setLineWrap(true);
         medlockerNotesTextArea.setWrapStyleWord(true);
         JScrollPane notesScrollPane = new JScrollPane(medlockerNotesTextArea);
@@ -471,7 +471,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(assigningStaffLabel, gbc);
 
         gbc.gridy++;
-        medlockerAssigningStaffField = new DBSyncedTextField(5, db.database.guests, this.activeGuestID, DBKeys.MED_LOCKER_ASSIGNING_STAFF.getKey());
+        medlockerAssigningStaffField = new DBSyncedTextField(5, db.database.guests, this.activeGuestID, GuestDBKeys.MED_LOCKER_ASSIGNING_STAFF.getKey());
         panel.add(medlockerAssigningStaffField, gbc);
 
         return panel;
@@ -489,7 +489,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(smLockerLockerNumberLabel, gbc);
 
         gbc.gridy++;
-        smLockerLockerNumberField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, DBKeys.SM_LOCKER_NUMBER.getKey());
+        smLockerLockerNumberField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, GuestDBKeys.SM_LOCKER_NUMBER.getKey());
         panel.add(smLockerLockerNumberField, gbc);
 
         addSeparator(panel, gbc);
@@ -499,7 +499,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(smLockerStartDateLabel, gbc);
 
         gbc.gridy++;
-        smLockerStartDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, DBKeys.SM_LOCKER_START_DATE.getKey());
+        smLockerStartDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, GuestDBKeys.SM_LOCKER_START_DATE.getKey());
         smLockerStartDate.setDateFormatString("MM/dd/yyyy");
         panel.add(smLockerStartDate, gbc);
 
@@ -508,7 +508,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(smLockerLastAccessedLabel, gbc);
 
         gbc.gridy++;
-        smLockerLastAccessedDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, DBKeys.SM_LOCKER_LAST_ACCESSED_DATE.getKey());
+        smLockerLastAccessedDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, GuestDBKeys.SM_LOCKER_LAST_ACCESSED_DATE.getKey());
         smLockerLastAccessedDate.setDateFormatString("MM/dd/yyyy");
         panel.add(smLockerLastAccessedDate, gbc);
 
@@ -519,7 +519,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(smLockerNotesLabel, gbc);
 
         gbc.gridy++;
-        smLockerNotesTextArea = new DBSyncedTextArea(5, 20, db.database.guests, this.activeGuestID, DBKeys.SM_LOCKER_NOTES.getKey());
+        smLockerNotesTextArea = new DBSyncedTextArea(5, 20, db.database.guests, this.activeGuestID, GuestDBKeys.SM_LOCKER_NOTES.getKey());
         smLockerNotesTextArea.setLineWrap(true);
         smLockerNotesTextArea.setWrapStyleWord(true);
         JScrollPane smLockerNotesScrollPane = new JScrollPane(smLockerNotesTextArea);
@@ -532,7 +532,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(smLockerAssigningStaffLabel, gbc);
 
         gbc.gridy++;
-        smLockerAssigningStaffField = new DBSyncedTextField(5, db.database.guests, this.activeGuestID, DBKeys.SM_LOCKER_ASSIGNING_STAFF.getKey());
+        smLockerAssigningStaffField = new DBSyncedTextField(5, db.database.guests, this.activeGuestID, GuestDBKeys.SM_LOCKER_ASSIGNING_STAFF.getKey());
         panel.add(smLockerAssigningStaffField, gbc);
 
         return panel;
@@ -550,7 +550,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(csPreviousLocationLabel, gbc);
 
         gbc.gridy++;
-        csPreviousLocationField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, DBKeys.CS_PREVIOUS_LOCATION.getKey());
+        csPreviousLocationField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, GuestDBKeys.CS_PREVIOUS_LOCATION.getKey());
         panel.add(csPreviousLocationField, gbc);
 
         gbc.gridy++;
@@ -558,7 +558,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(csReasonForMoveLabel, gbc);
 
         gbc.gridy++;
-        csReasonForMoveTextArea = new DBSyncedTextArea(5, 20, db.database.guests, this.activeGuestID, DBKeys.CS_REASON_FOR_MOVE.getKey());
+        csReasonForMoveTextArea = new DBSyncedTextArea(5, 20, db.database.guests, this.activeGuestID, GuestDBKeys.CS_REASON_FOR_MOVE.getKey());
         csReasonForMoveTextArea.setLineWrap(true);
         csReasonForMoveTextArea.setWrapStyleWord(true);
         JScrollPane csReasonForMoveScrollPane = new JScrollPane(csReasonForMoveTextArea);
@@ -569,7 +569,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(csContainerDescriptionLabel, gbc);
 
         gbc.gridy++;
-        csContainerDescriptionTextArea = new DBSyncedTextArea(5, 20, db.database.guests, this.activeGuestID, DBKeys.CS_CONTAINER_DESCRIPTION.getKey());
+        csContainerDescriptionTextArea = new DBSyncedTextArea(5, 20, db.database.guests, this.activeGuestID, GuestDBKeys.CS_CONTAINER_DESCRIPTION.getKey());
         csContainerDescriptionTextArea.setLineWrap(true);
         csContainerDescriptionTextArea.setWrapStyleWord(true);
         JScrollPane csContainerDescriptionScrollPane = new JScrollPane(csContainerDescriptionTextArea);
@@ -582,7 +582,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(csStartDateLabel, gbc);
 
         gbc.gridy++;
-        csStartDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, DBKeys.CS_START_DATE.getKey());
+        csStartDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, GuestDBKeys.CS_START_DATE.getKey());
         csStartDate.setDateFormatString("MM/dd/yyyy");
         panel.add(csStartDate, gbc);
 
@@ -591,7 +591,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(csExpirationDateLabel, gbc);
 
         gbc.gridy++;
-        csExpirationDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, DBKeys.CS_EXPIRATION_DATE.getKey());
+        csExpirationDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, GuestDBKeys.CS_EXPIRATION_DATE.getKey());
         csExpirationDate.setDateFormatString("MM/dd/yyyy");
         panel.add(csExpirationDate, gbc);
 
@@ -602,7 +602,7 @@ public class GuestDetailsPanel extends JPanel {
         panel.add(csGuestNotifiedLabel, gbc);
 
         gbc.gridy++;
-        csGuestNotifiedBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, DBKeys.CS_GUEST_NOTIFIED_CHECK.getKey());
+        csGuestNotifiedBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, GuestDBKeys.CS_GUEST_NOTIFIED_CHECK.getKey());
         panel.add(csGuestNotifiedBox, gbc);
 
         return panel;
@@ -620,7 +620,7 @@ public class GuestDetailsPanel extends JPanel {
         basicDataPanel.add(firstNameLabel, gbc);
 
         gbc.gridy++;
-        firstNameField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, DBKeys.FIRST_NAME.getKey());
+        firstNameField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, GuestDBKeys.FIRST_NAME.getKey());
         basicDataPanel.add(firstNameField, gbc);
 
         gbc.gridy++;
@@ -628,7 +628,7 @@ public class GuestDetailsPanel extends JPanel {
         basicDataPanel.add(lastNameLabel, gbc);
 
         gbc.gridy++;
-        lastNameField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, DBKeys.LAST_NAME.getKey());
+        lastNameField = new DBSyncedTextField(20, db.database.guests, this.activeGuestID, GuestDBKeys.LAST_NAME.getKey());
         basicDataPanel.add(lastNameField, gbc);
 
         addSeparator(basicDataPanel, gbc);
@@ -638,7 +638,7 @@ public class GuestDetailsPanel extends JPanel {
         basicDataPanel.add(firstHousedLabel, gbc);
 
         gbc.gridy++;
-        guestSinceDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, DBKeys.GUEST_SINCE_DATE.getKey());
+        guestSinceDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, GuestDBKeys.GUEST_SINCE_DATE.getKey());
         guestSinceDate.setDateFormatString("MM/dd/yyyy");
         basicDataPanel.add(guestSinceDate, gbc);
 
@@ -647,7 +647,7 @@ public class GuestDetailsPanel extends JPanel {
         basicDataPanel.add(lastVisitLabel, gbc);
 
         gbc.gridy++;
-        lastVisitDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, DBKeys.LAST_VISIT_DATE.getKey());
+        lastVisitDate = new DBSyncedDateChooser(db.database.guests, this.activeGuestID, GuestDBKeys.LAST_VISIT_DATE.getKey());
         lastVisitDate.setDateFormatString("MM/dd/yyyy");
         basicDataPanel.add(lastVisitDate, gbc);
 
@@ -658,7 +658,7 @@ public class GuestDetailsPanel extends JPanel {
         basicDataPanel.add(notesLabel, gbc);
 
         gbc.gridy++;
-        notesTextArea = new DBSyncedTextArea(10, 20, db.database.guests, this.activeGuestID, DBKeys.NOTES.getKey());
+        notesTextArea = new DBSyncedTextArea(10, 20, db.database.guests, this.activeGuestID, GuestDBKeys.NOTES.getKey());
         notesTextArea.setLineWrap(true);
         notesTextArea.setWrapStyleWord(true);
         JScrollPane notesScrollPane = new JScrollPane(notesTextArea);
@@ -679,6 +679,8 @@ public class GuestDetailsPanel extends JPanel {
             JOptionPane.showMessageDialog(null, "Error: The guest " + guestID + " does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
+
+        disciplinaryInfoPanel.setActiveGuestID(guestID);
 
         onActiveGuestChanged();
 
