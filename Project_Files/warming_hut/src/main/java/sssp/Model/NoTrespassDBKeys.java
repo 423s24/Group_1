@@ -3,10 +3,10 @@ package sssp.Model;
 public enum NoTrespassDBKeys {
     DATE_OF_INCIDENT("DateOfIncident", "Date of Incident"),
     NO_TRESPASS_FROM("NoTrespassFrom", "No Trespass From"),
-    BPD_STATUS("BPDStatus", "BPD Status"),
+    BPD_STATUS("StatusBPD", "BPD Status"),
     STAFF_INITIALS("StaffInitials", "Staff Initials"),
-    LBD_STATUS("LBDStatus", "LBD Status"),
-    CW_ALERT("CWAlert", "CW Alert"),
+    LPD_STATUS("StatusLPD", "LPD Status"),
+    CW_ALERT("AlertToCW", "CW Alert"),
     NOTES("Notes", "Notes");
 
     private final String key;

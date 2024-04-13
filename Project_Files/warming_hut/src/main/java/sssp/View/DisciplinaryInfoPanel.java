@@ -98,7 +98,7 @@ public class DisciplinaryInfoPanel extends JPanel {
         NoTrespassDBKeys.NO_TRESPASS_FROM.getPrettyName(),
         NoTrespassDBKeys.STAFF_INITIALS.getPrettyName(),
         NoTrespassDBKeys.BPD_STATUS.getPrettyName(),
-        NoTrespassDBKeys.LBD_STATUS.getPrettyName(),
+        NoTrespassDBKeys.LPD_STATUS.getPrettyName(),
         NoTrespassDBKeys.CW_ALERT.getPrettyName(),
         NoTrespassDBKeys.NOTES.getPrettyName()
     };
@@ -191,7 +191,7 @@ public class DisciplinaryInfoPanel extends JPanel {
             dataArray[i][1] = row.get(NoTrespassDBKeys.NO_TRESPASS_FROM.getKey());
             dataArray[i][2] = row.get(NoTrespassDBKeys.STAFF_INITIALS.getKey());
             dataArray[i][3] = row.get(NoTrespassDBKeys.BPD_STATUS.getKey());
-            dataArray[i][4] = row.get(NoTrespassDBKeys.LBD_STATUS.getKey());
+            dataArray[i][4] = row.get(NoTrespassDBKeys.LPD_STATUS.getKey());
             dataArray[i][5] = row.get(NoTrespassDBKeys.CW_ALERT.getKey());
             dataArray[i][6] = row.get(NoTrespassDBKeys.NOTES.getKey());
         }
