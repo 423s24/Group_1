@@ -142,25 +142,20 @@ public class DisciplinaryInfoPanel extends JPanel {
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.WEST;
-        c.gridx = 0;
-        c.gridy = 0;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.gridy = GridBagConstraints.RELATIVE;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+
         noTrespassDetailsPanel.add(noTrespassGuestNameLabel, c);
-
-        c.gridy = 1;
         noTrespassDetailsPanel.add(noNoTrespassesLabel, c);
-
-        c.weightx = 0;
-        c.gridwidth = 3;
-        c.gridx = 0;
-        c.gridy = 2;
         noTrespassDetailsPanel.add(noTrespassLabel, c);
-        c.gridx = 0;
-        c.weightx = 1;
-        c.gridy = 3;
         noTrespassDetailsPanel.add(noTrespassTable.getTableHeader(), c);
-        c.gridy = 4;
         noTrespassDetailsPanel.add(noTrespassTable, c);
+
+        // Add padding below the panel
+        c.weighty = 1.0;
+        c.gridy = GridBagConstraints.RELATIVE;
+        noTrespassDetailsPanel.add(new JLabel(), c);
 
         return new JScrollPane(noTrespassDetailsPanel);
     }
@@ -203,11 +198,9 @@ public class DisciplinaryInfoPanel extends JPanel {
 // region Warnings Panel
     public static final JLabel lastSixMonthsLabel = new JLabel("Last 6 Months");
     public static final JLabel lastSixMonthsTotalLabel = new JLabel("Total: ");
-    public static final JLabel lastSixMonthsTotal = new JLabel("2");
     public static final JLabel olderLabel = new JLabel("Older Than 6 Months");
     public static final JLabel olderTotalLabel = new JLabel("Total: ");
-    public static final JLabel olderTotal = new JLabel("4");
-    private static final JLabel noWarningsLabel = new JLabel("No Warnings");
+    private static final JLabel noWarningsHeader = new JLabel("No Warnings");
 
     private JTable sixMonthWarningsTable;
     private JTable olderWarningsTable;
@@ -215,7 +208,7 @@ public class DisciplinaryInfoPanel extends JPanel {
     private JScrollPane createWarningDetailsPanel(){
         warningDetailsPanel = new JPanel(new GridBagLayout());
 
-        warningsGuestNameLabel = new JLabel("Guest Name: " + "John Doe");
+        warningsGuestNameLabel = new JLabel("Guest Name: John Doe");
 
         warningsGuestNameLabel.setBackground(Color.gray);
         warningsGuestNameLabel.setOpaque(true);
@@ -228,9 +221,6 @@ public class DisciplinaryInfoPanel extends JPanel {
         lastSixMonthsTotalLabel.setOpaque(true);
         lastSixMonthsTotalLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         lastSixMonthsTotalLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        lastSixMonthsTotal.setBackground(Color.lightGray);
-        lastSixMonthsTotal.setOpaque(true);
-        lastSixMonthsTotal.setFont(new Font("Serif", Font.PLAIN, 18));
 
         olderLabel.setBackground(Color.lightGray);
         olderLabel.setOpaque(true);
@@ -239,14 +229,11 @@ public class DisciplinaryInfoPanel extends JPanel {
         olderTotalLabel.setOpaque(true);
         olderTotalLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         olderTotalLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        olderTotal.setBackground(Color.lightGray);
-        olderTotal.setOpaque(true);
-        olderTotal.setFont(new Font("Serif", Font.PLAIN, 18));
 
-        noWarningsLabel.setBackground(Color.lightGray);
-        noWarningsLabel.setOpaque(true);
-        noWarningsLabel.setFont(new Font("Serif", Font.PLAIN, 18));
-        noWarningsLabel.setVisible(false);
+        noWarningsHeader.setBackground(Color.lightGray);
+        noWarningsHeader.setOpaque(true);
+        noWarningsHeader.setFont(new Font("Serif", Font.PLAIN, 18));
+        noWarningsHeader.setVisible(false);
 
         // Data to be displayed in the JTable
         String[][] sixMonthData = {
@@ -288,69 +275,47 @@ public class DisciplinaryInfoPanel extends JPanel {
         olderWarningsTable.setBackground(Color.YELLOW);
 
 
+        // Add left-side elements
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.WEST;
-        c.gridx = 0;
-        c.gridy = 0;
-        warningDetailsPanel.add(warningsGuestNameLabel, c);
-
-        c.gridy = 1;
-        warningDetailsPanel.add(noWarningsLabel, c);
-
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.gridx = 0;
-        c.gridy = 2;
-        warningDetailsPanel.add(lastSixMonthsLabel, c);
-
-        c.weightx = 1.0;
-        c.gridx = 1;
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        warningDetailsPanel.add(lastSixMonthsTotalLabel, c);
-
-        c.gridx = 2;
-        c.weightx = 0;
-        c.ipadx = 5;
-        c.anchor = GridBagConstraints.WEST;
-        warningDetailsPanel.add(lastSixMonthsTotal, c);
-
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.gridy = GridBagConstraints.RELATIVE;
         c.gridx = 0;
         c.weightx = 1;
-        c.gridy = 3;
-        c.gridwidth = 3;
-        warningDetailsPanel.add(sixMonthWarningsTable.getTableHeader(), c);
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        
+        warningDetailsPanel.add(warningsGuestNameLabel, c);
+        warningDetailsPanel.add(noWarningsHeader, c);
 
-        c.gridy = 4;
+        c.gridwidth = 1;
+        warningDetailsPanel.add(lastSixMonthsLabel, c);
+        c.gridwidth = GridBagConstraints.REMAINDER;
+
+        warningDetailsPanel.add(sixMonthWarningsTable.getTableHeader(), c);
         warningDetailsPanel.add(sixMonthWarningsTable, c);
 
-        c.gridx = 0;
-        c.gridy = 5;
         c.gridwidth = 1;
-        c.weightx = 0;
         warningDetailsPanel.add(olderLabel, c);
+        c.gridwidth = GridBagConstraints.REMAINDER;
 
-        c.weightx = 1.0;
-        c.gridx = 1;
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        warningDetailsPanel.add(olderTotalLabel, c);
-
-        c.gridx = 2;
-        c.weightx = 0;
-        c.ipadx = 5;
-        c.anchor = GridBagConstraints.WEST;
-        warningDetailsPanel.add(olderTotal, c);
-
-        c.gridx = 0;
-        c.weightx = 1;
-        c.gridy = 6;
-        c.gridwidth = 3;
         warningDetailsPanel.add(olderWarningsTable.getTableHeader(), c);
 
-        c.gridy = 7;
         warningDetailsPanel.add(olderWarningsTable, c);
+
+        // add right-side elements
+        
+        c.gridx = 1;
+        c.gridy = 1;
+        warningDetailsPanel.add(lastSixMonthsTotalLabel, c);
+
+        c.gridy = 4;
+        warningDetailsPanel.add(olderTotalLabel, c);
+
+        // Add padding below the panel
+        c.weighty = 1.0;
+        c.gridx = 0;
+        c.gridy = GridBagConstraints.RELATIVE;
+        warningDetailsPanel.add(new JLabel(), c);
 
         return new JScrollPane(warningDetailsPanel);
     }
@@ -389,27 +354,25 @@ public class DisciplinaryInfoPanel extends JPanel {
 
         if (shouldShowSixMonthWarnings) {
             sixMonthWarningsTable.setModel(createWarningsTable(sixMonthWarnings, columnNames));
-            lastSixMonthsTotal.setText(String.valueOf(sixMonthWarnings.size()));
+            lastSixMonthsTotalLabel.setText("Total: " + String.valueOf(sixMonthWarnings.size()));
         }
 
         sixMonthWarningsTable.setVisible(shouldShowSixMonthWarnings);
         sixMonthWarningsTable.getTableHeader().setVisible(shouldShowSixMonthWarnings);
         lastSixMonthsLabel.setVisible(shouldShowSixMonthWarnings);
         lastSixMonthsTotalLabel.setVisible(shouldShowSixMonthWarnings);
-        lastSixMonthsTotal.setVisible(shouldShowSixMonthWarnings);
 
         if (shouldShowOlderWarnings) {
             olderWarningsTable.setModel(createWarningsTable(olderWarnings, columnNames));
-            olderTotal.setText(String.valueOf(olderWarnings.size()));
+            olderTotalLabel.setText("Total: " + String.valueOf(olderWarnings.size()));
         }
 
         olderWarningsTable.setVisible(shouldShowOlderWarnings);
         olderWarningsTable.getTableHeader().setVisible(shouldShowOlderWarnings);
         olderLabel.setVisible(shouldShowOlderWarnings);
         olderTotalLabel.setVisible(shouldShowOlderWarnings);
-        olderTotal.setVisible(shouldShowOlderWarnings);
 
-        noWarningsLabel.setVisible(!shouldShowSixMonthWarnings && !shouldShowOlderWarnings);
+        noWarningsHeader.setVisible(!shouldShowSixMonthWarnings && !shouldShowOlderWarnings);
     }
     
     private DefaultTableModel createWarningsTable(List<Map<String, String>> data, String[] columnNames) {
@@ -439,8 +402,8 @@ public class DisciplinaryInfoPanel extends JPanel {
         JPanel suspensionsDetailsPanel = new JPanel(new GridBagLayout());
 
         suspensionsGuestNameLabel = new JLabel("Guest Name: John Doe");
-        activeSuspensionsHeader = new JLabel("  Active Suspensions");
-        olderSuspensionsHeader = new JLabel("  Expired Suspensions");
+        activeSuspensionsHeader = new JLabel("Active Suspensions");
+        olderSuspensionsHeader = new JLabel("Expired Suspensions");
 
         // Visible when there are no suspensions.
         noSuspensionsHeader = new JLabel("No Suspensions");
@@ -459,8 +422,6 @@ public class DisciplinaryInfoPanel extends JPanel {
         noSuspensionsHeader.setBackground(Color.lightGray);
         noSuspensionsHeader.setOpaque(true);
         noSuspensionsHeader.setFont(new Font("Serif", Font.PLAIN, 18));
-
-        
 
         // Column Names
         String[] columnNames = {
@@ -508,44 +469,26 @@ public class DisciplinaryInfoPanel extends JPanel {
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.WEST;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.gridy = GridBagConstraints.RELATIVE;
         c.gridx = 0;
-        c.gridy = 0;
+        c.weightx = 1;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+
         suspensionsDetailsPanel.add(suspensionsGuestNameLabel, c);
-
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.gridx = 0;
-        c.gridy = 1;
         suspensionsDetailsPanel.add(noSuspensionsHeader, c);
-
-        c.weightx = 0;
-        c.gridwidth = 3;
-        c.gridx = 0;
-        c.gridy = 2;
         suspensionsDetailsPanel.add(activeSuspensionsHeader, c);
-
-        c.gridx = 0;
-        c.weightx = 1;
-        c.gridy = 3;
         suspensionsDetailsPanel.add(activeSuspensionsTable.getTableHeader(), c);
-
-        c.gridy = 4;
         suspensionsDetailsPanel.add(activeSuspensionsTable, c);
-
-        c.gridx = 0;
-        c.gridy = 5;
-        c.gridwidth = 3;
-        c.weightx = 0;
         suspensionsDetailsPanel.add(olderSuspensionsHeader, c);
-
-        c.gridx = 0;
-        c.weightx = 1;
-        c.gridy = 6;
         suspensionsDetailsPanel.add(olderSuspensionsTable.getTableHeader(), c);
-
-        c.gridy = 7;
         suspensionsDetailsPanel.add(olderSuspensionsTable, c);
+
+        // Add padding below the panel
+        c.weighty = 1.0;
+        c.gridx = 0;
+        c.gridy = GridBagConstraints.RELATIVE;
+        noTrespassDetailsPanel.add(new JLabel(), c);
 
         return new JScrollPane(suspensionsDetailsPanel);
     }
