@@ -11,7 +11,7 @@ import sssp.Helper.DBConnectorV2Singleton;
 import sssp.Model.GuestDBKeys;
 import sssp.Model.NoTrespassDBKeys;
 import sssp.Model.SuspensionDBKeys;
-import sssp.Model.WarningsDBKeys;
+import sssp.Model.WarningDBKeys;
 
 import java.awt.*;
 import java.util.Date;
@@ -243,9 +243,9 @@ public class DisciplinaryInfoPanel extends JPanel {
 
         // Column Names
         String[] columnNames = {
-            WarningsDBKeys.DATE.getPrettyName(),
-            WarningsDBKeys.STAFF_INITIALS.getPrettyName(),
-            WarningsDBKeys.NOTES.getPrettyName()
+            WarningDBKeys.DATE.getPrettyName(),
+            WarningDBKeys.STAFF_INITIALS.getPrettyName(),
+            WarningDBKeys.NOTES.getPrettyName()
         };
 
         // Initializing the JTable
@@ -332,7 +332,7 @@ public class DisciplinaryInfoPanel extends JPanel {
 
         for (Map<String, String> warning : warningData) {
             try {
-                Date warningDate = sdf.parse(warning.get(WarningsDBKeys.DATE.getKey()));
+                Date warningDate = sdf.parse(warning.get(WarningDBKeys.DATE.getKey()));
                 if (warningDate.after(sixMonthsAgo)) {
                     sixMonthWarnings.add(warning);
                 } else {
@@ -344,9 +344,9 @@ public class DisciplinaryInfoPanel extends JPanel {
         }
 
         String[] columnNames = {
-            WarningsDBKeys.DATE.getPrettyName(),
-            WarningsDBKeys.STAFF_INITIALS.getPrettyName(),
-            WarningsDBKeys.NOTES.getPrettyName()
+            WarningDBKeys.DATE.getPrettyName(),
+            WarningDBKeys.STAFF_INITIALS.getPrettyName(),
+            WarningDBKeys.NOTES.getPrettyName()
         };
 
         boolean shouldShowSixMonthWarnings = !sixMonthWarnings.isEmpty();
@@ -380,9 +380,9 @@ public class DisciplinaryInfoPanel extends JPanel {
         String[][] dataArray = new String[data.size()][columnNames.length];
         for (int i = 0; i < data.size(); i++) {
             Map<String, String> row = data.get(i);
-            dataArray[i][0] = row.get(WarningsDBKeys.DATE.getKey());
-            dataArray[i][1] = row.get(WarningsDBKeys.STAFF_INITIALS.getKey());
-            dataArray[i][2] = row.get(WarningsDBKeys.NOTES.getKey());
+            dataArray[i][0] = row.get(WarningDBKeys.DATE.getKey());
+            dataArray[i][1] = row.get(WarningDBKeys.STAFF_INITIALS.getKey());
+            dataArray[i][2] = row.get(WarningDBKeys.NOTES.getKey());
         }
     
         // Create new DefaultTableModel with data

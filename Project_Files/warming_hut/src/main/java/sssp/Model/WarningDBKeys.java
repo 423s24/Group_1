@@ -1,6 +1,6 @@
 package sssp.Model;
 
-public enum WarningsDBKeys {
+public enum WarningDBKeys {
     DATE("Date", "Date"),
     STAFF_INITIALS("StaffInitials", "Staff Initials"),
     NOTES("Notes", "Notes");
@@ -8,7 +8,7 @@ public enum WarningsDBKeys {
     private final String key;
     private final String prettyName;
 
-    WarningsDBKeys(String key, String prettyName) {
+    WarningDBKeys(String key, String prettyName) {
         this.key = key;
         this.prettyName = prettyName;
     }
