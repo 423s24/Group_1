@@ -1,6 +1,6 @@
 package sssp.Model;
 
-public enum DBKeys {
+public enum GuestDBKeys {
     FIRST_NAME("FirstName"),
     LAST_NAME("LastName"),
     NOTES("Notes"),
@@ -52,7 +52,7 @@ public enum DBKeys {
 
     private final String key;
 
-    DBKeys(String key) {
+    GuestDBKeys(String key) {
         this.key = key;
     }
 
