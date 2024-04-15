@@ -18,10 +18,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class BunkAssignmentPanel {
 
+    private static final JPanel bunkPanel = new JPanel(new GridBagLayout());
+    private static final GridBagConstraints bpc = new GridBagConstraints();
     public static JPanel getBunkAssignmentPanel(){
         JPanel scrollPanel = new JPanel(new GridBagLayout());
         ScrollPane scrollPane = new ScrollPane();
-        JPanel bunkPanel = new JPanel(new GridBagLayout());
 
         JLabel GuestLabel = new JLabel("Guest");
         JLabel BunkLabel = new JLabel("Bunk Assignment");
@@ -40,37 +41,31 @@ public class BunkAssignmentPanel {
             label.setHorizontalAlignment(SwingConstants.CENTER);
         }
 
-        GridBagConstraints c = new GridBagConstraints();
-
-        c.gridx = 4;
-        c.gridy = 0;
-        c.weightx = 1;
-        c.insets = new Insets(0,0,5,10);
-        c.anchor = GridBagConstraints.EAST;
-        bunkPanel.add(bunkEditPopup, c);
-        c.gridx = 0;
-        c.gridy = 1;
-        c.weightx = 1;
-        c.anchor = GridBagConstraints.NORTH;
-        c.ipady = 20;
-        bunkPanel.add(GuestLabel, c);
-        c.gridx = 1;
-        bunkPanel.add(bedSlotLabel, c);
-        c.gridx = 2;
-        bunkPanel.add(BunkLabel, c);
-        c.gridx = 3;
-        bunkPanel.add(ReservationLabel, c);
-        c.gridx = 4;
-        bunkPanel.add(PreviouslyAssignedLabel, c);
-        c.ipady = 0;
+        bpc.gridx = 4;
+        bpc.gridy = 0;
+        bpc.weightx = 1;
+        bpc.insets = new Insets(0,0,5,10);
+        bpc.anchor = GridBagConstraints.EAST;
+        bunkPanel.add(bunkEditPopup, bpc);
+        bpc.gridx = 0;
+        bpc.gridy = 1;
+        bpc.weightx = 1;
+        bpc.anchor = GridBagConstraints.NORTH;
+        bpc.ipady = 20;
+        bunkPanel.add(GuestLabel, bpc);
+        bpc.gridx = 1;
+        bunkPanel.add(bedSlotLabel, bpc);
+        bpc.gridx = 2;
+        bunkPanel.add(BunkLabel, bpc);
+        bpc.gridx = 3;
+        bunkPanel.add(ReservationLabel, bpc);
+        bpc.gridx = 4;
+        bunkPanel.add(PreviouslyAssignedLabel, bpc);
+        bpc.ipady = 0;
 
         DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
-        int rowNum = 2;
-        for (Map.Entry<String, Map<String, String>> entry : db.database.guests.entrySet()) {
-            Map<String, String> guest = entry.getValue();
-            addGuestRow(bunkPanel, c, guest, rowNum);
-            rowNum++;
-        }
+        db.subscribeRunnableToDBUpdate(BunkAssignmentPanel::buildGuestRows);
+        buildGuestRows();
 
         scrollPane.add(bunkPanel);
 
@@ -85,7 +80,7 @@ public class BunkAssignmentPanel {
         return scrollPanel;
     }
 
-    private static void addGuestRow(JPanel panel, GridBagConstraints c, Map<String, String> guest, int rowNum){
+    private static void addGuestRow(Map<String, String> guest, int rowNum){
 
         JLabel guestNameLabel = new JLabel(guest.get("FirstName") + " " + guest.get("LastName"));
         JLabel reservedLabel = new JLabel("None");
@@ -125,26 +120,40 @@ public class BunkAssignmentPanel {
 
         bunkAssignmentRows.add(new BunkAssignmentRow(bedSlot, bunkAssignmentCombo));
 
-        c.gridy = rowNum;
-        c.gridx = 0;
-        c.weightx = 1;
-        c.anchor = GridBagConstraints.WEST;
-        c.insets = new Insets(5, 20, 5, 0);
-        panel.add(guestNameLabel, c);
-        c.insets = new Insets(5, 0, 5, 0);
-        c.gridx = 1;
-        c.anchor = GridBagConstraints.CENTER;
-        panel.add(bedSlot, c);
-        c.gridx = 2;
-        panel.add(bunkAssignmentCombo, c);
-        c.gridx = 3;
-        panel.add(reservedLabel, c);
-        c.gridx = 4;
-        panel.add(lastAssignedLabel, c);
+        bpc.gridy = rowNum;
+        bpc.gridx = 0;
+        bpc.weightx = 1;
+        bpc.anchor = GridBagConstraints.WEST;
+        bpc.insets = new Insets(5, 20, 5, 0);
+        bunkPanel.add(guestNameLabel, bpc);
+        bpc.insets = new Insets(5, 0, 5, 0);
+        bpc.gridx = 1;
+        bpc.anchor = GridBagConstraints.CENTER;
+        bunkPanel.add(bedSlot, bpc);
+        bpc.gridx = 2;
+        bunkPanel.add(bunkAssignmentCombo, bpc);
+        bpc.gridx = 3;
+        bunkPanel.add(reservedLabel, bpc);
+        bpc.gridx = 4;
+        bunkPanel.add(lastAssignedLabel, bpc);
+    }
+
+    private static ArrayList<String> guestsAdded = new ArrayList<>();
+    private static int rowNum = 2;
+    private static void buildGuestRows(){
+        DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
+
+        for (String guestId : db.database.guests.keySet()) {
+            if(!guestsAdded.contains(guestId)) {
+                guestsAdded.add(guestId);
+                Map<String, String> guest = db.database.guests.get(guestId);
+                addGuestRow(guest, rowNum);
+                rowNum++;
+            }
+        }
     }
 
     private static final ArrayList<BunkAssignmentRow> bunkAssignmentRows = new ArrayList<>();
-
     private static final ArrayList<String[]> mensBunkList = new ArrayList<>();
     private static final ArrayList<String[]> womensBunkList = new ArrayList<>();
     private static final ArrayList<String[]> observationBunkList = new ArrayList<>();
