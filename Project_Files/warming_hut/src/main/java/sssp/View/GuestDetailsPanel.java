@@ -98,7 +98,6 @@ public class GuestDetailsPanel extends JPanel {
         Border regBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.GRAY);
         topBarPanel.setBorder(topBorder);
 
-
         addBasicInfo();
 
         addInfoChecks();
@@ -609,6 +608,8 @@ public class GuestDetailsPanel extends JPanel {
     }
 
     private void addBasicInfo() {
+        JTabbedPane tabbedPane = new JTabbedPane();
+
         JPanel basicDataPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -664,9 +665,12 @@ public class GuestDetailsPanel extends JPanel {
         JScrollPane notesScrollPane = new JScrollPane(notesTextArea);
         basicDataPanel.add(notesScrollPane, gbc);
 
-        basicDataPanel.setBorder(BorderFactory.createTitledBorder("Basic Guest Data"));
+        //basicDataPanel.setBorder(BorderFactory.createTitledBorder("Basic Guest Data"));
 
-        add(basicDataPanel, BorderLayout.WEST);
+        tabbedPane.addTab("Basic Guest Data", basicDataPanel);
+        tabbedPane.addTab("Bunk Info", BunkReservationsPanel.getBunkReservationsPanel(this.activeGuestID));
+
+        add(tabbedPane, BorderLayout.WEST);
     }
 
     public boolean setActiveGuestID(String guestID) {
@@ -727,6 +731,8 @@ public class GuestDetailsPanel extends JPanel {
         medlockerLastAccessedDate.setObjKey(activeGuestID);
         medlockerNotesTextArea.setObjKey(activeGuestID);
         medlockerAssigningStaffField.setObjKey(activeGuestID);
+
+        BunkReservationsPanel.setObjKey(activeGuestID);
     }
 
     /**

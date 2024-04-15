@@ -152,7 +152,7 @@ public class BunkAssignmentPanel {
     private static final ArrayList<String[]>[] allBunkLists = new ArrayList[] {mensBunkList, womensBunkList, observationBunkList};
     private static final String[] bunkHeaders = new String[] {"Men's Bunks: ", "Women's Bunks: ", "Observation Area: "};
 
-    private static ArrayList<String[]> getAvailableBunks(JComboBox<String> bedSlotCombo){
+    public static ArrayList<String[]> getAvailableBunks(JComboBox<String> bedSlotCombo){
         Database db = DBConnectorV2Singleton.getInstance().database;
         boolean bunkSlotA = Objects.equals(bedSlotCombo.getSelectedItem(), "A");
 
@@ -208,10 +208,10 @@ public class BunkAssignmentPanel {
         }
         return availableBunks;
     }
-    private static class ComboBoxRenderer extends JLabel implements ListCellRenderer<String[]> {
+    public static class ComboBoxRenderer extends JLabel implements ListCellRenderer<String[]> {
 
         private Color selectionBackgroundColor;
-        private ComboBoxRenderer(){
+        ComboBoxRenderer(){
             setOpaque(true);
         }
 
