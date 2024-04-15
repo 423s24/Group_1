@@ -3,6 +3,8 @@ package sssp.View.components;
 import javax.swing.JTextField;
 import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
+
+import java.awt.event.ActionListener;
 import java.util.Map;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -36,17 +38,7 @@ public class DBSyncedTextField extends JTextField {
      * * The user pressing the enter key after selecting the field.
      * * The user clicking away from the field.
      */
-    DocumentListener textChangedListener = new DocumentListener() {
-        public void changedUpdate(DocumentEvent e) {
-            onTextChanged();
-        }
-        public void removeUpdate(DocumentEvent e) {
-            onTextChanged();
-        }
-        public void insertUpdate(DocumentEvent e) {
-            onTextChanged();
-        }
-    };
+    ActionListener textSubmittedListener = e -> onTextSubmitted();
 
     /**
      * A JTextField equivalent that is synchronized with the database.
@@ -133,7 +125,7 @@ public class DBSyncedTextField extends JTextField {
      */
     private void init() {
         // Triggered when the text field is updated
-        super.getDocument().addDocumentListener(textChangedListener);
+        super.addActionListener(textSubmittedListener);
 
         // Triggered when the DB updates
         db.subscribeRunnableToDBUpdate(this::onDBUpdate);
@@ -169,7 +161,7 @@ public class DBSyncedTextField extends JTextField {
     /**
      * Updates the DB when the text is changed.
      */
-    private void onTextChanged()
+    private void onTextSubmitted()
     {
         if(!fieldAssigned() || !tableAssigned())
         {
@@ -194,13 +186,13 @@ public class DBSyncedTextField extends JTextField {
             return;
         }
 
-        super.getDocument().removeDocumentListener(textChangedListener);        
+        super.removeActionListener(textSubmittedListener);
 
         Map<String, String> targetObject = table != null ? table.get(objKey) : superTable.get(tableKey).get(objKey);
 
         this.setText(targetObject.get(fieldKey));
 
-        super.getDocument().addDocumentListener(textChangedListener);
+        super.addActionListener(textSubmittedListener);
     }
 
     /**
