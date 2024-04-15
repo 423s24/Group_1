@@ -122,13 +122,9 @@ public class DisciplinaryInfoPanel extends JPanel {
         noNoTrespassesLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         noNoTrespassesLabel.setVisible(false);
 
-        // Data to be displayed in the JTable
-        String[][] activeSuspensionData = {
-                { "3/15/2024", "ALL HRDC", "RS", "Notified", "Not Notified", "Added", "Threatened to tickle me..."}
-        };
-
         // Initializing the JTable
-        noTrespassTable = new JTable(activeSuspensionData, noTrespassColumnNames);
+        DefaultTableModel model = createTrespassTableModel(null, noTrespassColumnNames);
+        noTrespassTable = new JTable(model);
         noTrespassTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         noTrespassTable.setRowHeight(50);
         noTrespassTable.getColumnModel().getColumn(0).setMaxWidth(250);
@@ -139,7 +135,6 @@ public class DisciplinaryInfoPanel extends JPanel {
         noTrespassTable.getColumnModel().getColumn(5).setMaxWidth(100);
         noTrespassTable.getColumnModel().getColumn(6).setMinWidth(100);
         noTrespassTable.setBackground(Color.RED);
-
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -158,14 +153,25 @@ public class DisciplinaryInfoPanel extends JPanel {
         c.gridy = GridBagConstraints.RELATIVE;
         noTrespassDetailsPanel.add(new JLabel(), c);
 
+        updateTrespassPanel();
+
         return new JScrollPane(noTrespassDetailsPanel);
     }
 
     private void updateTrespassPanel() {
-        String guestNameString = activeGuestData.get(GuestDBKeys.FIRST_NAME.getKey()) + " " + activeGuestData.get(GuestDBKeys.LAST_NAME.getKey());
+        String guestNameString;
+
+        if (activeGuestID == null) {
+            guestNameString = "None";
+        }
+        else
+        {
+            guestNameString = activeGuestData.get(GuestDBKeys.FIRST_NAME.getKey()) + " " + activeGuestData.get(GuestDBKeys.LAST_NAME.getKey());
+        }
+
         noTrespassGuestNameLabel.setText("Guest Name: " + guestNameString);
 
-        boolean shouldShowNoTrespass = !trespassData.isEmpty();
+        boolean shouldShowNoTrespass = trespassData != null && !trespassData.isEmpty();
         
         if (shouldShowNoTrespass) {
             noTrespassTable.setModel(createTrespassTableModel(trespassData, noTrespassColumnNames));
@@ -179,6 +185,18 @@ public class DisciplinaryInfoPanel extends JPanel {
     }
 
     private DefaultTableModel createTrespassTableModel(List<Map<String, String>> data, String[] columnNames) {
+        if(data == null)
+        {
+            return new DefaultTableModel(new String[0][0], columnNames)
+            {
+                @Override
+                public boolean isCellEditable(int row, int column)
+                {
+                    return false;
+                }
+            };
+        }
+        
         // Convert data to 2D array
         String[][] dataArray = new String[data.size()][columnNames.length];
         for (int i = 0; i < data.size(); i++) {
@@ -193,7 +211,14 @@ public class DisciplinaryInfoPanel extends JPanel {
         }
     
         // Create new DefaultTableModel with data
-        return new DefaultTableModel(dataArray, columnNames);
+        return new DefaultTableModel(dataArray, columnNames)
+        {
+            @Override
+            public boolean isCellEditable(int row, int column)
+            {
+                return false;
+            }
+        };
     }
 
 // endregion
@@ -251,32 +276,23 @@ public class DisciplinaryInfoPanel extends JPanel {
             WarningDBKeys.NOTES.getPrettyName()
         };
 
-        // Initializing the JTable
-        sixMonthWarningsTable = new JTable(sixMonthData, columnNames);
+        DefaultTableModel model = createWarningsTable(null, columnNames);
+
+        // Create tables
+        sixMonthWarningsTable = new JTable(model);
         sixMonthWarningsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         sixMonthWarningsTable.setRowHeight(50);
         sixMonthWarningsTable.getColumnModel().getColumn(0).setMaxWidth(75);
         sixMonthWarningsTable.getColumnModel().getColumn(1).setMaxWidth(75);
         sixMonthWarningsTable.getColumnModel().getColumn(2).setMinWidth(100);
-        sixMonthWarningsTable.setBackground(Color.YELLOW);
 
-        // Data to be displayed in the JTable
-        String[][] data = {
-                { "3/13/2023", "RS", "They didn't remember my birthday..." },
-                { "2/24/2023", "RS", "They didn't laugh at my joke" },
-                { "1/18/2023", "RS", "They smelt funny" },
-                { "1/12/2023", "RS", "They said bad words" }
-        };
-
-        // Initializing the JTable
-        olderWarningsTable = new JTable(data, columnNames);
+        olderWarningsTable = new JTable(model);
         olderWarningsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         olderWarningsTable.setRowHeight(50);
         olderWarningsTable.getColumnModel().getColumn(0).setMaxWidth(75);
         olderWarningsTable.getColumnModel().getColumn(1).setMaxWidth(75);
         olderWarningsTable.getColumnModel().getColumn(2).setMinWidth(100);
         olderWarningsTable.setBackground(Color.YELLOW);
-
 
         // Add left-side elements
         GridBagConstraints c = new GridBagConstraints();
@@ -320,11 +336,22 @@ public class DisciplinaryInfoPanel extends JPanel {
         c.gridy = GridBagConstraints.RELATIVE;
         warningDetailsPanel.add(new JLabel(), c);
 
+        updateWarningPanel();
+
         return new JScrollPane(warningDetailsPanel);
     }
         
     private void updateWarningPanel() {
-        String guestNameString = activeGuestData.get(GuestDBKeys.FIRST_NAME.getKey()) + " " + activeGuestData.get(GuestDBKeys.LAST_NAME.getKey());
+        String guestNameString;
+        
+        if(activeGuestID == null) {
+            guestNameString = "None";
+        }
+        else
+        {
+            guestNameString = activeGuestData.get(GuestDBKeys.FIRST_NAME.getKey()) + " " + activeGuestData.get(GuestDBKeys.LAST_NAME.getKey());
+        }
+
         warningsGuestNameLabel.setText("Guest Name: " + guestNameString);
 
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
@@ -333,16 +360,19 @@ public class DisciplinaryInfoPanel extends JPanel {
         List<Map<String, String>> sixMonthWarnings = new ArrayList<>();
         List<Map<String, String>> olderWarnings = new ArrayList<>();
 
-        for (Map<String, String> warning : warningData) {
-            try {
-                Date warningDate = sdf.parse(warning.get(WarningDBKeys.DATE.getKey()));
-                if (warningDate.after(sixMonthsAgo)) {
-                    sixMonthWarnings.add(warning);
-                } else {
-                    olderWarnings.add(warning);
+        if(warningData != null)
+        {
+            for (Map<String, String> warning : warningData) {
+                try {
+                    Date warningDate = sdf.parse(warning.get(WarningDBKeys.DATE.getKey()));
+                    if (warningDate.after(sixMonthsAgo)) {
+                        sixMonthWarnings.add(warning);
+                    } else {
+                        olderWarnings.add(warning);
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
-            } catch (ParseException e) {
-                e.printStackTrace();
             }
         }
 
@@ -379,6 +409,18 @@ public class DisciplinaryInfoPanel extends JPanel {
     }
     
     private DefaultTableModel createWarningsTable(List<Map<String, String>> data, String[] columnNames) {
+        if(data == null)
+        {
+            return new DefaultTableModel(new String[0][0], columnNames)
+            {
+                @Override
+                public boolean isCellEditable(int row, int column)
+                {
+                    return false;
+                }
+            };
+        }
+
         // Convert data to 2D array
         String[][] dataArray = new String[data.size()][columnNames.length];
         for (int i = 0; i < data.size(); i++) {
@@ -388,8 +430,15 @@ public class DisciplinaryInfoPanel extends JPanel {
             dataArray[i][2] = row.get(WarningDBKeys.NOTES.getKey());
         }
     
-        // Create new DefaultTableModel with data
-        return new DefaultTableModel(dataArray, columnNames);
+        // Create new uneditable DefaultTableModel with data
+        return new DefaultTableModel(dataArray, columnNames)
+        {
+            @Override
+            public boolean isCellEditable(int row, int column)
+            {
+                return false;
+            }
+        };
     }
 // endregion
 
@@ -434,15 +483,12 @@ public class DisciplinaryInfoPanel extends JPanel {
             SuspensionDBKeys.STAFF_INITIALS.getPrettyName(),
             SuspensionDBKeys.NOTES.getPrettyName()
         };
-
-        // Data to be displayed in the JTable
-        String[][] activeSuspensionData = {
-                { "3/15/2024", "3/15/2025", "Nightly Bunking", "RS", "Refused to leave after 5 warnings" }
-        };
         
+        // init with empty model having only our column names
+        DefaultTableModel model = createSuspensionsTableModel(null, columnNames);
 
         // Initializing the JTable
-        activeSuspensionsTable = new JTable(activeSuspensionData, columnNames);
+        activeSuspensionsTable = new JTable(model);
         activeSuspensionsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         activeSuspensionsTable.setRowHeight(50);
         activeSuspensionsTable.getColumnModel().getColumn(0).setMaxWidth(100);
@@ -452,14 +498,7 @@ public class DisciplinaryInfoPanel extends JPanel {
         activeSuspensionsTable.getColumnModel().getColumn(4).setMinWidth(100);
         activeSuspensionsTable.setBackground(Color.ORANGE);
 
-        // Data to be displayed in the JTable
-        String[][] olderData = {
-                { "3/13/2023", "3/13/2024", "Showers", "RS", "Harassed other guests" },
-                { "1/20/2023", "8/22/2023", "Storage", "RS", "Would not remove his items" }
-        };
-
-        // Initializing the JTable
-        olderSuspensionsTable = new JTable(olderData, columnNames);
+        olderSuspensionsTable = new JTable(model);
         olderSuspensionsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         olderSuspensionsTable.setRowHeight(50);
         olderSuspensionsTable.getColumnModel().getColumn(0).setMaxWidth(100);
@@ -493,11 +532,22 @@ public class DisciplinaryInfoPanel extends JPanel {
         c.gridy = GridBagConstraints.RELATIVE;
         noTrespassDetailsPanel.add(new JLabel(), c);
 
+        updateSuspensionPanel();
+
         return new JScrollPane(suspensionsDetailsPanel);
     }
 
     private void updateSuspensionPanel() {
-        String guestNameString = activeGuestData.get(GuestDBKeys.FIRST_NAME.getKey()) + " " + activeGuestData.get(GuestDBKeys.LAST_NAME.getKey());
+        String guestNameString;
+
+        if(activeGuestID == null) {
+            guestNameString = "None";
+        }
+        else
+        {
+            guestNameString = activeGuestData.get(GuestDBKeys.FIRST_NAME.getKey()) + " " + activeGuestData.get(GuestDBKeys.LAST_NAME.getKey());
+        }
+
         suspensionsGuestNameLabel.setText("Guest Name: " + guestNameString);
 
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
@@ -506,16 +556,18 @@ public class DisciplinaryInfoPanel extends JPanel {
         List<Map<String, String>> activeSuspensions = new ArrayList<>();
         List<Map<String, String>> olderSuspensions = new ArrayList<>();
 
-        for (Map<String, String> suspension : suspensionData) {
-            try {
-                Date expirationDate = sdf.parse(suspension.get(SuspensionDBKeys.EXPIRY_DATE.getKey()));
-                if (expirationDate.after(today)) {
-                    activeSuspensions.add(suspension);
-                } else {
-                    olderSuspensions.add(suspension);
+        if (suspensionData != null) {
+            for (Map<String, String> suspension : suspensionData) {
+                try {
+                    Date expirationDate = sdf.parse(suspension.get(SuspensionDBKeys.EXPIRY_DATE.getKey()));
+                    if (expirationDate.after(today)) {
+                        activeSuspensions.add(suspension);
+                    } else {
+                        olderSuspensions.add(suspension);
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
-            } catch (ParseException e) {
-                e.printStackTrace();
             }
         }
 
@@ -550,6 +602,18 @@ public class DisciplinaryInfoPanel extends JPanel {
     }
 
     private DefaultTableModel createSuspensionsTableModel(List<Map<String, String>> data, String[] columnNames) {
+        if(data == null)
+        {
+            return new DefaultTableModel(new String[0][0], columnNames)
+            {
+                @Override
+                public boolean isCellEditable(int row, int column)
+                {
+                    return false;
+                }
+            };
+        }
+
         // Convert data to 2D array
         String[][] dataArray = new String[data.size()][columnNames.length];
         for (int i = 0; i < data.size(); i++) {
@@ -562,7 +626,14 @@ public class DisciplinaryInfoPanel extends JPanel {
         }
     
         // Create new DefaultTableModel with data
-        return new DefaultTableModel(dataArray, columnNames);
+        return new DefaultTableModel(dataArray, columnNames)
+        {
+            @Override
+            public boolean isCellEditable(int row, int column)
+            {
+                return false;
+            }
+        };
     }
 //endregion
 }
