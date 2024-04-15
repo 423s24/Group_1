@@ -43,7 +43,7 @@ public class DBSyncedCheckBox extends JCheckBox {
     /**
      * Triggered when the checkbox is clicked.
      */
-    ActionListener allChangesListener = new ActionListener() {
+    ActionListener pressedListener = new ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent e) {
             onToggled();
         }
@@ -134,7 +134,7 @@ public class DBSyncedCheckBox extends JCheckBox {
      */
     private void init() {
         // Triggered when the checkbox is clicked
-        super.addActionListener(actionListener);
+        super.addActionListener(pressedListener);
 
         // Triggered when the DB updates
         db.subscribeRunnableToDBUpdate(this::onDBUpdate);
@@ -200,7 +200,7 @@ public class DBSyncedCheckBox extends JCheckBox {
         }
 
         // Necessary to avoid calling the action listener when setting the checkbox state
-        super.removeActionListener(actionListener);
+        super.removeActionListener(pressedListener);
 
         // Get our target object from the database
         Map<String, String> targetObj = table != null ? table.get(objKey) : superTable.get(tableKey).get(objKey);
@@ -209,7 +209,7 @@ public class DBSyncedCheckBox extends JCheckBox {
         this.setSelected(Boolean.parseBoolean(targetObj.get(fieldKey)));
 
         // Re-add the action listener
-        super.addActionListener(actionListener);
+        super.addActionListener(pressedListener);
     }
 
     /**
