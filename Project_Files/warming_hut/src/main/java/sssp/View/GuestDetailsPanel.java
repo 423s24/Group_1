@@ -163,7 +163,7 @@ public class GuestDetailsPanel extends JPanel {
         infoChecksPanel.add(caseCheckLabel, gbc);
 
         gbc.gridx++;
-        caseCheckBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, "Caseworthy");
+        caseCheckBox = new DBSyncedCheckBox(db.database.guests, this.activeGuestID, GuestDBKeys.CASE_CHECK.getKey());
         infoChecksPanel.add(caseCheckBox, gbc);
 
         gbc.gridx++;
