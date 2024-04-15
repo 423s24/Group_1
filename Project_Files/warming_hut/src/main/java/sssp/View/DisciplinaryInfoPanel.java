@@ -87,6 +87,7 @@ public class DisciplinaryInfoPanel extends JPanel {
         updateWarningPanel();
     }
 
+//region Trespass Panel
     
     public static final JLabel noTrespassLabel = new JLabel("No Trespass Orders");
     public static final JLabel noNoTrespassesLabel = new JLabel("No Orders To Display");
@@ -194,6 +195,8 @@ public class DisciplinaryInfoPanel extends JPanel {
         // Create new DefaultTableModel with data
         return new DefaultTableModel(dataArray, columnNames);
     }
+
+// endregion
 
 // region Warnings Panel
     public static final JLabel lastSixMonthsLabel = new JLabel("Last 6 Months");
