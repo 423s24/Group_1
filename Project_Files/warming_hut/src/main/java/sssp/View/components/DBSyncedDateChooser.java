@@ -176,6 +176,7 @@ public class DBSyncedDateChooser extends JDateChooser {
             e.printStackTrace();
         }
 
+        // remove the property listener when we set the date to avoid self-triggering
         this.getDateEditor().removePropertyChangeListener(allChangesListener);
         
         if (instant != null) {
@@ -188,7 +189,7 @@ public class DBSyncedDateChooser extends JDateChooser {
     }
 
     /**
-     * Checks if a table is assigned for the checkbox.
+     * Checks if a table is assigned for the date chooser.
      * @return True if a table is assigned, false otherwise.
      */
     private boolean tableAssigned() {
@@ -196,7 +197,7 @@ public class DBSyncedDateChooser extends JDateChooser {
     }
     
     /**
-     * Checks if a field is assigned for the checkbox.
+     * Checks if a field is assigned for the date chooser.
      * @return True if a field is assigned, false otherwise.
      */
     private boolean fieldAssigned() {
