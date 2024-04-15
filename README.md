@@ -27,3 +27,5 @@ Documentation for both Dataview users and interested developers can both be foun
 Click the link above to access our product website.
 ## [Report a Bug](https://github.com/423s24/Group_1/issues/new)
 Click the link above to create a bug report. Please include steps to reproduce the issue when creating a report.
+## [User Testing](https://docs.google.com/document/d/1cAp83rY2dSRZ6mS_YBoBAt__XtqurGVu0dn4eoxqte4/edit?usp=sharing)
+Click the link above to view the reports that we generated from testing our app with users.

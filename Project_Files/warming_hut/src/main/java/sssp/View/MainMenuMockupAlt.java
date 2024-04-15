@@ -83,6 +83,7 @@ public class MainMenuMockupAlt extends JFrame {
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         Border border = BorderFactory.createEtchedBorder();
+
         // Documentation button
         JButton docsButton = new JButton("Help!");
         docsButton.addActionListener(new ActionListener() {
@@ -96,6 +97,7 @@ public class MainMenuMockupAlt extends JFrame {
             }
         });
         topPanel.add(docsButton);
+
         // Github Issue button
         JButton createIssueButton = new JButton("Report a Bug");
         createIssueButton.addActionListener(new ActionListener() {
@@ -109,6 +111,17 @@ public class MainMenuMockupAlt extends JFrame {
             }
         });
         topPanel.add(createIssueButton);
+
+        // Button to set DB secret Key
+        JButton createDBSecretButton = new JButton("Set Database Key");
+        createDBSecretButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                    // DB Secret Panel pops up here
+                SetDBSecretPopup.displaySetDBSecretPopup();
+            }
+        });
+        topPanel.add(createDBSecretButton);
         topPanel.setBorder(border);
 
         // Main + Side Panels
@@ -281,7 +294,7 @@ public class MainMenuMockupAlt extends JFrame {
         String formattedDate = dateFormat.format(selectedDate);
 
         // Looks like "Guest_<integer>"
-        String guestTableKey = getGuestTableKey(guestName);
+        String guestTableKey = getGuestTableKey(guestName); // TODO USE THIS IN THE CENTER TABLE IMPLEMENTATION
 
         if (db.database.guests.containsKey(guestTableKey)) {
             JOptionPane.showMessageDialog(this, "Guest already checked in.", "Duplicate Guest", JOptionPane.WARNING_MESSAGE);
@@ -309,7 +322,7 @@ public class MainMenuMockupAlt extends JFrame {
         // Add the updated data
         for (Map.Entry<String, Map<String, String>> entry : db.database.guests.entrySet()) {
             Map<String, String> guest = entry.getValue();
-            String[] rowData = {guest.get("FirstName") + " " + guest.get("LastName")};
+            String[] rowData = {guest.get("FirstName") + " " + guest.get("LastName")}; //TODO add updated guest info data here
             tableModel.addRow(rowData);
         }
     }
