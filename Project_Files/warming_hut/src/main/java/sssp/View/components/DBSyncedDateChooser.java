@@ -146,7 +146,7 @@ public class DBSyncedDateChooser extends JDateChooser {
             targetObj.put(fieldKey, null);
         }
 
-        db.push();
+        db.asyncPush();
     }
 
     /**

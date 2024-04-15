@@ -173,7 +173,7 @@ public class DBSyncedTextField extends JTextField {
         // Update the DB with the text field value
         targetObject.put(fieldKey, this.getText());
 
-        db.push();
+        db.asyncPush();
     }
 
     /**

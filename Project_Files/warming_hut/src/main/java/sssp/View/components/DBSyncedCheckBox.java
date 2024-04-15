@@ -186,7 +186,7 @@ public class DBSyncedCheckBox extends JCheckBox {
 
         targetObj.put(fieldKey, String.valueOf(this.isSelected()));
 
-        db.push();
+        db.asyncPush();
     }
 
     /**

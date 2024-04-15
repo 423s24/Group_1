@@ -216,7 +216,7 @@ public class DBSyncedTextArea extends JTextArea {
 
         targetObj.put(fieldKey, this.getText());
 
-        db.push();
+        db.asyncPush();
     }
 
     /**

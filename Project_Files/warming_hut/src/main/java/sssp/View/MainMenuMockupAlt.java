@@ -304,7 +304,7 @@ public class MainMenuMockupAlt extends JFrame {
         {
             Map<String,String> guestTableEntry = createGuestEntry(guestName, formattedDate);
             db.database.guests.put(guestTableKey, guestTableEntry);
-            db.push();
+            db.asyncPush();
         }
     }
 
@@ -428,7 +428,7 @@ public class MainMenuMockupAlt extends JFrame {
 
                 String toDeleteKey = getGuestTableKey(guestName);
                 db.database.guests.put(toDeleteKey, null);
-                db.push();
+                db.asyncPush();
             }
         }
     };
@@ -468,7 +468,7 @@ public class MainMenuMockupAlt extends JFrame {
             
                 String oldGuestTableKey = getGuestTableKey(oldValue);
                 db.database.guests.put(oldGuestTableKey, null);
-                db.push();
+                db.asyncPush();
                 db.database.guests.put(newGuestTableKey, guestTableEntry);
             }
             else
@@ -476,7 +476,7 @@ public class MainMenuMockupAlt extends JFrame {
                 db.database.guests.put(newGuestTableKey, guestTableEntry);
             }
 
-            db.push();
+            db.asyncPush();
         }
     };
 
