@@ -12,6 +12,7 @@ public class SetDBSecretPopup {
 
     public static void displaySetDBSecretPopup(){
         JFrame secretPopupFrame = new JFrame();
+        secretPopupFrame.setTitle("Set Database Key");
         secretPopupFrame.setLayout(new GridBagLayout());
         secretPopupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         secretPopupFrame.setSize(new Dimension(WIDTH, HEIGHT));
@@ -32,12 +33,13 @@ public class SetDBSecretPopup {
     public static JPanel getDBSecretPopup() {
         JPanel popup = new JPanel();
         // TODO add popup content
-        JLabel secretExplanation1 = new JLabel("Use the box below to set the key for the database.");
-        JLabel secretExplanation2 = new JLabel("Just input database key and press 'Enter'");
+        JTextArea secretExplanation = new JTextArea("Use the box below to set the key for the database. Just input database key and press 'Enter'");
         //secretExplanation.setHorizontalAlignment(SwingConstants.LEFT);
-
-        popup.add(secretExplanation1);
-        popup.add(secretExplanation2);
+        //secretExplanation.setPreferredSize
+        secretExplanation.setLineWrap(true);
+        popup.add(secretExplanation);
         return popup;
+
+
     }
 }
