@@ -18,12 +18,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
 import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
 import sssp.Helper.HttpStreamingManagerSingleton;
+import sssp.Model.GuestDBKeys;
+import sssp.Model.NoTrespassDBKeys;
 
 public class MainMenuMockupAlt extends JFrame {
     private JPanel mainPanel;
@@ -322,8 +325,56 @@ public class MainMenuMockupAlt extends JFrame {
         // Add the updated data
         for (Map.Entry<String, Map<String, String>> entry : db.database.guests.entrySet()) {
             Map<String, String> guest = entry.getValue();
-            String[] rowData = {guest.get("FirstName") + " " + guest.get("LastName")}; //TODO add updated guest info data here
+
+            // Check whether they have a small or medium locker
+            String locker;
+            if (guest.get("SmallLockerNumber") != null && !guest.get("SmallLockerNumber").isEmpty()) {
+                locker = guest.get("SmallLockerNumber");
+            } else if (guest.get("MediumLockerNumber") != null && !guest.get("MediumLockerNumber").isEmpty()) {
+                locker = guest.get("MediumLockerNumber");
+            } else {
+                locker = "No Locker Assigned";
+            }
+
+            // Check what kind of storage the guest is using (if any)
+            String storage;
+            if (guest.get("DayStorageShelf") != null && !guest.get("DayStorageShelf").isEmpty()) {
+                storage = "shelf:" + guest.get("DayStorageShelf") + " slot:" + guest.get("DayStorageSlot");
+            //} else if (guest.get("MediumLockerNumber") != null && !guest.get("MediumLockerNumber").isEmpty()) {
+                //storage = guest.get("MediumLockerNumber"); TODO CHECK HOW CUBE STORAGE WORKS AND INCORPORATE IT (MAYBE ADD A NEW COLUMN)
+            } else {
+                storage = "No Storage Assigned";
+            }
+
+            // Check for an assigned bunk (if any)
+            String bunk;
+            //db.database.bunkList.get("")
+            // TODO replace PlaceHolder in decision below when we have joinOnValue() figured out
+            if (guest.get("PlaceHolder") != null && !guest.get("PlaceHolder").isEmpty()) {
+                bunk = "shelf:" + guest.get("DayStorageShelf") + " slot:" + guest.get("DayStorageSlot");
+            } else {
+                bunk = "No Bunk Assigned";
+            }
+
+            // Check for any issues in order of seriousness
+            String issue;
+
+            // TODO need to work out the GuestID + joinOnValue() - joinValue field, currenlty stumped on what/how i pass it what it needs
+            // getGuestTableKey(String guestName)
+            //List<Map<String,String>> trespassData;
+            //trespassData = DBConnectorV2.joinOnKey(db.database.conflicts.get("NoTrespass"), "GuestId", guest.get("FirstName") + " " + guest.get("LastName"));
+            if (guest.get(NoTrespassDBKeys.NO_TRESPASS_FROM.getKey()) != null && !guest.get(NoTrespassDBKeys.NO_TRESPASS_FROM.getKey()).isEmpty()) {
+                issue = "No Trespass";
+            } else if (guest.get("ConflictId") != null && !guest.get("ConflictId").isEmpty()) {
+                issue = "Suspension";
+            } else {
+                issue = "None";
+            }
+
+            String[] rowData = {guest.get("FirstName") + " " + guest.get("LastName"),
+                    locker, storage, bunk, issue}; //TODO add updated guest info data here
             tableModel.addRow(rowData);
+
         }
     }
     
