@@ -336,6 +336,8 @@ public class GuestDetailsPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
         gbc.insets = new Insets(5, 20, 5, 20);
 
         JLabel shelfLabel = new JLabel("Shelf:");
@@ -413,6 +415,8 @@ public class GuestDetailsPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
         gbc.insets = new Insets(5, 20, 5, 20);
 
         JLabel lockerNumberLabel = new JLabel("Locker Number:");
@@ -482,6 +486,8 @@ public class GuestDetailsPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
         gbc.insets = new Insets(5, 20, 5, 20);
 
         JLabel smLockerLockerNumberLabel = new JLabel("Locker Number:");
@@ -543,6 +549,8 @@ public class GuestDetailsPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
         gbc.insets = new Insets(5, 20, 5, 20);
 
         JLabel csPreviousLocationLabel = new JLabel("Previous Location:");
@@ -612,9 +620,11 @@ public class GuestDetailsPanel extends JPanel {
 
         JPanel basicDataPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
+        gbc.weightx = 1;
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 20, 5, 20);
 
         JLabel firstNameLabel = new JLabel("First Name:");
