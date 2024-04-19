@@ -425,12 +425,10 @@ public class MainMenuMockupAlt extends JFrame {
     }
     
     /**
-     * Pulls data from the database and updates the guests table.
+     * Updates the guest table when DB updates.
      */
     private void onDatabasePut()
     {
-        db.pull();
-
         updateGuestsTable();
     }
 
