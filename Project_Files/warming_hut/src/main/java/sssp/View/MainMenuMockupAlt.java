@@ -365,19 +365,29 @@ public class MainMenuMockupAlt extends JFrame {
             }
 
             // Check for any issues in order of seriousness
-            String issue;
+            String issue = "";
 
             // TODO need to work out the GuestID + joinOnValue() - joinValue field, currenlty stumped on what/how i pass it what it needs
             // getGuestTableKey(String guestName)
-            //List<Map<String,String>> trespassData;
-            //trespassData = DBConnectorV2.joinOnKey(db.database.conflicts.get("NoTrespass"), "GuestId", guest.get("FirstName") + " " + guest.get("LastName"));
-            if (guest.get(NoTrespassDBKeys.NO_TRESPASS_FROM.getKey()) != null && !guest.get(NoTrespassDBKeys.NO_TRESPASS_FROM.getKey()).isEmpty()) {
-                issue = "No Trespass";
-            } else if (guest.get("ConflictId") != null && !guest.get("ConflictId").isEmpty()) {
-                issue = "Suspension";
-            } else {
-                issue = "None";
+            List<Map<String,String>> trespassData;
+            trespassData = DBConnectorV2.joinOnKey(db.database.conflicts.get("NoTrespass"),
+                    "GuestId", getGuestTableKey(guest.get("FirstName") + " " + guest.get("LastName")));
+
+            // check Each entry in trespassData List
+            for (Map<String,String> oneTrespass : trespassData) {
+                if (oneTrespass != null && !oneTrespass.get(NoTrespassDBKeys.NO_TRESPASS_FROM.getKey()).isEmpty()) {
+                    issue = "No Trespass";
+                }
+                else {
+                    issue = "None";
+                }
             }
+
+//            } else if (guest.get("ConflictId") != null && !guest.get("ConflictId").isEmpty()) {
+//                issue = "Suspension";
+//            } else {
+//                issue = "None";
+//            }
 
             String[] rowData = {guest.get("FirstName") + " " + guest.get("LastName"),
                     locker, storage, bunk, issue}; //TODO add updated guest info data here
@@ -423,6 +433,8 @@ public class MainMenuMockupAlt extends JFrame {
     public String getGuestTableKey(String guestName) {
         return "Guest_" + guestName.hashCode();
     }
+
+
     
     /**
      * Updates the guest table when DB updates.
@@ -438,11 +450,10 @@ public class MainMenuMockupAlt extends JFrame {
      * When the delete button is pressed, the row is removed from the table and the entry is removed from the database.
      */
     Action onDeleteRowButtonPressed = new AbstractAction() {
-        public void actionPerformed(ActionEvent e)
-        {
+        public void actionPerformed(ActionEvent e) {
             JTable table = (JTable)e.getSource();
             int modelRow = Integer.valueOf( e.getActionCommand() );
-            Object delete = table.getModel().getValueAt(modelRow, 2);
+            Object delete = table.getModel().getValueAt(modelRow, 5);
             Window window = SwingUtilities.windowForComponent(table);
 
             String guestName = (String)table.getModel().getValueAt(modelRow, 0);
