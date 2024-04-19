@@ -561,17 +561,7 @@ public class MainMenuMockupAlt extends JFrame {
     }
 
     public static void main(String[] args) {
-        //try {
-        //    UIManager.setLookAndFeel(new FlatLightLaf());
-        //} catch (Exception e) {
-        //    e.printStackTrace();
-        //}
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new MainMenuMockupAlt();
-            }
-        });
+        runMenu();
     }
 
     public static void runMenu() {
