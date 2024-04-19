@@ -228,20 +228,31 @@ public class MainMenuMockupAlt extends JFrame {
                 // method below for some more info.
         };
 
+        int deleteColumn = 5;
+
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames) {
             // Disable cell editing
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return column == deleteColumn;
             }
         };
         table = new JTable(tableModel);
+
+        // Create column of delete buttons.
+        // Register the delete button action listener
+        ButtonColumn deleteButtons = new ButtonColumn(table, onDeleteRowButtonPressed, deleteColumn);
 
         table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     JTable target = (JTable)e.getSource();
                     int row = target.getSelectedRow();
+                    int col = target.getSelectedColumn();
+                    if(col == 5)
+                    {
+                        return;
+                    }
                     String guestID = getGuestTableKey(target.getValueAt(row, 0).toString());
                     if(guestDetailsPanel.setActiveGuestID(guestID))
                     {
@@ -258,10 +269,6 @@ public class MainMenuMockupAlt extends JFrame {
         table.getColumnModel().getColumn(3).setPreferredWidth(15);
         table.getColumnModel().getColumn(4).setPreferredWidth(15);
         table.getColumnModel().getColumn(5).setMaxWidth(50);
-
-        // Create column of delete buttons.
-        // Register the delete button action listener
-        ButtonColumn deleteButtons = new ButtonColumn(table, onDeleteRowButtonPressed, 5);
 
         // hotkeys the delete key
         deleteButtons.setMnemonic(KeyEvent.VK_D);
