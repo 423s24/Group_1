@@ -47,14 +47,14 @@ public class IssueDetailsPopup {
 
         guestNameLabel.setBackground(Color.gray);
         guestNameLabel.setOpaque(true);
-        guestNameLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        //guestNameLabel.setFont(new Font("Serif", Font.PLAIN, 24));
         guestName.setBackground(Color.gray);
         guestName.setOpaque(true);
-        guestName.setFont(new Font("Serif", Font.PLAIN, 24));
+        //guestName.setFont(new Font("Serif", Font.PLAIN, 24));
 
         noTrespassLabel.setBackground(Color.lightGray);
         noTrespassLabel.setOpaque(true);
-        noTrespassLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        //noTrespassLabel.setFont(new Font("Serif", Font.PLAIN, 18));
 
         // Column Names
         String[] columnNames = { "Date of incident", "No Trespassed From", "Staff Initials", "BPD Status", "LBD Status", "CW Alert", "Notes" };
@@ -113,17 +113,17 @@ public class IssueDetailsPopup {
 
         guestNameLabel.setBackground(Color.gray);
         guestNameLabel.setOpaque(true);
-        guestNameLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        //guestNameLabel.setFont(new Font("Serif", Font.PLAIN, 24));
         guestName.setBackground(Color.gray);
         guestName.setOpaque(true);
-        guestName.setFont(new Font("Serif", Font.PLAIN, 24));
+        //guestName.setFont(new Font("Serif", Font.PLAIN, 24));
 
         activeSuspensionsLabel.setBackground(Color.lightGray);
         activeSuspensionsLabel.setOpaque(true);
-        activeSuspensionsLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        //activeSuspensionsLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         olderSuspensionsLabel.setBackground(Color.lightGray);
         olderSuspensionsLabel.setOpaque(true);
-        olderSuspensionsLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        //olderSuspensionsLabel.setFont(new Font("Serif", Font.PLAIN, 18));
 
         // Column Names
         String[] columnNames = { "Date Issued", "Expiration", "Service Suspended", "Staff Initials", "Notes" };
@@ -213,32 +213,32 @@ public class IssueDetailsPopup {
 
         guestNameLabel.setBackground(Color.gray);
         guestNameLabel.setOpaque(true);
-        guestNameLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        //guestNameLabel.setFont(new Font("Serif", Font.PLAIN, 24));
         guestName.setBackground(Color.gray);
         guestName.setOpaque(true);
-        guestName.setFont(new Font("Serif", Font.PLAIN, 24));
+        //guestName.setFont(new Font("Serif", Font.PLAIN, 24));
 
         lastSixMonthsLabel.setBackground(Color.lightGray);
         lastSixMonthsLabel.setOpaque(true);
-        lastSixMonthsLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        //lastSixMonthsLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         lastSixMonthsTotalLabel.setBackground(Color.lightGray);
         lastSixMonthsTotalLabel.setOpaque(true);
-        lastSixMonthsTotalLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        //lastSixMonthsTotalLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         lastSixMonthsTotalLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         lastSixMonthsTotal.setBackground(Color.lightGray);
         lastSixMonthsTotal.setOpaque(true);
-        lastSixMonthsTotal.setFont(new Font("Serif", Font.PLAIN, 18));
+        //lastSixMonthsTotal.setFont(new Font("Serif", Font.PLAIN, 18));
 
         olderLabel.setBackground(Color.lightGray);
         olderLabel.setOpaque(true);
-        olderLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        //olderLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         olderTotalLabel.setBackground(Color.lightGray);
         olderTotalLabel.setOpaque(true);
-        olderTotalLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        //olderTotalLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         olderTotalLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         olderTotal.setBackground(Color.lightGray);
         olderTotal.setOpaque(true);
-        olderTotal.setFont(new Font("Serif", Font.PLAIN, 18));
+        //olderTotal.setFont(new Font("Serif", Font.PLAIN, 18));
 
         // Data to be displayed in the JTable
         String[][] sixMonthData = {

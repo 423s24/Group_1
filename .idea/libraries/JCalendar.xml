@@ -2,6 +2,7 @@
   <library name="JCalendar">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/libs/jcalendar-1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/flatlaf-3.4.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

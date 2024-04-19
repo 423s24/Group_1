@@ -37,7 +37,7 @@ public class BunkAssignmentPanel {
         });
 
         for (JLabel label : labels) {
-            label.setFont(new Font("Serif", Font.BOLD, 24));
+            //label.setFont(new Font("Serif", Font.BOLD, 24));
             label.setHorizontalAlignment(SwingConstants.CENTER);
         }
 
@@ -89,7 +89,7 @@ public class BunkAssignmentPanel {
         JComboBox<String> bedSlot = new JComboBox<>(new String[]{"A", "B"});
 
         for (JLabel label : labels) {
-            label.setFont(new Font("Serif", Font.PLAIN, 18));
+            //label.setFont(new Font("Serif", Font.PLAIN, 18));
             label.setHorizontalAlignment(SwingConstants.CENTER);
         }
 

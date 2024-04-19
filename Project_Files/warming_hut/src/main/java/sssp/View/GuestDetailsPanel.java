@@ -105,13 +105,13 @@ public class GuestDetailsPanel extends JPanel {
         addStorageInfo();
 
         disciplinaryInfoPanel = new DisciplinaryInfoPanel();
-        disciplinaryInfoPanel.setBorder(regBorder);
+        disciplinaryInfoPanel.setBorder(BorderFactory.createTitledBorder("Disciplinary Info"));
 
         JPanel storageInfoPanel = new JPanel();
         storageInfoPanel.setLayout(new BorderLayout());
         JLabel storageInfoLabel = new JLabel("Storage Info");
         storageInfoPanel.add(storageInfoLabel, BorderLayout.NORTH);
-        storageInfoPanel.setBorder(regBorder);
+        storageInfoPanel.setBorder(BorderFactory.createTitledBorder("Storage Info"));
 
         add(topBarPanel, BorderLayout.NORTH);
 
@@ -669,6 +669,7 @@ public class GuestDetailsPanel extends JPanel {
 
         tabbedPane.addTab("Basic Guest Data", basicDataPanel);
         tabbedPane.addTab("Bunk Info", BunkReservationsPanel.getBunkReservationsPanel(this.activeGuestID));
+        tabbedPane.setBorder(BorderFactory.createTitledBorder("Guest and Bunks"));
 
         add(tabbedPane, BorderLayout.WEST);
     }

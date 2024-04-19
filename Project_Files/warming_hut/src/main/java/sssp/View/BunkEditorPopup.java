@@ -76,7 +76,7 @@ public class BunkEditorPopup {
 
         JLabel[] labels = {mensAreaLabel, womensAreaLabel, observationAreaLabel};
         for (JLabel label : labels) {
-            label.setFont(new Font("Serif", Font.PLAIN, 22));
+            //label.setFont(new Font("Serif", Font.PLAIN, 22));
         }
 
         ScrollPane mensScrollPane = new ScrollPane();
@@ -94,17 +94,17 @@ public class BunkEditorPopup {
         observationScrollPane.setPreferredSize(new Dimension(MENU_WIDTH, SCROLL_HEIGHT));
 
         JLabel title = new JLabel("Bunk Editor");
-        title.setFont(new Font("Serif", Font.PLAIN, 24));
+        //title.setFont(new Font("Serif", Font.PLAIN, 24));
         title.setHorizontalAlignment(SwingConstants.CENTER);
 
         JButton newBtn = new JButton("New Bunk");
-        newBtn.setFont(new Font("Serif", Font.PLAIN, 18));
+        //newBtn.setFont(new Font("Serif", Font.PLAIN, 18));
         newBtn.setPreferredSize(new Dimension(MENU_WIDTH, 25));
         newBtn.addActionListener(e -> {
             createNewBunk();
         });
 
-        deleteBtn.setFont(new Font("Serif", Font.PLAIN, 18));
+        //deleteBtn.setFont(new Font("Serif", Font.PLAIN, 18));
         deleteBtn.setPreferredSize(new Dimension(MENU_WIDTH, 25));
         deleteBtn.setBackground(Color.red);
         deleteBtn.setEnabled(false);
@@ -202,7 +202,7 @@ public class BunkEditorPopup {
         JLabel bunkAreaLabel = new JLabel("Bunk Area");
 
         JButton saveChangesBtn = new JButton("Save Changes");
-        saveChangesBtn.setFont(new Font("Serif", Font.PLAIN, 18));
+        //saveChangesBtn.setFont(new Font("Serif", Font.PLAIN, 18));
         saveChangesBtn.setPreferredSize(new Dimension(MENU_WIDTH, 25));
         saveChangesBtn.setEnabled(false);
         saveChangesBtn.addActionListener(e -> {
@@ -211,7 +211,7 @@ public class BunkEditorPopup {
 
         JLabel[] labels = {bunkNumLabel, bunkAreaLabel};
         for (JLabel label : labels) {
-            label.setFont(new Font("Serif", Font.PLAIN, 22));
+            //label.setFont(new Font("Serif", Font.PLAIN, 22));
         }
 
         bunkNumField.setPreferredSize(new Dimension(MENU_WIDTH, 25));

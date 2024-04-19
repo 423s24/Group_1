@@ -33,11 +33,13 @@ public class DisciplinaryInfoPanel extends JPanel {
     {
         this.setLayout(new BorderLayout());
 
+
         JTabbedPane tabbedPane = new JTabbedPane();
 
         noTrespassDetailsPanel = new JPanel(new BorderLayout());
         suspensionDetailsPanel = new JPanel(new BorderLayout());
         warningDetailsPanel = new JPanel(new BorderLayout());
+
 
         noTrespassDetailsPanel.add(createNoTrespassDetailsPanel(), BorderLayout.NORTH);
         suspensionDetailsPanel.add(createSuspensionsDetailsPanel(), BorderLayout.NORTH);
@@ -109,17 +111,17 @@ public class DisciplinaryInfoPanel extends JPanel {
 
         noTrespassGuestNameLabel = new JLabel("Guest Name: " + "John Doe");
 
-        noTrespassGuestNameLabel.setBackground(Color.gray);
+        //noTrespassGuestNameLabel.setBackground(Color.gray);
         noTrespassGuestNameLabel.setOpaque(true);
-        noTrespassGuestNameLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        //noTrespassGuestNameLabel.setFont(new Font("Serif", Font.PLAIN, 24));
 
-        noTrespassLabel.setBackground(Color.lightGray);
+        noTrespassLabel.setBackground(Color.white);
         noTrespassLabel.setOpaque(true);
-        noTrespassLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        //noTrespassLabel.setFont(new Font("Serif", Font.PLAIN, 18));
 
-        noNoTrespassesLabel.setBackground(Color.lightGray);
+        noNoTrespassesLabel.setBackground(Color.white);
         noNoTrespassesLabel.setOpaque(true);
-        noNoTrespassesLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        //noNoTrespassesLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         noNoTrespassesLabel.setVisible(false);
 
         // Initializing the JTable
@@ -134,7 +136,7 @@ public class DisciplinaryInfoPanel extends JPanel {
         noTrespassTable.getColumnModel().getColumn(4).setMaxWidth(100);
         noTrespassTable.getColumnModel().getColumn(5).setMaxWidth(100);
         noTrespassTable.getColumnModel().getColumn(6).setMinWidth(100);
-        noTrespassTable.setBackground(Color.RED);
+        //noTrespassTable.setBackground(Color.RED);
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -238,29 +240,29 @@ public class DisciplinaryInfoPanel extends JPanel {
 
         warningsGuestNameLabel = new JLabel("Guest Name: John Doe");
 
-        warningsGuestNameLabel.setBackground(Color.gray);
+        //warningsGuestNameLabel.setBackground(Color.gray);
         warningsGuestNameLabel.setOpaque(true);
-        warningsGuestNameLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        //warningsGuestNameLabel.setFont(new Font("Serif", Font.PLAIN, 24));
 
-        lastSixMonthsLabel.setBackground(Color.lightGray);
+        lastSixMonthsLabel.setBackground(Color.white);
         lastSixMonthsLabel.setOpaque(true);
-        lastSixMonthsLabel.setFont(new Font("Serif", Font.PLAIN, 18));
-        lastSixMonthsTotalLabel.setBackground(Color.lightGray);
+        //lastSixMonthsLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        lastSixMonthsTotalLabel.setBackground(Color.white);
         lastSixMonthsTotalLabel.setOpaque(true);
-        lastSixMonthsTotalLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        //lastSixMonthsTotalLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         lastSixMonthsTotalLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
-        olderLabel.setBackground(Color.lightGray);
+        olderLabel.setBackground(Color.white);
         olderLabel.setOpaque(true);
-        olderLabel.setFont(new Font("Serif", Font.PLAIN, 18));
-        olderTotalLabel.setBackground(Color.lightGray);
+        //olderLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        olderTotalLabel.setBackground(Color.white);
         olderTotalLabel.setOpaque(true);
-        olderTotalLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        //olderTotalLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         olderTotalLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
-        noWarningsHeader.setBackground(Color.lightGray);
+        noWarningsHeader.setBackground(Color.white);
         noWarningsHeader.setOpaque(true);
-        noWarningsHeader.setFont(new Font("Serif", Font.PLAIN, 18));
+        //noWarningsHeader.setFont(new Font("Serif", Font.PLAIN, 18));
         noWarningsHeader.setVisible(false);
 
         // Data to be displayed in the JTable
@@ -292,7 +294,7 @@ public class DisciplinaryInfoPanel extends JPanel {
         olderWarningsTable.getColumnModel().getColumn(0).setMaxWidth(75);
         olderWarningsTable.getColumnModel().getColumn(1).setMaxWidth(75);
         olderWarningsTable.getColumnModel().getColumn(2).setMinWidth(100);
-        olderWarningsTable.setBackground(Color.YELLOW);
+        //olderWarningsTable.setBackground(Color.YELLOW);
 
         // Add left-side elements
         GridBagConstraints c = new GridBagConstraints();
@@ -461,19 +463,19 @@ public class DisciplinaryInfoPanel extends JPanel {
         noSuspensionsHeader = new JLabel("No Suspensions");
         noSuspensionsHeader.setVisible(false);
 
-        suspensionsGuestNameLabel.setBackground(Color.gray);
+        //suspensionsGuestNameLabel.setBackground(Color.gray);
         suspensionsGuestNameLabel.setOpaque(true);
-        suspensionsGuestNameLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        //suspensionsGuestNameLabel.setFont(new Font("Serif", Font.PLAIN, 24));
 
-        activeSuspensionsHeader.setBackground(Color.lightGray);
+        activeSuspensionsHeader.setBackground(Color.white);
         activeSuspensionsHeader.setOpaque(true);
-        activeSuspensionsHeader.setFont(new Font("Serif", Font.PLAIN, 18));
-        olderSuspensionsHeader.setBackground(Color.lightGray);
+        //activeSuspensionsHeader.setFont(new Font("Serif", Font.PLAIN, 18));
+        olderSuspensionsHeader.setBackground(Color.white);
         olderSuspensionsHeader.setOpaque(true);
-        olderSuspensionsHeader.setFont(new Font("Serif", Font.PLAIN, 18));
-        noSuspensionsHeader.setBackground(Color.lightGray);
+        //olderSuspensionsHeader.setFont(new Font("Serif", Font.PLAIN, 18));
+        noSuspensionsHeader.setBackground(Color.white);
         noSuspensionsHeader.setOpaque(true);
-        noSuspensionsHeader.setFont(new Font("Serif", Font.PLAIN, 18));
+        //noSuspensionsHeader.setFont(new Font("Serif", Font.PLAIN, 18));
 
         // Column Names
         String[] columnNames = {
@@ -496,7 +498,7 @@ public class DisciplinaryInfoPanel extends JPanel {
         activeSuspensionsTable.getColumnModel().getColumn(2).setMaxWidth(275);
         activeSuspensionsTable.getColumnModel().getColumn(3).setMaxWidth(75);
         activeSuspensionsTable.getColumnModel().getColumn(4).setMinWidth(100);
-        activeSuspensionsTable.setBackground(Color.ORANGE);
+        //activeSuspensionsTable.setBackground(Color.ORANGE);
 
         olderSuspensionsTable = new JTable(model);
         olderSuspensionsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -506,7 +508,7 @@ public class DisciplinaryInfoPanel extends JPanel {
         olderSuspensionsTable.getColumnModel().getColumn(2).setMaxWidth(200);
         olderSuspensionsTable.getColumnModel().getColumn(3).setMaxWidth(75);
         olderSuspensionsTable.getColumnModel().getColumn(4).setMinWidth(100);
-        olderSuspensionsTable.setBackground(Color.ORANGE);
+        //olderSuspensionsTable.setBackground(Color.ORANGE);
 
 
         GridBagConstraints c = new GridBagConstraints();

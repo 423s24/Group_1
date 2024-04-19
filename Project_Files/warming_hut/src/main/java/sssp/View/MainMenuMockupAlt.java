@@ -7,6 +7,8 @@ import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AbstractDocument;
 
+import com.formdev.flatlaf.FlatLightLaf;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -188,7 +190,9 @@ public class MainMenuMockupAlt extends JFrame {
         inputPanel.add(submitButton);
 
         panel.add(inputPanel, BorderLayout.CENTER);
-        panel.add(EditGuestPanel.getEditGuestPanel(panel), BorderLayout.EAST);
+
+        //Removing this for now
+        //panel.add(EditGuestPanel.getEditGuestPanel(panel), BorderLayout.EAST);
 
         JPanel formPanel = new JPanel(new GridLayout(2, 2));
 
@@ -557,6 +561,11 @@ public class MainMenuMockupAlt extends JFrame {
     }
 
     public static void main(String[] args) {
+        //try {
+        //    UIManager.setLookAndFeel(new FlatLightLaf());
+        //} catch (Exception e) {
+        //    e.printStackTrace();
+        //}
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
