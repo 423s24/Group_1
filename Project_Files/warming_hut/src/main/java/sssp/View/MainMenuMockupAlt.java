@@ -259,9 +259,6 @@ public class MainMenuMockupAlt extends JFrame {
         table.getColumnModel().getColumn(4).setPreferredWidth(15);
         table.getColumnModel().getColumn(5).setMaxWidth(50);
 
-        // register onTableCellUpdated, which must be done after table creation
-        new TableCellListener(table, onTableCellUpdated);
-
         // Create column of delete buttons.
         // Register the delete button action listener
         ButtonColumn deleteButtons = new ButtonColumn(table, onDeleteRowButtonPressed, 5);
@@ -381,32 +378,6 @@ public class MainMenuMockupAlt extends JFrame {
 
         }
     }
-    
-    /**
-     * Updates the guest table based on the provided filter.
-     * 
-     * @param filter the filter to apply on the guest names
-     */
-    private void filterTable(String filter, JTable table)
-    {
-        // Update the guest table
-        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-
-        // Clear the table
-        tableModel.setRowCount(0);
-
-        // Add the updated data
-        for (Map.Entry<String, Map<String, String>> entry : db.database.guests.entrySet()) {
-            Map<String, String> guest = entry.getValue();
-            String guestName = guest.get("FirstName") + " " + guest.get("LastName");
-            if(guestName.toLowerCase().contains(filter.toLowerCase()))
-            {
-                String[] rowData = {guestName, guest.get("Date")};
-                tableModel.addRow(rowData);
-            }
-        }
-    
-    }
 
     /**
      * Creates a guest entry suitable for the guest table.
@@ -485,53 +456,6 @@ public class MainMenuMockupAlt extends JFrame {
                 db.database.guests.put(toDeleteKey, null);
                 db.asyncPush();
             }
-        }
-    };
-
-    // Source: https://tips4java.wordpress.com/2009/06/07/table-cell-listener/
-    /**
-     * Event listener that listens for when a cell in the guest table is updated.
-     * When a cell is updated, the entry in the database is updated with the new value.
-     */
-    Action onTableCellUpdated = new AbstractAction()
-    {
-        public void actionPerformed(ActionEvent e)
-        {
-            TableCellListener tcl = (TableCellListener)e.getSource();
-            int row = tcl.getRow();
-            int col = tcl.getColumn();
-            String oldValue = (String) tcl.getOldValue();
-            String newValue = (String) tcl.getNewValue();
-
-            String name = (String)table.getValueAt(row, 0);
-            String date = (String)table.getValueAt(row, 1);
-    
-            String newGuestTableKey = getGuestTableKey(name);
-
-            Map<String,String> guestTableEntry = createGuestEntry(name, date);
-    
-            // Key is based on name, so if the name changes, we must rekey the entry
-            if(col == 0 && oldValue != null && !oldValue.equals(newValue)) {
-
-                // If the name changed to an already existing name, reject the change
-                if(db.database.guests.containsKey(newGuestTableKey))
-                {
-                    JOptionPane.showMessageDialog(null, "There's already a guest with that name.", "Duplicate Guest", JOptionPane.WARNING_MESSAGE);
-                    table.setValueAt(oldValue, row, 0);
-                    return;
-                }
-            
-                String oldGuestTableKey = getGuestTableKey(oldValue);
-                db.database.guests.put(oldGuestTableKey, null);
-                db.asyncPush();
-                db.database.guests.put(newGuestTableKey, guestTableEntry);
-            }
-            else
-            {
-                db.database.guests.put(newGuestTableKey, guestTableEntry);
-            }
-
-            db.asyncPush();
         }
     };
 
