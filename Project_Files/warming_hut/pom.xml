@@ -21,6 +21,14 @@
   <dependencies>
 
     <dependency>
+      <groupId>com.akathist.maven.plugins.launch4j</groupId>
+      <artifactId>launch4j-maven-plugin</artifactId>
+      <version>2.5.0</version>
+      <type>maven-plugin</type>
+    </dependency>
+
+
+    <dependency>
       <groupId>com.formdev</groupId>
       <artifactId>flatlaf</artifactId>
       <version>3.4.1</version>
@@ -64,9 +72,79 @@
 
   </dependencies>
 
-  <build>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (can be moved to parent pom) -->
+  <build><!-- lock down plugins versions to avoid using Maven defaults (can be moved to parent pom) -->
       <plugins>
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>3.3.0</version>
+          <configuration>
+            <descriptors>
+              <descriptor>src/main/assembly/release.xml</descriptor>
+            </descriptors>
+            <archive>
+              <manifest>
+                <mainClass>sssp.mainpage</mainClass>
+              </manifest>
+            </archive>
+          </configuration>
+          <executions>
+            <execution>
+              <id>make-assembly</id>
+              <!-- this is used for inheritance merges -->
+              <phase>package</phase>
+              <!-- bind to the packaging phase -->
+              <goals>
+                <goal>single</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.2.0</version>
+          <configuration>
+            <archive>
+              <manifest>
+                <mainClass>sssp.mainpage</mainClass> <!-- Replace with your main class -->
+              </manifest>
+            </archive>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>com.akathist.maven.plugins.launch4j</groupId>
+          <artifactId>launch4j-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>l4j-gui</id>
+              <phase>package</phase>
+              <goals><goal>launch4j</goal></goals>
+              <configuration>
+                <headerType>gui</headerType>
+                <outfile>target/Dataview.exe</outfile>
+                <jar>target/warming_hut-1-release.jar</jar>
+                <errTitle>Error!</errTitle>
+                <classPath>
+                  <mainClass>sssp.mainpage</mainClass>
+                </classPath>
+                <jre>
+                  <minVersion>20.0.0</minVersion>
+                </jre>
+                <versionInfo>
+                  <fileVersion>2.4.1.0</fileVersion>
+                  <txtFileVersion>v2.4.1-beta</txtFileVersion>
+                  <fileDescription>Dataview</fileDescription>
+                  <copyright></copyright>
+                  <productVersion>2.4.1.0</productVersion>
+                  <txtProductVersion>2.4.1</txtProductVersion>
+                  <productName>Dataview</productName>
+                  <internalName>dataview</internalName>
+                  <originalFilename>Dataview.exe</originalFilename>
+                </versionInfo>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
         <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
@@ -86,10 +164,6 @@
           <version>2.22.1</version>
         </plugin>
         <plugin>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
-        </plugin>
-        <plugin>
           <artifactId>maven-install-plugin</artifactId>
           <version>2.5.2</version>
         </plugin>
@@ -107,6 +181,5 @@
           <version>3.0.0</version>
         </plugin>
       </plugins>
-    </pluginManagement>
   </build>
 </project>
