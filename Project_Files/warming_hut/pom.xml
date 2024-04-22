@@ -73,10 +73,54 @@
 
   <build><!-- lock down plugins versions to avoid using Maven defaults (can be moved to parent pom) -->
       <plugins>
+          <plugin>
+            <!-- https://github.com/wiverson/jtoolprovider-plugin -->
+            <groupId>io.github.wiverson</groupId>
+            <artifactId>jtoolprovider-plugin</artifactId>
+            <version>1.0.34</version>
+            <executions>
+                <!-- The command that actually generates the installer.
+
+                https://github.com/wiverson/jtoolprovider-plugin/blob/main/java-tool-doc.md
+                -->
+                <execution>
+                    <id>jpackage</id>
+                    <phase>install</phase>
+                    <goals>
+                        <goal>java-tool</goal>
+                    </goals>
+                    <configuration>
+                        <toolName>jpackage</toolName>
+                        <writeOutputToLog>true</writeOutputToLog>
+                        <writeErrorsToLog>true</writeErrorsToLog>
+                        <failOnError>true</failOnError>
+                        <args>
+                          <arg>--dest</arg>
+                          <arg>${project.build.directory}/installer</arg>
+                          <arg>--name</arg>
+                          <arg>Dataview</arg>
+                          <arg>--input</arg>
+                          <arg>${project.build.directory}/releasejar</arg>
+                          <arg>--main-jar</arg>
+                          <arg>warming_hut-1-release.jar</arg>
+                          <arg>--main-class</arg>
+                          <arg>sssp.View.MainMenuMockupAlt</arg>
+                          <arg>--win-dir-chooser</arg>
+                          <arg>--win-menu</arg>
+                          <arg>--win-shortcut</arg>
+                          <arg>--win-upgrade-uuid</arg>
+                          <arg>6deed215-f9ad-4f63-9c0d-5ec623e64d55</arg>
+                          <arg>--verbose</arg>
+                        </args>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
         <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
           <version>3.3.0</version>
           <configuration>
+            <outputDirectory>${project.build.directory}/releasejar</outputDirectory>
             <descriptors>
               <descriptor>src/main/assembly/release.xml</descriptor>
             </descriptors>
@@ -109,41 +153,6 @@
               </manifest>
             </archive>
           </configuration>
-        </plugin>
-        <plugin>
-          <groupId>com.akathist.maven.plugins.launch4j</groupId>
-          <artifactId>launch4j-maven-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>l4j-gui</id>
-              <phase>package</phase>
-              <goals><goal>launch4j</goal></goals>
-              <configuration>
-                <headerType>gui</headerType>
-                <outfile>target/Dataview.exe</outfile>
-                <jar>target/warming_hut-1-release.jar</jar>
-                <errTitle>Error!</errTitle>
-                <classPath>
-                  <mainClass>sssp.mainpage</mainClass>
-                </classPath>
-                <jre>
-                  <path>jlink</path>
-                  <minVersion>20.0.0</minVersion>
-                </jre>
-                <versionInfo>
-                  <fileVersion>2.4.1.0</fileVersion>
-                  <txtFileVersion>v2.4.1-beta</txtFileVersion>
-                  <fileDescription>Dataview</fileDescription>
-                  <copyright></copyright>
-                  <productVersion>2.4.1.0</productVersion>
-                  <txtProductVersion>2.4.1</txtProductVersion>
-                  <productName>Dataview</productName>
-                  <internalName>dataview</internalName>
-                  <originalFilename>Dataview.exe</originalFilename>
-                </versionInfo>
-              </configuration>
-            </execution>
-          </executions>
         </plugin>
         <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
         <plugin>
