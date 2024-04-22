@@ -2,6 +2,9 @@ package sssp.View;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+
+import java.util.prefs.*;
 
 public class SetDBSecretPopup {
 
@@ -30,14 +33,24 @@ public class SetDBSecretPopup {
         secretPopupFrame.add(getDBSecretPopup(), frameC);
     }
 
+    static ActionListener setSecret = e -> {
+        Preferences prefs = Preferences.userNodeForPackage(sssp.mainpage.class);
+        JTextField field = (JTextField) e.getSource();
+        String secret = field.getText();
+        prefs.put("db_secret", secret);
+    };
+
     public static JPanel getDBSecretPopup() {
         JPanel popup = new JPanel();
-        // TODO add popup content
-        JTextArea secretExplanation = new JTextArea("Use the box below to set the key for the database. Just input database key and press 'Enter'");
-        //secretExplanation.setHorizontalAlignment(SwingConstants.LEFT);
-        //secretExplanation.setPreferredSize
-        secretExplanation.setLineWrap(true);
+        JLabel secretExplanation = new JLabel("Use the box below to set the key for the database. Just input database key and press 'Enter'");
         popup.add(secretExplanation);
+
+        JTextField secretField = new JTextField();
+        secretField.setPreferredSize(new Dimension(MENU_WIDTH, SCROLL_HEIGHT));
+        secretField.addActionListener(setSecret);
+
+        popup.add(secretField);
+
         return popup;
 
 
