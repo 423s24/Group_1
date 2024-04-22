@@ -27,7 +27,6 @@
       <type>maven-plugin</type>
     </dependency>
 
-
     <dependency>
       <groupId>com.formdev</groupId>
       <artifactId>flatlaf</artifactId>
@@ -106,10 +105,53 @@
           <configuration>
             <archive>
               <manifest>
-                <mainClass>sssp.mainpage</mainClass> <!-- Replace with your main class -->
+                <mainClass>sssp.mainpage</mainClass>
               </manifest>
             </archive>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jdeps-plugin</artifactId>
+          <version>3.1.2</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>jdkinternals</goal> <!-- verify main classes -->
+                <goal>test-jdkinternals</goal> <!-- verify test classes -->
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <classpath>
+              <path>${project.build.outputDirectory}</path>
+              <path>${project.build.testOutputDirectory}</path>
+            </classpath>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jlink-plugin</artifactId>
+          <version>3.0.0-alpha-1</version>
+          <extensions>true</extensions>
+          <configuration>
+            <modulePaths>
+              <modulePath>${java.home}/jmods</modulePath>
+            </modulePaths>
+            <modules>
+              <module>java.base</module>
+              <module>java.sql</module>
+              <!-- Add other modules your application needs -->
+            </modules>
+          </configuration>
+          <executions>
+            <execution>
+              <id>default-cli</id>
+              <goals>
+                <goal>jlink</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>com.akathist.maven.plugins.launch4j</groupId>
@@ -128,6 +170,7 @@
                   <mainClass>sssp.mainpage</mainClass>
                 </classPath>
                 <jre>
+                  <path>jlink</path>
                   <minVersion>20.0.0</minVersion>
                 </jre>
                 <versionInfo>
