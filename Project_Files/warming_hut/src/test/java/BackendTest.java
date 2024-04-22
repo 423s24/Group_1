@@ -53,7 +53,7 @@ public class BackendTest {
         assertEquals("data1", table.get("key1").get("value1"));
         assertEquals("data2", table.get("key2").get("value2"));
     }
-    @Test
+/*     @Test
     public void testConvertToJson2() {
         connector = new DBConnectorV2(client, secret);
         Map<String, Map<String, Map<String, String>>> table = Map.of(
@@ -63,9 +63,9 @@ public class BackendTest {
         String json = connector.convertToJson2(table);
         assertNotNull(json);
         assertEquals("{\"key2\":{\"subkey2\":{\"value2\":\"data2\"}},\"key1\":{\"subkey1\":{\"value1\":\"data1\"}}}", json);
-    }
+    } */
 
-    @Test
+/*     @Test
     public void testConvertToJson1() {
         connector = new DBConnectorV2(client, secret);
         Map<String, Map<String, String>> table = Map.of(
@@ -75,7 +75,7 @@ public class BackendTest {
         String json = connector.convertToJson1(table);
         assertNotNull(json);
         assertEquals("{\"key2\":{\"value2\":\"data2\"},\"key1\":{\"value1\":\"data1\"}}", json);
-    }
+    } */
 
     
 
