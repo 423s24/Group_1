@@ -11,6 +11,8 @@ import java.util.concurrent.CompletableFuture;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import sssp.Control.SecretManager;
+
 import java.lang.reflect.Type;
 import java.util.concurrent.Future;
 
@@ -454,6 +456,16 @@ public class DBConnectorV2{
                     return json;
                 }
             } else {
+                // Response code 401 indicates invalid credentials. Re-fetch secret and retry
+                if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    SecretManager.invalidateSecret();
+                    SecretManager.requireNewDBSecretEntry();
+                    this.secret = SecretManager.getDBSecret();
+
+                    // Retry
+                    return getTableJson(table);
+                }
+
                 // If response code is not success, print error
                 System.out.println("Failed to fetch client table. Response Code: " + responseCode);
                 return null;
@@ -505,6 +517,14 @@ public class DBConnectorV2{
                     }
                 }
                 System.out.println("Local table successfully pushed to Firebase Realtime Database.");
+            } else if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                // Response code 401 indicates invalid credentials. Re-fetch secret and retry
+                SecretManager.invalidateSecret();
+                SecretManager.requireNewDBSecretEntry();
+                this.secret = SecretManager.getDBSecret();
+
+                // Retry
+                pushTable(table, json);
             } else {
                 // If response code indicates failure, print error message
                 System.out.println("Failed to push local table to Firebase Realtime Database. Response Code: " + responseCode);

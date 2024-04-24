@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
+import sssp.Control.SecretManager;
 import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
 import sssp.Helper.HttpStreamingManagerSingleton;
@@ -122,8 +123,8 @@ public class MainMenuMockupAlt extends JFrame {
         createDBSecretButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                    // DB Secret Panel pops up here
-                SetDBSecretPopup.displaySetDBSecretPopup();
+                // DB Secret Panel pops up here
+                SecretManager.voluntaryDBSecretUpdate();
             }
         });
         topPanel.add(createDBSecretButton);
@@ -139,7 +140,7 @@ public class MainMenuMockupAlt extends JFrame {
         // Subscribe to database events
         db.subscribeRunnableToDBUpdate(this::onDatabasePut);
 
-        // Start listening only AFTER db has been instantiated
+        // Start listening only AFTER all subscribers have been subscribed
         HttpStreamingManagerSingleton.startListening();
 // endregion
 
