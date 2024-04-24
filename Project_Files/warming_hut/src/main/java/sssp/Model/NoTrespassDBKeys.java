@@ -1,6 +1,7 @@
 package sssp.Model;
 
 public enum NoTrespassDBKeys {
+    GUEST_ID("GuestId", "Guest ID"),
     DATE_OF_INCIDENT("DateOfIncident", "Date of Incident"),
     NO_TRESPASS_FROM("NoTrespassFrom", "No Trespass From"),
     BPD_STATUS("StatusBPD", "BPD Status"),
