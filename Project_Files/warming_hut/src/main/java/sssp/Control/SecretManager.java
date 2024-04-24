@@ -10,6 +10,9 @@ import java.net.URISyntaxException;
 import java.util.prefs.*;
 import javax.swing.*;
 
+import sssp.Helper.DBConnectorV2;
+import sssp.Helper.DBConnectorV2Singleton;
+
 public class SecretManager {
     static Preferences prefs = Preferences.userNodeForPackage(sssp.mainpage.class);
 
@@ -24,14 +27,14 @@ public class SecretManager {
         prefs.remove("db_secret");
     }
 
-    public static void requireNewDBSecretEntry()
+    public static String invalidSecretPopup()
     {
-        showSecretInputDialog("Dataview Setup", "Invalid database secret.");
+        return showSecretInputDialog("Dataview Setup", "Invalid database secret.");
     }
 
-    public static void voluntaryDBSecretUpdate()
+    public static String voluntarySecretUpdatePopup()
     {
-        showSecretInputDialog("Dataview Setup", "Enter your new database secret.");
+        return showSecretInputDialog("Dataview Setup", "Enter your new database secret.");
     }
 
     private static String showSecretInputDialog(String title, String message)
@@ -64,7 +67,7 @@ public class SecretManager {
         panel.add(linkLabel, gbc);
 
         gbc.insets = new Insets(0, 0, 0, 0);
-        panel.add(new JScrollPane(editorPane), gbc);
+        panel.add(editorPane, gbc);
 
 
         int option = JOptionPane.showOptionDialog(null, panel, title,
@@ -73,6 +76,14 @@ public class SecretManager {
         if (option == JOptionPane.OK_OPTION) {
             String secret = editorPane.getText();
             prefs.put("db_secret", secret);
+
+            DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
+            if(!db.setAndValidateSecret(secret))
+            {
+                invalidateSecret();
+                return invalidSecretPopup();
+            }
+
             return secret;
         }
         if ((option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) && prefs.get("db_secret", null) == null) {
