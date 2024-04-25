@@ -1,21 +1,27 @@
 package sssp.View;
 
+import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
 import sssp.Helper.Database;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class BunkReservationsPanel {
     // data fields in the Bunk Info panel
 
+    public static final String RESERVED = "RESERVED";
     private static final String RESERVED_BUNK = "ReservedBunk";
     private static final String RESERVED_BUNK_SLOT = "ReservedBunkSlot";
-    private static final JLabel bunkReservationLabel = new JLabel("Bunk Reservation");
+    private static final JLabel bunkReservationLabel = new JLabel("Bunk Reservation:");
     private static final JLabel bunkReservedSinceLabel = new JLabel("Reserved Since: ");
     private static final JLabel lastAssignedLabel = new JLabel("Last Assigned Bunk: ");
     private static final JComboBox<String> bedSlot = new JComboBox<>(new String[]{"A", "B"});
@@ -23,16 +29,66 @@ public class BunkReservationsPanel {
     private static String activeGuestId;
 
     public static void setObjKey(String guestId){
-        activeGuestId = guestId;
-        bedSlot.setSelectedIndex(0);
-        bunkReservationCombo.setModel(new DefaultComboBoxModel<>(getAvailableBunks().toArray(new String[0][0])));
-        setActiveGuestReservedBunkIndex();
+        if(activeGuestId != guestId){
+            activeGuestId = guestId;
+            removeListeners();
+            bedSlot.setSelectedIndex(0);
+            bunkReservationCombo.setModel(new DefaultComboBoxModel<>(getAvailableBunks().toArray(new String[0][0])));
+            setActiveGuestReservedBunkIndex();
+            addActionListeners();
+        }
+
     }
+
+    private static ActionListener bedSlotListener;
+    private static ActionListener bunkReservationListener;
+    private static void removeListeners(){
+        for(ActionListener listener : bedSlot.getActionListeners()){
+            bedSlot.removeActionListener(listener);
+        }
+        for(ActionListener listener : bunkReservationCombo.getActionListeners()){
+            bunkReservationCombo.removeActionListener(listener);
+        }
+    }
+
+    private static void addActionListeners(){
+        bedSlot.addActionListener(bedSlotListener);
+        bunkReservationCombo.addActionListener(bunkReservationListener);
+    }
+
     public static JPanel getBunkReservationsPanel(String guestId) {
+
+        DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
+        bunkReservationListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(bunkReservationCombo.getSelectedItem() != null && bedSlot.getSelectedItem() != null){
+                    if(Arrays.stream(bunkHeaders).toList().contains(((String[]) Objects.requireNonNull(bunkReservationCombo.getSelectedItem()))[0])){
+                        bunkReservationCombo.setSelectedIndex(0);
+                    } else if (((String[])bunkReservationCombo.getSelectedItem())[1].equals(RESERVED)){
+                        bunkReservationCombo.setSelectedIndex(0);
+                    } else if(db.database.guests.containsKey(activeGuestId)){
+                        String newBunkReservation = ((String[])bunkReservationCombo.getSelectedItem())[1];
+                        db.database.guests.get(activeGuestId).put(RESERVED_BUNK, newBunkReservation);
+                        db.database.guests.get(activeGuestId).put(RESERVED_BUNK_SLOT, bedSlot.getSelectedItem().toString());
+                        db.asyncPush();
+                        System.out.println(Arrays.stream(bunkReservationCombo.getActionListeners()).count());
+                    }
+                }
+            }
+        };
+        bedSlotListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                bunkReservationCombo.setModel(new DefaultComboBoxModel<>(getAvailableBunks().toArray(new String[0][0])));
+                bunkReservationCombo.setSelectedIndex(0);
+            }
+        };
+
+
         setObjKey(guestId);
         JPanel panel = new JPanel(new GridBagLayout());
-        Database db = DBConnectorV2Singleton.getInstance().database;
-        Map<String, String> guest = db.guests.get(activeGuestId);
+        Map<String, String> guest = db.database.guests.get(activeGuestId);
         if(guest == null){
             guest = new HashMap<>();
         }
@@ -50,40 +106,18 @@ public class BunkReservationsPanel {
         JLabel lastAssignedDate = new JLabel("NA");
         updateLastAssignedBunkId(activeGuestId);
         if(lastAssignedBunkId != null){
-            lastAssigned.setText(db.bunkList.get(lastAssignedBunkId).get("BunkNum"));
+            lastAssigned.setText(db.database.bunkList.get(lastAssignedBunkId).get("BunkNum"));
         }
         if(lastAssignedBunkDate != null){
             lastAssignedDate.setText("(" + lastAssignedBunkDate + ")");
         }
 
         bunkReservationCombo = new JComboBox<>(new DefaultComboBoxModel<>(getAvailableBunks().toArray(new String[0][0])));
-        bunkReservationCombo.setRenderer(new BunkAssignmentPanel.ComboBoxRenderer());
+        bunkReservationCombo.setRenderer(new ComboBoxRenderer());
         bunkReservationCombo.setPreferredSize(new Dimension(225, 30));
         bunkReservationCombo.setSelectedItem(null);
-        bunkReservationCombo.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if(bunkReservationCombo.getSelectedItem() != null && bedSlot.getSelectedItem() != null){
-                    if(Arrays.stream(bunkHeaders).toList().contains(((String[]) Objects.requireNonNull(bunkReservationCombo.getSelectedItem()))[0]) && e.getStateChange() == ItemEvent.SELECTED){
-                        String[] item = bunkReservationCombo.getItemAt(bunkReservationCombo.getSelectedIndex() + 1);
-                        bunkReservationCombo.setSelectedItem(item);
-                    }
-                    if(db.guests.containsKey(activeGuestId)){
-                        String reservedBunk = ((String[])bunkReservationCombo.getSelectedItem())[1];
-                        db.guests.get(activeGuestId).put(RESERVED_BUNK, reservedBunk);
-                        db.guests.get(activeGuestId).put(RESERVED_BUNK_SLOT, bedSlot.getSelectedItem().toString());
-                        DBConnectorV2Singleton.getInstance().asyncPush();
-                    }
-                }
-            }
-        });
 
-        bedSlot.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                bunkReservationCombo.setModel(new DefaultComboBoxModel<>(getAvailableBunks().toArray(new String[0][0])));
-            }
-        });
+        addActionListeners();
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -118,14 +152,15 @@ public class BunkReservationsPanel {
     private static final ArrayList<String[]>[] allBunkLists = new ArrayList[] {mensBunkList, womensBunkList, observationBunkList};
     private static final String[] bunkHeaders = new String[] {"Men's Bunks: ", "Women's Bunks: ", "Observation Area: "};
     private static ArrayList<String[]> getAvailableBunks(){
+        removeListeners();
         Database db = DBConnectorV2Singleton.getInstance().database;
-        boolean bunkSlotA = Objects.equals(BunkReservationsPanel.bedSlot.getSelectedItem(), "A");
+        boolean bunkSlotA = Objects.equals(bedSlot.getSelectedItem(), "A");
 
         mensBunkList.clear();
         womensBunkList.clear();
         observationBunkList.clear();
 
-        ArrayList<String> reservedBunks = new ArrayList<>();
+        HashMap<String, String> reservedBunks = new HashMap<>();
         for(String guestId : db.guests.keySet()) {
             if(guestId.equals(activeGuestId)){
                 continue;
@@ -133,7 +168,7 @@ public class BunkReservationsPanel {
             Map<String, String> guest = db.guests.get(guestId);
             if (guest.get(RESERVED_BUNK) != null && guest.get(RESERVED_BUNK_SLOT) != null) {
                 if (bunkSlotA == guest.get(RESERVED_BUNK_SLOT).equals("A")) {
-                    reservedBunks.add(guest.get(RESERVED_BUNK));
+                    reservedBunks.put(guest.get(RESERVED_BUNK), guestId);
                 }
             }
         }
@@ -160,16 +195,23 @@ public class BunkReservationsPanel {
                 default -> availableBunks.add(new String[]{bunkHeaders[2], ""});
             }
             for(String[] bunk : bunkList){
-                if(!reservedBunks.contains(bunk[1])){
+                if(!reservedBunks.containsKey(bunk[1])){
                     availableBunks.add(new String[]{bunk[0], bunk[1]});
+                } else {
+                    Map<String, String> guest = db.guests.get(reservedBunks.get(bunk[1]));
+                    String bunkWithAssignment = bunk[0] + " | " + guest.get("FirstName") + " " + guest.get("LastName");
+                    availableBunks.add(new String[]{bunkWithAssignment, RESERVED});
                 }
             }
             bunkListType++;
         }
+
+        addActionListeners();
         return availableBunks;
     }
 
     private static void setActiveGuestReservedBunkIndex(){
+        removeListeners();
         if(activeGuestId != null){
             Database db = DBConnectorV2Singleton.getInstance().database;
             for(String guestId : db.guests.keySet()) {
@@ -190,6 +232,7 @@ public class BunkReservationsPanel {
         } else {
             bunkReservationCombo.setSelectedIndex(-1);
         }
+        addActionListeners();
     }
 
     private static String lastAssignedBunkId = null;
@@ -207,6 +250,45 @@ public class BunkReservationsPanel {
                 lastAssignedBunkDate = db.attributes.get("GuestRoster").get(rosterId).get("Date");
             }
             dayCounter++;
+        }
+    }
+
+    public static class ComboBoxRenderer extends JLabel implements ListCellRenderer<String[]> {
+
+        private Color selectionBackgroundColor;
+        ComboBoxRenderer(){
+            setOpaque(true);
+        }
+
+        @Override
+        public Component getListCellRendererComponent(JList<? extends String[]> list, String[] value, int index, boolean isSelected, boolean cellHasFocus) {
+            selectionBackgroundColor = Color.white;
+            if(value != null){
+            if(Arrays.stream(bunkHeaders).toList().contains(value[0])) {
+                selectionBackgroundColor = Color.lightGray;
+            } else if (value[1].equals(RESERVED)){
+                selectionBackgroundColor = Color.red;
+            }
+            setText(value[0]);
+            } else {
+                setText("");
+            }
+            return this;
+        }
+
+        @Override
+        public boolean isOpaque() {
+            return true;
+        }
+
+        @Override
+        public void setBackground(Color bg) {
+            super.setBackground(bg); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public Color getBackground() {
+            return selectionBackgroundColor == null ? super.getBackground() : selectionBackgroundColor;
         }
     }
 }
