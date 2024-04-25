@@ -58,13 +58,13 @@ public class MainMenuMockupAlt extends JFrame {
 
         // Panels for Tab Switching
         JPanel checkInPanel = createCheckInPanel();
-        JPanel bunkAssignmentPanel = BunkAssignmentPanel.getBunkAssignmentPanel();
+        BunkAssignmentPanel.mainBunkPanel = BunkAssignmentPanel.getBunkAssignmentPanel();
         guestDetailsPanel = new GuestDetailsPanel();
         ExternalDataReportingPanel externalDataReportingPanel = new ExternalDataReportingPanel();
 
         // Add panels to the main panel
         mainPanel.add(checkInPanel, "Panel 1");
-        mainPanel.add(bunkAssignmentPanel, "Panel 2");
+        mainPanel.add(BunkAssignmentPanel.mainBunkPanel, "Panel 2");
         mainPanel.add(guestDetailsPanel, "Panel 3");
         mainPanel.add(externalDataReportingPanel.createExternalDataReportingPanel(), "Panel 4");
 
@@ -74,7 +74,20 @@ public class MainMenuMockupAlt extends JFrame {
 
         // Panel Switching Action Listeners
         checkinPanelButton.addActionListener(createButtonActionListener(checkinPanelButton, "Panel 1"));
-        bunkAssignmentPanelButton.addActionListener(createButtonActionListener(bunkAssignmentPanelButton, "Panel 2"));
+        //bunkAssignmentPanelButton.addActionListener(createButtonActionListener(bunkAssignmentPanelButton, "Panel 2"));
+        bunkAssignmentPanelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mainPanel.remove(BunkAssignmentPanel.mainBunkPanel);
+                BunkAssignmentPanel.mainBunkPanel = BunkAssignmentPanel.getBunkAssignmentPanel();
+                mainPanel.add(BunkAssignmentPanel.mainBunkPanel, "Panel 2");
+                cardLayout.show(mainPanel, "Panel 2");
+                activeButton.setEnabled(true); // Enable previously active button
+                bunkAssignmentPanelButton.setEnabled(false); // Disable clicked button
+                activeButton = bunkAssignmentPanelButton; // Update active button reference
+
+            }
+        });
         guestDetailsPanelButton.addActionListener(createButtonActionListener(guestDetailsPanelButton, "Panel 3"));
         externalDataReportingPanelButton.addActionListener(createButtonActionListener(externalDataReportingPanelButton,"Panel 4"));
 

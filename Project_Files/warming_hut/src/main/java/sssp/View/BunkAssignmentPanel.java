@@ -18,11 +18,21 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class BunkAssignmentPanel {
 
-    private static final JPanel bunkPanel = new JPanel(new GridBagLayout());
-    private static final GridBagConstraints bpc = new GridBagConstraints();
+    public static JPanel mainBunkPanel;
+    private static JPanel bunkPanel = new JPanel(new GridBagLayout());
+    private static GridBagConstraints bpc = new GridBagConstraints();
+
+    static int counter = 0;
     public static JPanel getBunkAssignmentPanel(){
         JPanel scrollPanel = new JPanel(new GridBagLayout());
         ScrollPane scrollPane = new ScrollPane();
+
+        bunkPanel = new JPanel(new GridBagLayout());
+        bpc = new GridBagConstraints();
+        reservedBunksA = new ArrayList<>();
+        reservedBunksB = new ArrayList<>();
+        guestsAdded = new ArrayList<>();
+        rowNum = 2;
 
         JLabel GuestLabel = new JLabel("Guest");
         JLabel BunkLabel = new JLabel("Bunk Assignment");
@@ -31,6 +41,11 @@ public class BunkAssignmentPanel {
         JLabel PreviouslyAssignedLabel = new JLabel("Previously Assigned");
         JLabel[] labels = {GuestLabel, BunkLabel, ReservationLabel, PreviouslyAssignedLabel, bedSlotLabel};
         JButton bunkEditPopup = new JButton("Edit Bunks");
+
+        counter++;
+        if(counter > 2) {
+            bunkEditPopup.setText("Egg Man");
+        }
 
         bunkEditPopup.addActionListener(e -> {
             BunkEditorPopup.showBunkEditorPopup();
@@ -80,10 +95,25 @@ public class BunkAssignmentPanel {
         return scrollPanel;
     }
 
+    private static ArrayList<String> reservedBunksA = new ArrayList<>();
+    private static ArrayList<String> reservedBunksB = new ArrayList<>();
     private static void addGuestRow(Map<String, String> guest, int rowNum){
 
+        Database db = DBConnectorV2Singleton.getInstance().database;
         JLabel guestNameLabel = new JLabel(guest.get("FirstName") + " " + guest.get("LastName"));
         JLabel reservedLabel = new JLabel("None");
+        if(guest.get(BunkReservationsPanel.RESERVED_BUNK) != null && !guest.get(BunkReservationsPanel.RESERVED_BUNK).equals("NONE")){
+            String reservedBunkId = guest.get(BunkReservationsPanel.RESERVED_BUNK);
+            String reservedBunkStr = "Bunk " + db.bunkList.get(reservedBunkId).get("BunkNum") + " " + guest.get(BunkReservationsPanel.RESERVED_BUNK_SLOT);
+            if(guest.get(BunkReservationsPanel.RESERVED_BUNK_SLOT).equals("A")){
+                reservedBunksA.add("Bunk " + db.bunkList.get(reservedBunkId).get("BunkNum"));
+            } else {
+                reservedBunksB.add("Bunk " + db.bunkList.get(reservedBunkId).get("BunkNum"));
+            }
+            reservedLabel.setText(reservedBunkStr);
+            reservedLabel.setOpaque(true);
+            reservedLabel.setBackground(Color.YELLOW);
+        }
         JLabel lastAssignedLabel = new JLabel("Bunk 1 A");
         JLabel[] labels = {guestNameLabel, reservedLabel, lastAssignedLabel};
         JComboBox<String> bedSlot = new JComboBox<>(new String[]{"A", "B"});
@@ -93,14 +123,8 @@ public class BunkAssignmentPanel {
             label.setHorizontalAlignment(SwingConstants.CENTER);
         }
 
-        if(rowNum == 2){
-            reservedLabel.setText("Bunk 2 B");
-            reservedLabel.setOpaque(true);
-            reservedLabel.setBackground(Color.YELLOW);
-        }
-
         JComboBox<String[]> bunkAssignmentCombo = new JComboBox<>(new DefaultComboBoxModel<>(getAvailableBunks(bedSlot).toArray(new String[0][0])));
-        bunkAssignmentCombo.setRenderer(new ComboBoxRenderer());
+        bunkAssignmentCombo.setRenderer(new ComboBoxRenderer(bedSlot));
         bunkAssignmentCombo.addPopupMenuListener(new MyPopupMenuListener(bedSlot, bunkAssignmentCombo));
         bunkAssignmentCombo.setPreferredSize(new Dimension(225, 30));
         bunkAssignmentCombo.setSelectedItem(null);
@@ -218,20 +242,28 @@ public class BunkAssignmentPanel {
         return availableBunks;
     }
     public static class ComboBoxRenderer extends JLabel implements ListCellRenderer<String[]> {
-
         private Color selectionBackgroundColor;
-        ComboBoxRenderer(){
+        private JComboBox<String> bedSlot;
+        ComboBoxRenderer(JComboBox<String> bedSlot){
             setOpaque(true);
+            this.bedSlot = bedSlot;
         }
 
         @Override
         public Component getListCellRendererComponent(JList<? extends String[]> list, String[] value, int index, boolean isSelected, boolean cellHasFocus) {
             selectionBackgroundColor = Color.white;
             if(value != null){
-                if("Bunk 2 B".equals(value[0])){
-                    selectionBackgroundColor = Color.YELLOW;
-                } else if(Arrays.stream(bunkHeaders).toList().contains(value[0])) {
+                if(Arrays.stream(bunkHeaders).toList().contains(value[0])) {
                     selectionBackgroundColor = Color.lightGray;
+                }
+                if(bedSlot.getSelectedItem().equals("A")) {
+                    if(reservedBunksA.contains(value[0])){
+                        selectionBackgroundColor = Color.YELLOW;
+                    }
+                } else {
+                    if(reservedBunksB.contains(value[0])){
+                        selectionBackgroundColor = Color.YELLOW;
+                    }
                 }
                 setText(value[0]);
             } else {

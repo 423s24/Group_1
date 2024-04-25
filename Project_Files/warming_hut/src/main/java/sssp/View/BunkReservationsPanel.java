@@ -8,20 +8,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 public class BunkReservationsPanel {
     // data fields in the Bunk Info panel
 
     public static final String RESERVED = "RESERVED";
-    private static final String RESERVED_BUNK = "ReservedBunk";
-    private static final String RESERVED_BUNK_SLOT = "ReservedBunkSlot";
-    private static final JLabel bunkReservationLabel = new JLabel("Bunk Reservation:");
+    public static final String RESERVED_BUNK = "ReservedBunk";
+    public static final String RESERVED_BUNK_SLOT = "ReservedBunkSlot";
+    private static final JLabel bunkReservationTitle = new JLabel("Bunk Reservation:");
+    private static final JLabel bunkReservationLabel = new JLabel("Bunk:");
+    private static final JLabel bedReservationLabel = new JLabel("Bed:");
     private static final JLabel bunkReservedSinceLabel = new JLabel("Reserved Since: ");
     private static final JLabel lastAssignedLabel = new JLabel("Last Assigned Bunk: ");
     private static final JComboBox<String> bedSlot = new JComboBox<>(new String[]{"A", "B"});
@@ -32,7 +30,13 @@ public class BunkReservationsPanel {
         if(activeGuestId != guestId){
             activeGuestId = guestId;
             removeListeners();
-            bedSlot.setSelectedIndex(0);
+            Map<String, String> guest = DBConnectorV2Singleton.getInstance().database.guests.get(activeGuestId);
+            if (guest.get(RESERVED_BUNK_SLOT) != null) {
+                int ABedSlot = (guest.get(RESERVED_BUNK_SLOT).equals("A")) ? 0 : 1;
+                bedSlot.setSelectedIndex(ABedSlot);
+            } else {
+                bedSlot.setSelectedIndex(0);
+            }
             bunkReservationCombo.setModel(new DefaultComboBoxModel<>(getAvailableBunks().toArray(new String[0][0])));
             setActiveGuestReservedBunkIndex();
             addActionListeners();
@@ -122,25 +126,29 @@ public class BunkReservationsPanel {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
-        c.insets = new Insets(0, 10, 10 ,10);
+        c.insets = new Insets(0, 10, 0 ,10);
         c.anchor = GridBagConstraints.WEST;
-        panel.add(bunkReservationLabel, c);
+        panel.add(bunkReservationTitle, c);
+        c.gridy = 1;
+        panel.add(bedReservationLabel, c);
         c.gridx = 1;
         panel.add(bedSlot, c);
-        c.gridx = 2;
-        panel.add(bunkReservationCombo, c);
-        c.gridy = 1;
+        c.gridy = 2;
         c.gridx = 0;
+        panel.add(bunkReservationLabel, c);
+        c.gridx = 1;
+        panel.add(bunkReservationCombo, c);
+        c.gridy = 3;
+        c.gridx = 0;
+        c.insets = new Insets(0, 10, 10 ,10);
         panel.add(bunkReservedSinceLabel, c);
         c.gridx = 1;
         panel.add(reservedSince, c);
-        c.gridy = 2;
+        c.gridy = 4;
         c.gridx = 0;
         panel.add(lastAssignedLabel, c);
         c.gridx = 1;
         panel.add(lastAssigned, c);
-        c.gridx = 2;
-        panel.add(lastAssignedDate, c);
 
         return panel;
     }
@@ -218,8 +226,6 @@ public class BunkReservationsPanel {
                 if(guestId.equals(activeGuestId)){
                     Map<String, String> guest = db.guests.get(guestId);
                     if (guest.get(RESERVED_BUNK) != null && guest.get(RESERVED_BUNK_SLOT) != null) {
-                        int ABedSlot = (guest.get(RESERVED_BUNK_SLOT).equals("A")) ? 0 : 1;
-                        bedSlot.setSelectedIndex(ABedSlot);
                         for(int i = 0; i<bunkReservationCombo.getItemCount(); i++){
                             if(((String[])bunkReservationCombo.getItemAt(i))[1].equals(guest.get(RESERVED_BUNK))){
                                 bunkReservationCombo.setSelectedIndex(i);
