@@ -180,14 +180,12 @@ public class MainMenuMockupAlt extends JFrame {
             public void propertyChange(PropertyChangeEvent evt) {
                 if (evt.getPropertyName().equals("date"))
                 {
-                    Date d = dateChooser.getDate();
-
-                    filterGuestTableByRosterDate(d);
+                    updateGuestsTable();
                 }
             }
         };
 
-        dateChooser.addPropertyChangeListener(dateChangedListener);
+        dateChooser.getDateEditor().addPropertyChangeListener(dateChangedListener);
 
         // Submit Button
         JButton submitButton = new JButton("Submit");
