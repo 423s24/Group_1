@@ -15,19 +15,23 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 
 import sssp.Control.SecretManager;
 import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
 import sssp.Helper.HttpStreamingManagerSingleton;
+import sssp.Helper.UUIDGenerator;
+import sssp.Model.AttributesDBKeys;
+import sssp.Model.CheckinsDBKeys;
 import sssp.Model.GuestDBKeys;
 import sssp.Model.NoTrespassDBKeys;
 
@@ -137,7 +141,8 @@ public class MainMenuMockupAlt extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // DB Secret Panel pops up here
-                SecretManager.voluntarySecretUpdatePopup();
+                String secret = SecretManager.voluntarySecretUpdatePopup();
+                db.setSecret(secret);
             }
         });
         topPanel.add(createDBSecretButton);
@@ -163,6 +168,8 @@ public class MainMenuMockupAlt extends JFrame {
         setVisible(true);
     }
 
+
+    JDateChooser dateChooser;
     private JPanel createCheckInPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
@@ -176,10 +183,24 @@ public class MainMenuMockupAlt extends JFrame {
         inputPanel.add(guestNameField);
 
         // Date Picker
-        JDateChooser dateChooser = new JDateChooser();
+        dateChooser = new JDateChooser();
         dateChooser.setDate(new Date()); // Set default date to current date
         dateChooser.setDateFormatString("MM/dd/yyyy"); // Format of the selected date (Month/Day/Year)
         inputPanel.add(dateChooser);
+
+        PropertyChangeListener dateChangedListener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getPropertyName().equals("date"))
+                {
+                    Date d = dateChooser.getDate();
+
+                    filterGuestTableByRosterDate(d);
+                }
+            }
+        };
+
+        dateChooser.addPropertyChangeListener(dateChangedListener);
 
         // Submit Button
         JButton submitButton = new JButton("Submit");
@@ -295,6 +316,28 @@ public class MainMenuMockupAlt extends JFrame {
         return panel;
     }
 
+    private List<Map<String,String>> filterGuestTableByRosterDate(Date d) {
+        if (db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()) == null)
+            return null;
+
+        List<Map<String, String>> checkins = db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).values().stream().toList();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        List<Map<String, String>> checkinsOnDate = checkins.stream().filter(e -> e.get(CheckinsDBKeys.DATE.getKey()).equals(dateFormat.format(d))).toList();
+
+        List<String> guestIDs = checkinsOnDate.stream().map(e -> e.get(CheckinsDBKeys.GUEST_ID.getKey())).toList();
+
+        List<Map<String,String>> guestsForDate = new ArrayList<>();
+
+        for(String guestID : guestIDs)
+        {
+            Map<String,String> guest = db.database.guests.get(guestID);
+            guestsForDate.add(guest);
+        }
+
+        return guestsForDate;
+    }
+
     // Button Init Stuff, mostly to stop border focus
     private JButton createButton(String text) {
         JButton button = new JButton(text);
@@ -321,6 +364,18 @@ public class MainMenuMockupAlt extends JFrame {
         // Looks like "Guest_<integer>"
         String guestTableKey = getGuestTableKey(guestName); // TODO USE THIS IN THE CENTER TABLE IMPLEMENTATION
 
+        // create single "Check In"
+        Map<String, String> checkinEntry = new HashMap<>();
+        checkinEntry.put(CheckinsDBKeys.GUEST_ID.getKey(), guestTableKey);
+        checkinEntry.put(CheckinsDBKeys.DATE.getKey(), formattedDate);
+        checkinEntry.put(CheckinsDBKeys.EMERGENCY_SHELTER.getKey(), Boolean.toString(true));
+        checkinEntry.put(CheckinsDBKeys.LAUNDRY.getKey(), Boolean.toString(false));
+        checkinEntry.put(CheckinsDBKeys.CASEWORTHY_ENTERED.getKey(), Boolean.toString(false));
+        checkinEntry.put(CheckinsDBKeys.HIMS_ENTERED.getKey(), Boolean.toString(false));
+
+        // enter the "Check In" in to the DB
+        db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).put(UUIDGenerator.getNewUUID(), checkinEntry);
+
         if (db.database.guests.containsKey(guestTableKey)) {
             JOptionPane.showMessageDialog(this, "Guest already checked in.", "Duplicate Guest", JOptionPane.WARNING_MESSAGE);
             return;
@@ -338,6 +393,8 @@ public class MainMenuMockupAlt extends JFrame {
      */
     private void updateGuestsTable()
     {
+        List<Map<String,String>> guestsForDate = filterGuestTableByRosterDate(dateChooser.getDate());
+
         // Update the guest table
         DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
 
@@ -345,8 +402,7 @@ public class MainMenuMockupAlt extends JFrame {
         tableModel.setRowCount(0);
 
         // Add the updated data
-        for (Map.Entry<String, Map<String, String>> entry : db.database.guests.entrySet()) {
-            Map<String, String> guest = entry.getValue();
+        for (Map<String,String> guest : guestsForDate) {
 
             // Check whether they have a small or medium locker
             String locker;
@@ -368,6 +424,8 @@ public class MainMenuMockupAlt extends JFrame {
                 storage = "No Storage Assigned";
             }
 
+            LocalDate today = LocalDate.now();
+            //System.out.println(today);
             // Check for an assigned bunk (if any)
             String bunk;
             //db.database.bunkList.get("")
@@ -386,6 +444,10 @@ public class MainMenuMockupAlt extends JFrame {
             List<Map<String,String>> trespassData;
             trespassData = DBConnectorV2.joinOnKey(db.database.conflicts.get("NoTrespass"),
                     "GuestId", getGuestTableKey(guest.get("FirstName") + " " + guest.get("LastName")));
+
+//            suspensionData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Suspensions"), "GuestId", guestID);
+//            probationData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Probation"), "GuestId", guestID);
+//            warningData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Warnings"), "GuestId", guestID);
 
             // check Each entry in trespassData List
             for (Map<String,String> oneTrespass : trespassData) {

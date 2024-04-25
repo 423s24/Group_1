@@ -75,20 +75,26 @@ public class SecretManager {
 
         if (option == JOptionPane.OK_OPTION) {
             String secret = editorPane.getText();
-            prefs.put("db_secret", secret);
-
             DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
-            if(!db.setAndValidateSecret(secret))
+
+            if(!db.validateSecret(secret))
             {
-                invalidateSecret();
                 return invalidSecretPopup();
             }
 
+            prefs.put("db_secret", secret);
+
             return secret;
         }
-        if ((option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) && prefs.get("db_secret", null) == null) {
+        // if we cancel and the program doesn't have a valid secret stored, exit the program
+        if ((option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) && !secretAlreadyExists()) {
             System.exit(0);
         }
         return prefs.get("db_secret", null);
+    }
+
+    private static boolean secretAlreadyExists()
+    {
+        return prefs.get("db_secret", null) != null;
     }
 }
