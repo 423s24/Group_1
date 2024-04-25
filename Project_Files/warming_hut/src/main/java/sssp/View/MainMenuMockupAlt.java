@@ -128,7 +128,8 @@ public class MainMenuMockupAlt extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // DB Secret Panel pops up here
-                SecretManager.voluntarySecretUpdatePopup();
+                String secret = SecretManager.voluntarySecretUpdatePopup();
+                db.setSecret(secret);
             }
         });
         topPanel.add(createDBSecretButton);
