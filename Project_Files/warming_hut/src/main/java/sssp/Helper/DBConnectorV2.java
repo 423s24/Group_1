@@ -429,10 +429,8 @@ public class DBConnectorV2{
      * This method checks if the client's secret is valid by sending a GET request to the Firebase Realtime Database.
      * @return boolean indicating whether the client's secret is valid
      */
-    public boolean setAndValidateSecret(String secret)
+    public boolean validateSecret(String secret)
     {
-        this.secret = secret;
-
         try {
             // Construct the URL to fetch client's data
             String urlString = endpoint +"/"+ client + "/.json?auth=" + secret;
@@ -469,6 +467,10 @@ public class DBConnectorV2{
         return true;
     }
 
+    public void setSecret(String secret){
+        this.secret = secret;
+    }
+
     // This is the code to pull a table from the database. It does not account for schema depth, and just kicks back the raw JSON associated with 
     // the table. 
     public String getTableJson(String table) {
@@ -503,8 +505,7 @@ public class DBConnectorV2{
                 // Response code 401 indicates invalid credentials. Re-fetch secret and retry
                 if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                     SecretManager.invalidateSecret();
-                    SecretManager.invalidSecretPopup();
-                    this.secret = SecretManager.getDBSecret();
+                    this.secret = SecretManager.invalidSecretPopup();
 
                     // Retry
                     return getTableJson(table);
@@ -564,8 +565,7 @@ public class DBConnectorV2{
             } else if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 // Response code 401 indicates invalid credentials. Re-fetch secret and retry
                 SecretManager.invalidateSecret();
-                SecretManager.invalidSecretPopup();
-                this.secret = SecretManager.getDBSecret();
+                this.secret = SecretManager.invalidSecretPopup();
 
                 // Retry
                 pushTable(table, json);
