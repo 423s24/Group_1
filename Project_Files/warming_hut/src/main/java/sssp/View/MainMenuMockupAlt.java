@@ -48,6 +48,7 @@ public class MainMenuMockupAlt extends JFrame {
         setTitle("HRDC Warming Center Manager");
         setSize(1366, 768);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setExtendedState(java.awt.Frame.MAXIMIZED_BOTH); // Sets the App Window to Maximized on Startup
         
         // Panel Switch Buttons
         JButton checkinPanelButton = createButton("Check In");
