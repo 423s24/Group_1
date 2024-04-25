@@ -309,7 +309,8 @@ public class MainMenuMockupAlt extends JFrame {
 
         List<Map<String, String>> checkins = db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).values().stream().toList();
 
-        List<Map<String, String>> checkinsOnDate = checkins.stream().filter(e -> e.get(CheckinsDBKeys.DATE.getKey()).equals(d.toString())).toList();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        List<Map<String, String>> checkinsOnDate = checkins.stream().filter(e -> e.get(CheckinsDBKeys.DATE.getKey()).equals(dateFormat.format(d))).toList();
 
         List<String> guestIDs = checkinsOnDate.stream().map(e -> e.get(CheckinsDBKeys.GUEST_ID.getKey())).toList();
 
