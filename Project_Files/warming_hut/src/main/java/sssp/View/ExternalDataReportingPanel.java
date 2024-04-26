@@ -56,6 +56,10 @@ public class ExternalDataReportingPanel extends JPanel {
         // set up strings for table params
 
         for (Map<String,String> oneCheckin : checkinsToReport) {
+            if(!oneCheckin.containsKey(CheckinsDBKeys.GUEST_ID.getKey()))
+            {
+                continue;
+            }
 
             //get Date
             String date = oneCheckin.get("Date");
