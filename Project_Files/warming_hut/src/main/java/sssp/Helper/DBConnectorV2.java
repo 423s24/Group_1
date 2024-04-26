@@ -31,7 +31,7 @@ public class DBConnectorV2{
     // For this use case, client should always be HRDC and secret is the firebase api key
     private String client;
     private String secret;
-    private String endpoint = "https://hrdc-warming-hut-db-manager-default-rtdb.firebaseio.com/clients";
+    private static String endpoint = "https://hrdc-warming-hut-db-manager-default-rtdb.firebaseio.com/clients";
 
 
 
@@ -429,11 +429,11 @@ public class DBConnectorV2{
      * This method checks if the client's secret is valid by sending a GET request to the Firebase Realtime Database.
      * @return boolean indicating whether the client's secret is valid
      */
-    public boolean validateSecret(String secret)
+    public static boolean validateSecret(String secret)
     {
         try {
             // Construct the URL to fetch client's data
-            String urlString = endpoint +"/"+ client + "/.json?auth=" + secret;
+            String urlString = endpoint +"/"+ "HRDC" + "/.json?auth=" + secret;
     
             // Create URL object
             URL url = new URL(urlString);
