@@ -464,7 +464,7 @@ public class MainMenuMockupAlt extends JFrame {
             }
 
             // Check for any issues in order of seriousness
-            String issue = "";
+            String issue;
             String trespass = "";
             String suspension = "";
             String warning = "";

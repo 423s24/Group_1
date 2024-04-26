@@ -3,6 +3,8 @@ package sssp.View;
 import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
 import sssp.Model.AttributesDBKeys;
+import sssp.Model.CheckinsDBKeys;
+import sssp.Model.GuestDBKeys;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -51,15 +53,28 @@ public class ExternalDataReportingPanel extends JPanel {
         // Clear the table
         tableModel.setRowCount(0);
 
-/*
+        // set up strings for table params
+
         for (Map<String,String> oneCheckin : checkinsToReport) {
 
+            //get Date
+            String date = oneCheckin.get("Date");
+            String guestName;
+            // get Emergency Shelter Status
+            String emergencyShelter="", laundry="";
+            Boolean caseWorthy = true, hmis = false;
+
+            String checkinGuestId = oneCheckin.get(CheckinsDBKeys.GUEST_ID.getKey());
+            Map<String, String> guest = db.database.guests.get(checkinGuestId);
+            guestName = guest.get(GuestDBKeys.FIRST_NAME.getKey()) + " " + guest.get(GuestDBKeys.LAST_NAME.getKey());
+/*
+            for (String guestId : db.database.guests.keySet()) {
+                if(guestId.equals(checkinGuestId)) {*/
+
+            String[] rowData = {date, guestName, emergencyShelter, laundry, caseWorthy.toString(), hmis.toString()};
+            tableModel.addRow(rowData);
+
         }
-*/
-//
-//        String[] rowData = {oneCheckin.get("FirstName") + " " + guest.get("LastName"),
-//                locker, storage, bunk, issue}; //TODO add updated guest info data here
-//        tableModel.addRow(rowData);
     }
 
 //    private List<Map<String, String>> getCheckinsToReport() {
