@@ -488,7 +488,7 @@ public class MainMenuMockupAlt extends JFrame {
             // check each entry in trespassData list
             for (Map<String,String> oneTrespass : trespassData) {
                 if (oneTrespass != null && !oneTrespass.get(NoTrespassDBKeys.CONFLICT_ID.getKey()).isEmpty()) {
-                    trespass = "No Trespass";
+                    trespass = "NO TRESPASS";
                 }
                 else {
                     trespass = "None";
@@ -497,7 +497,7 @@ public class MainMenuMockupAlt extends JFrame {
             // check each entry in the suspensionData list
             for (Map<String,String> oneSuspension : suspensionData) {
                 if (oneSuspension != null && !oneSuspension.get(SuspensionDBKeys.CONFLICT_ID.getKey()).isEmpty()) {
-                    suspension = "Suspension";
+                    suspension = "SUSPENSION";
                 }
                 else {
                     suspension = "None";
@@ -506,7 +506,7 @@ public class MainMenuMockupAlt extends JFrame {
             // check each entry in the warningData list
             for (Map<String,String> oneWarning : warningData) {
                 if (oneWarning != null && !oneWarning.get(WarningDBKeys.GUEST_ID.getKey()).isEmpty()) {
-                    warning = "Warning";
+                    warning = "WARNING";
                 }
                 else {
                     warning = "None";
@@ -524,9 +524,8 @@ public class MainMenuMockupAlt extends JFrame {
             }
 
             String[] rowData = {guest.get("FirstName") + " " + guest.get("LastName"),
-                    locker, storage, bunk, issue}; //TODO add updated guest info data here
+                    locker, storage, bunk, issue};
             tableModel.addRow(rowData);
-
         }
     }
 
