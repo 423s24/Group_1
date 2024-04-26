@@ -35,6 +35,8 @@ import sssp.Model.CheckinsDBKeys;
 import sssp.Model.GuestDBKeys;
 import sssp.Model.NoTrespassDBKeys;
 
+import static sssp.View.ExternalDataReportingPanel.externalDataReportingPanel;
+
 public class MainMenuMockupAlt extends JFrame {
     private JPanel mainPanel;
     private CardLayout cardLayout;
@@ -42,6 +44,7 @@ public class MainMenuMockupAlt extends JFrame {
     private DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
     private JTable table;
     private GuestDetailsPanel guestDetailsPanel;
+    private ExternalDataReportingPanel dataReportingPanel;
     private JButton guestDetailsPanelButton;
 
     public MainMenuMockupAlt() {
@@ -65,13 +68,13 @@ public class MainMenuMockupAlt extends JFrame {
         JPanel checkInPanel = createCheckInPanel();
         BunkAssignmentPanel.mainBunkPanel = BunkAssignmentPanel.getBunkAssignmentPanel();
         guestDetailsPanel = new GuestDetailsPanel();
-        ExternalDataReportingPanel externalDataReportingPanel = new ExternalDataReportingPanel();
+        dataReportingPanel = new ExternalDataReportingPanel();
 
         // Add panels to the main panel
         mainPanel.add(checkInPanel, "Panel 1");
         mainPanel.add(BunkAssignmentPanel.mainBunkPanel, "Panel 2");
         mainPanel.add(guestDetailsPanel, "Panel 3");
-        mainPanel.add(externalDataReportingPanel.createExternalDataReportingPanel(), "Panel 4");
+        mainPanel.add(dataReportingPanel.createExternalDataReportingPanel(), "Panel 4");
 
         // Initialize Active Button
         activeButton = checkinPanelButton;
@@ -390,8 +393,7 @@ public class MainMenuMockupAlt extends JFrame {
     /**
      * Updates the guest table with the latest data from the database.
      */
-    private void updateGuestsTable()
-    {
+    private void updateGuestsTable() {
         List<Map<String,String>> guestsForDate = filterGuestTableByRosterDate(dateChooser.getDate());
 
         // Update the guest table
