@@ -366,6 +366,27 @@ public class MainMenuMockupAlt extends JFrame {
         // Looks like "Guest_<integer>"
         String guestTableKey = getGuestTableKey(guestName); // TODO USE THIS IN THE CENTER TABLE IMPLEMENTATION
 
+        // If there hasn't been a checkin already, go ahead and create one
+        if(!guestCheckedInOnDate(guestTableKey, selectedDate))
+        {
+            createAndPutCheckin(formattedDate, guestTableKey);
+            db.asyncPush();
+            updateGuestsTable();
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(this, "Guest already checked in.", "Duplicate Checkin", JOptionPane.WARNING_MESSAGE);
+        }
+
+        // If there hasn't been a guest entry created, make one
+        if (!db.database.guests.containsKey(guestTableKey)) {
+            Map<String,String> guestTableEntry = createGuestEntry(guestName, formattedDate);
+            db.database.guests.put(guestTableKey, guestTableEntry);
+            db.asyncPush();
+        }
+    }
+
+    private void createAndPutCheckin(String formattedDate, String guestTableKey) {
         // create single "Check In"
         Map<String, String> checkinEntry = new HashMap<>();
         checkinEntry.put(CheckinsDBKeys.GUEST_ID.getKey(), guestTableKey);
@@ -377,17 +398,28 @@ public class MainMenuMockupAlt extends JFrame {
 
         // enter the "Check In" in to the DB
         db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).put(UUIDGenerator.getNewUUID(), checkinEntry);
+    }
 
-        if (db.database.guests.containsKey(guestTableKey)) {
-            JOptionPane.showMessageDialog(this, "Guest already checked in.", "Duplicate Guest", JOptionPane.WARNING_MESSAGE);
-            return;
+    /** 
+     * Checks if a guest has checked in on a specific date.
+     * 
+     * @param guestID the ID of the guest
+     * @param date the date to check
+    */
+    private boolean guestCheckedInOnDate(String guestID, Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        String formattedDate = dateFormat.format(date);
+
+        List<Map<String, String>> checkins = db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).values().stream().toList();
+        List<Map<String, String>> checkinsOnDate = checkins.stream().filter(e -> e.get(CheckinsDBKeys.DATE.getKey()).equals(formattedDate)).toList();
+
+        for (Map<String, String> checkin : checkinsOnDate) {
+            if (checkin.get(CheckinsDBKeys.GUEST_ID.getKey()).equals(guestID)) {
+                return true;
+            }
         }
-        else
-        {
-            Map<String,String> guestTableEntry = createGuestEntry(guestName, formattedDate);
-            db.database.guests.put(guestTableKey, guestTableEntry);
-            db.asyncPush();
-        }
+
+        return false;
     }
 
     /**
@@ -527,9 +559,9 @@ public class MainMenuMockupAlt extends JFrame {
      * When the delete button is pressed, the row is removed from the table and the entry is removed from the database.
      */
     Action onDeleteRowButtonPressed = new AbstractAction() {
-        public void actionPerformed(ActionEvent e) {
-            JTable table = (JTable)e.getSource();
-            int modelRow = Integer.valueOf( e.getActionCommand() );
+        public void actionPerformed(ActionEvent evt) {
+            JTable table = (JTable)evt.getSource();
+            int modelRow = Integer.valueOf( evt.getActionCommand() );
             Object delete = table.getModel().getValueAt(modelRow, 5);
             Window window = SwingUtilities.windowForComponent(table);
 
@@ -545,8 +577,23 @@ public class MainMenuMockupAlt extends JFrame {
             {
                 ((DefaultTableModel)table.getModel()).removeRow(modelRow);
 
-                String toDeleteKey = getGuestTableKey(guestName);
-                db.database.guests.put(toDeleteKey, null);
+                String associatedGuest = getGuestTableKey(guestName);
+                Date currentSelected = dateChooser.getDate();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+                Set<Map.Entry<String, Map<String,String>>> checkins = db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).entrySet();
+
+                // filter where checkin.GuestId == associatedGuest && checkin.Date == currentSelected
+                for (Map.Entry<String, Map<String,String>> entry : checkins) 
+                {
+                    if (entry.getValue().get(CheckinsDBKeys.GUEST_ID.getKey()).equals(associatedGuest) &&
+                            entry.getValue().get(CheckinsDBKeys.DATE.getKey()).equals(dateFormat.format(currentSelected))) 
+                    {
+                        // remove entry from checkins
+                        db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).put(entry.getKey(), null);
+                        break;
+                    }
+                }
                 db.asyncPush();
             }
         }
