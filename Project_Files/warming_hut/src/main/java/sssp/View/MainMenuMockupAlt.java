@@ -389,6 +389,7 @@ public class MainMenuMockupAlt extends JFrame {
         checkinEntry.put(CheckinsDBKeys.GUEST_ID.getKey(), guestTableKey);
         checkinEntry.put(CheckinsDBKeys.DATE.getKey(), formattedDate);
         checkinEntry.put(CheckinsDBKeys.EMERGENCY_SHELTER.getKey(), Boolean.toString(true));
+        checkinEntry.put(CheckinsDBKeys.SERVICES_ONLY.getKey(), Boolean.toString(false));
         checkinEntry.put(CheckinsDBKeys.LAUNDRY.getKey(), Boolean.toString(false));
         checkinEntry.put(CheckinsDBKeys.CASEWORTHY_ENTERED.getKey(), Boolean.toString(false));
         checkinEntry.put(CheckinsDBKeys.HMIS_ENTERED.getKey(), Boolean.toString(false));
