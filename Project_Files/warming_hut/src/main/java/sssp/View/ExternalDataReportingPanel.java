@@ -26,7 +26,7 @@ public class ExternalDataReportingPanel extends JPanel {
         // Data
         reportingPanel = new JPanel(new BorderLayout());
 
-        String[] columnNames = {"Date", "Name", "Emergency Shelter", "Laundry", "CaseWorthy", "HMIS"};
+        String[] columnNames = {"Date", "Name", "Services Only", "Laundry", "CaseWorthy", "HMIS"};
         Object[][] data = {};
 
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
@@ -61,19 +61,19 @@ public class ExternalDataReportingPanel extends JPanel {
             String date = oneCheckin.get("Date");
             String guestName;
             // get Emergency Shelter Status
-            String emergencyShelter="", laundry="";
+            String servicesOnly="", laundry="";
             String caseWorthy ="", hmis = "";
 
             String checkinGuestId = oneCheckin.get(CheckinsDBKeys.GUEST_ID.getKey());
             Map<String, String> guest = db.database.guests.get(checkinGuestId);
             guestName = guest.get(GuestDBKeys.FIRST_NAME.getKey()) + " " + guest.get(GuestDBKeys.LAST_NAME.getKey());
 
-            emergencyShelter = oneCheckin.get(CheckinsDBKeys.EMERGENCY_SHELTER.getKey());
+            servicesOnly = oneCheckin.get(CheckinsDBKeys.SERVICES_ONLY.getKey());
             laundry = oneCheckin.get(CheckinsDBKeys.LAUNDRY.getKey());
             caseWorthy = oneCheckin.get(CheckinsDBKeys.CASEWORTHY_ENTERED.getKey());
             hmis = oneCheckin.get(CheckinsDBKeys.HMIS_ENTERED.getKey());
 
-            String[] rowData = {date, guestName, emergencyShelter, laundry, caseWorthy, hmis};
+            String[] rowData = {date, guestName, servicesOnly, laundry, caseWorthy, hmis};
             tableModel.addRow(rowData);
         }
     }
