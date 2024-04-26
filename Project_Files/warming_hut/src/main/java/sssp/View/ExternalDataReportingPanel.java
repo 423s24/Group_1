@@ -62,18 +62,19 @@ public class ExternalDataReportingPanel extends JPanel {
             String guestName;
             // get Emergency Shelter Status
             String emergencyShelter="", laundry="";
-            Boolean caseWorthy = true, hmis = false;
+            String caseWorthy ="", hmis = "";
 
             String checkinGuestId = oneCheckin.get(CheckinsDBKeys.GUEST_ID.getKey());
             Map<String, String> guest = db.database.guests.get(checkinGuestId);
             guestName = guest.get(GuestDBKeys.FIRST_NAME.getKey()) + " " + guest.get(GuestDBKeys.LAST_NAME.getKey());
-/*
-            for (String guestId : db.database.guests.keySet()) {
-                if(guestId.equals(checkinGuestId)) {*/
 
-            String[] rowData = {date, guestName, emergencyShelter, laundry, caseWorthy.toString(), hmis.toString()};
+            emergencyShelter = oneCheckin.get(CheckinsDBKeys.EMERGENCY_SHELTER.getKey());
+            laundry = oneCheckin.get(CheckinsDBKeys.LAUNDRY.getKey());
+            caseWorthy = oneCheckin.get(CheckinsDBKeys.CASEWORTHY_ENTERED.getKey());
+            hmis = oneCheckin.get(CheckinsDBKeys.HMIS_ENTERED.getKey());
+
+            String[] rowData = {date, guestName, emergencyShelter, laundry, caseWorthy, hmis};
             tableModel.addRow(rowData);
-
         }
     }
 
