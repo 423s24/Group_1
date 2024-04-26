@@ -30,10 +30,7 @@ import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
 import sssp.Helper.HttpStreamingManagerSingleton;
 import sssp.Helper.UUIDGenerator;
-import sssp.Model.AttributesDBKeys;
-import sssp.Model.CheckinsDBKeys;
-import sssp.Model.GuestDBKeys;
-import sssp.Model.NoTrespassDBKeys;
+import sssp.Model.*;
 
 import static sssp.View.ExternalDataReportingPanel.externalDataReportingPanel;
 
@@ -457,12 +454,9 @@ public class MainMenuMockupAlt extends JFrame {
                 storage = "Unassigned";
             }
 
-            LocalDate today = LocalDate.now();
-            //System.out.println(today);
             // Check for an assigned bunk (if any)
             String bunk;
-            //db.database.bunkList.get("")
-            // TODO replace PlaceHolder in decision below when we have joinOnValue() figured out
+
             if (guest.get("ReservedBunk") != null && !guest.get("ReservedBunk").isEmpty()) {
                 bunk = guest.get("ReservedBunkSlot") + ":" + guest.get("ReservedBunk");
             } else {
@@ -471,32 +465,63 @@ public class MainMenuMockupAlt extends JFrame {
 
             // Check for any issues in order of seriousness
             String issue = "";
+            String trespass = "";
+            String suspension = "";
+            String warning = "";
 
+            LocalDate today = LocalDate.now(); //Date is of the form YYYY-MM-DD
             // TODO need to work out the GuestID + joinOnValue() - joinValue field, currenlty stumped on what/how i pass it what it needs
             // getGuestTableKey(String guestName)
             List<Map<String,String>> trespassData;
+            List<Map<String,String>> suspensionData;
+            List<Map<String,String>> warningData;
+
             trespassData = DBConnectorV2.joinOnKey(db.database.conflicts.get("NoTrespass"),
                     "GuestId", getGuestTableKey(guest.get("FirstName") + " " + guest.get("LastName")));
 
-//            suspensionData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Suspensions"), "GuestId", guestID);
-//            probationData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Probation"), "GuestId", guestID);
-//            warningData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Warnings"), "GuestId", guestID);
+            suspensionData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Suspensions"),
+                    "GuestId", getGuestTableKey(guest.get("FirstName") + " " + guest.get("LastName")));
 
-            // check Each entry in trespassData List
+            warningData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Warnings"),
+                    "GuestId", getGuestTableKey(guest.get("FirstName") + " " + guest.get("LastName")));
+
+            // check each entry in trespassData list
             for (Map<String,String> oneTrespass : trespassData) {
-                if (oneTrespass != null && !oneTrespass.get(NoTrespassDBKeys.NO_TRESPASS_FROM.getKey()).isEmpty()) {
-                    issue = "No Trespass";
+                if (oneTrespass != null && !oneTrespass.get(NoTrespassDBKeys.CONFLICT_ID.getKey()).isEmpty()) {
+                    trespass = "No Trespass";
                 }
                 else {
-                    issue = "None";
+                    trespass = "None";
                 }
             }
-
-//            } else if (guest.get("ConflictId") != null && !guest.get("ConflictId").isEmpty()) {
-//                issue = "Suspension";
-//            } else {
-//                issue = "None";
-//            }
+            // check each entry in the suspensionData list
+            for (Map<String,String> oneSuspension : suspensionData) {
+                if (oneSuspension != null && !oneSuspension.get(SuspensionDBKeys.CONFLICT_ID.getKey()).isEmpty()) {
+                    suspension = "Suspension";
+                }
+                else {
+                    suspension = "None";
+                }
+            }
+            // check each entry in the warningData list
+            for (Map<String,String> oneWarning : warningData) {
+                if (oneWarning != null && !oneWarning.get(WarningDBKeys.GUEST_ID.getKey()).isEmpty()) {
+                    warning = "Warning";
+                }
+                else {
+                    warning = "None";
+                }
+            }
+            // checks if there are No Trespass, Suspensions, or Warnings - displays the most serious one in checkin table
+            if (!trespass.equals("")){
+                issue = trespass;
+            } else if (!suspension.equals("")) {
+                issue = suspension;
+            } else if (!warning.equals("")) {
+                issue = warning;
+            } else {
+                issue = "No Issues";
+            }
 
             String[] rowData = {guest.get("FirstName") + " " + guest.get("LastName"),
                     locker, storage, bunk, issue}; //TODO add updated guest info data here
