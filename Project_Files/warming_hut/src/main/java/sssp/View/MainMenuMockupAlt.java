@@ -444,7 +444,7 @@ public class MainMenuMockupAlt extends JFrame {
             } else if (guest.get("MediumLockerNumber") != null && !guest.get("MediumLockerNumber").isEmpty()) {
                 locker = guest.get("MediumLockerNumber");
             } else {
-                locker = "No Locker Assigned";
+                locker = "Unassigned";
             }
 
             // Check what kind of storage the guest is using (if any)
@@ -454,7 +454,7 @@ public class MainMenuMockupAlt extends JFrame {
             //} else if (guest.get("MediumLockerNumber") != null && !guest.get("MediumLockerNumber").isEmpty()) {
                 //storage = guest.get("MediumLockerNumber"); TODO CHECK HOW CUBE STORAGE WORKS AND INCORPORATE IT (MAYBE ADD A NEW COLUMN)
             } else {
-                storage = "No Storage Assigned";
+                storage = "Unassigned";
             }
 
             LocalDate today = LocalDate.now();
@@ -463,10 +463,10 @@ public class MainMenuMockupAlt extends JFrame {
             String bunk;
             //db.database.bunkList.get("")
             // TODO replace PlaceHolder in decision below when we have joinOnValue() figured out
-            if (guest.get("PlaceHolder") != null && !guest.get("PlaceHolder").isEmpty()) {
-                bunk = "shelf:" + guest.get("DayStorageShelf") + " slot:" + guest.get("DayStorageSlot");
+            if (guest.get("ReservedBunk") != null && !guest.get("ReservedBunk").isEmpty()) {
+                bunk = guest.get("ReservedBunkSlot") + ":" + guest.get("ReservedBunk");
             } else {
-                bunk = "No Bunk Assigned";
+                bunk = "Unassigned";
             }
 
             // Check for any issues in order of seriousness
