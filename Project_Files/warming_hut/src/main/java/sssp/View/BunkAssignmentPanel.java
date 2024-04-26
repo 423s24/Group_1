@@ -21,8 +21,7 @@ public class BunkAssignmentPanel {
     public static JPanel mainBunkPanel;
     private static JPanel bunkPanel = new JPanel(new GridBagLayout());
     private static GridBagConstraints bpc = new GridBagConstraints();
-
-    static int counter = 0;
+    
     public static JPanel getBunkAssignmentPanel(){
         JPanel scrollPanel = new JPanel(new GridBagLayout());
         ScrollPane scrollPane = new ScrollPane();
@@ -41,11 +40,6 @@ public class BunkAssignmentPanel {
         JLabel PreviouslyAssignedLabel = new JLabel("Previously Assigned");
         JLabel[] labels = {GuestLabel, BunkLabel, ReservationLabel, PreviouslyAssignedLabel, bedSlotLabel};
         JButton bunkEditPopup = new JButton("Edit Bunks");
-
-        counter++;
-        if(counter > 2) {
-            bunkEditPopup.setText("Egg Man");
-        }
 
         bunkEditPopup.addActionListener(e -> {
             BunkEditorPopup.showBunkEditorPopup();
