@@ -391,7 +391,7 @@ public class MainMenuMockupAlt extends JFrame {
         checkinEntry.put(CheckinsDBKeys.EMERGENCY_SHELTER.getKey(), Boolean.toString(true));
         checkinEntry.put(CheckinsDBKeys.LAUNDRY.getKey(), Boolean.toString(false));
         checkinEntry.put(CheckinsDBKeys.CASEWORTHY_ENTERED.getKey(), Boolean.toString(false));
-        checkinEntry.put(CheckinsDBKeys.HIMS_ENTERED.getKey(), Boolean.toString(false));
+        checkinEntry.put(CheckinsDBKeys.HMIS_ENTERED.getKey(), Boolean.toString(false));
 
         // enter the "Check In" in to the DB
         db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).put(UUIDGenerator.getNewUUID(), checkinEntry);
