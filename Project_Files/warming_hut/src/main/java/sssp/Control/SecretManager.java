@@ -75,9 +75,8 @@ public class SecretManager {
 
         if (option == JOptionPane.OK_OPTION) {
             String secret = editorPane.getText();
-            DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
 
-            if(!db.validateSecret(secret))
+            if(!DBConnectorV2.validateSecret(secret))
             {
                 return invalidSecretPopup();
             }

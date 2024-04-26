@@ -20,8 +20,12 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.List;
 
@@ -30,10 +34,9 @@ import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
 import sssp.Helper.HttpStreamingManagerSingleton;
 import sssp.Helper.UUIDGenerator;
-import sssp.Model.AttributesDBKeys;
-import sssp.Model.CheckinsDBKeys;
-import sssp.Model.GuestDBKeys;
-import sssp.Model.NoTrespassDBKeys;
+import sssp.Model.*;
+
+import static sssp.View.ExternalDataReportingPanel.externalDataReportingPanel;
 
 public class MainMenuMockupAlt extends JFrame {
     private JPanel mainPanel;
@@ -42,6 +45,7 @@ public class MainMenuMockupAlt extends JFrame {
     private DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
     private JTable table;
     private GuestDetailsPanel guestDetailsPanel;
+    private ExternalDataReportingPanel dataReportingPanel;
     private JButton guestDetailsPanelButton;
 
     public MainMenuMockupAlt() {
@@ -65,13 +69,13 @@ public class MainMenuMockupAlt extends JFrame {
         JPanel checkInPanel = createCheckInPanel();
         BunkAssignmentPanel.mainBunkPanel = BunkAssignmentPanel.getBunkAssignmentPanel();
         guestDetailsPanel = new GuestDetailsPanel();
-        ExternalDataReportingPanel externalDataReportingPanel = new ExternalDataReportingPanel();
+        dataReportingPanel = new ExternalDataReportingPanel();
 
         // Add panels to the main panel
         mainPanel.add(checkInPanel, "Panel 1");
         mainPanel.add(BunkAssignmentPanel.mainBunkPanel, "Panel 2");
         mainPanel.add(guestDetailsPanel, "Panel 3");
-        mainPanel.add(externalDataReportingPanel.createExternalDataReportingPanel(), "Panel 4");
+        mainPanel.add(dataReportingPanel.createExternalDataReportingPanel(), "Panel 4");
 
         // Initialize Active Button
         activeButton = checkinPanelButton;
@@ -321,8 +325,18 @@ public class MainMenuMockupAlt extends JFrame {
 
         List<Map<String, String>> checkins = db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).values().stream().toList();
 
+        Instant dateInstant = d.toInstant();
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        List<Map<String, String>> checkinsOnDate = checkins.stream().filter(e -> e.get(CheckinsDBKeys.DATE.getKey()).equals(dateFormat.format(d))).toList();
+            List<Map<String, String>> checkinsOnDate = checkins.stream().filter(
+                e -> 
+                {
+                    try {
+                        return instantsOnSameDayOfYear(Instant.parse(e.get(CheckinsDBKeys.DATE.getKey())), dateInstant);
+                    } catch (Exception ex) {
+                        return false;
+                    }
+                }
+            ).toList();
 
         List<String> guestIDs = checkinsOnDate.stream().map(e -> e.get(CheckinsDBKeys.GUEST_ID.getKey())).toList();
 
@@ -363,10 +377,17 @@ public class MainMenuMockupAlt extends JFrame {
         // Looks like "Guest_<integer>"
         String guestTableKey = getGuestTableKey(guestName); // TODO USE THIS IN THE CENTER TABLE IMPLEMENTATION
 
+        // If there hasn't been a guest entry created, make one
+        if (!db.database.guests.containsKey(guestTableKey)) {
+            Map<String,String> guestTableEntry = createGuestEntry(guestName, formattedDate);
+            db.database.guests.put(guestTableKey, guestTableEntry);
+            db.asyncPush();
+        }
+
         // If there hasn't been a checkin already, go ahead and create one
         if(!guestCheckedInOnDate(guestTableKey, selectedDate))
         {
-            createAndPutCheckin(formattedDate, guestTableKey);
+            createAndPutCheckin(selectedDate, guestTableKey);
             db.asyncPush();
             updateGuestsTable();
         }
@@ -374,27 +395,71 @@ public class MainMenuMockupAlt extends JFrame {
         {
             JOptionPane.showMessageDialog(this, "Guest already checked in.", "Duplicate Checkin", JOptionPane.WARNING_MESSAGE);
         }
-
-        // If there hasn't been a guest entry created, make one
-        if (!db.database.guests.containsKey(guestTableKey)) {
-            Map<String,String> guestTableEntry = createGuestEntry(guestName, formattedDate);
-            db.database.guests.put(guestTableKey, guestTableEntry);
-            db.asyncPush();
-        }
     }
 
-    private void createAndPutCheckin(String formattedDate, String guestTableKey) {
+    private boolean instantsOnSameDayOfYear(Instant i1, Instant i2) {
+        LocalDate d1 = i1.atOffset(ZoneOffset.UTC).toLocalDate();
+        LocalDate d2 = i2.atOffset(ZoneOffset.UTC).toLocalDate();
+
+        return d1.getDayOfYear() == d2.getDayOfYear();
+    }
+
+    private void createAndPutCheckin(Date date, String guestTableKey) {
         // create single "Check In"
         Map<String, String> checkinEntry = new HashMap<>();
         checkinEntry.put(CheckinsDBKeys.GUEST_ID.getKey(), guestTableKey);
-        checkinEntry.put(CheckinsDBKeys.DATE.getKey(), formattedDate);
+        checkinEntry.put(CheckinsDBKeys.DATE.getKey(), date.toInstant().toString());
         checkinEntry.put(CheckinsDBKeys.EMERGENCY_SHELTER.getKey(), Boolean.toString(true));
+        checkinEntry.put(CheckinsDBKeys.SERVICES_ONLY.getKey(), Boolean.toString(false));
         checkinEntry.put(CheckinsDBKeys.LAUNDRY.getKey(), Boolean.toString(false));
         checkinEntry.put(CheckinsDBKeys.CASEWORTHY_ENTERED.getKey(), Boolean.toString(false));
-        checkinEntry.put(CheckinsDBKeys.HIMS_ENTERED.getKey(), Boolean.toString(false));
+        checkinEntry.put(CheckinsDBKeys.HMIS_ENTERED.getKey(), Boolean.toString(false));
 
         // enter the "Check In" in to the DB
         db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).put(UUIDGenerator.getNewUUID(), checkinEntry);
+
+        // if the checkin is either the first or latest checkin, update the respective fields in the guest entry
+
+        boolean lastVisitExists = db.database.guests.get(guestTableKey).containsKey(GuestDBKeys.LAST_VISIT_DATE.getKey());
+        Instant lastVisitDate = null;
+        try {
+            lastVisitDate = Instant.parse(db.database.guests.get(guestTableKey).get(GuestDBKeys.LAST_VISIT_DATE.getKey()));
+        } catch (DateTimeParseException e) {
+            e.printStackTrace();
+            lastVisitExists = false;
+        }
+
+        boolean firstVisitExists = db.database.guests.get(guestTableKey).containsKey(GuestDBKeys.GUEST_SINCE_DATE.getKey());
+        Instant firstVisitDate = null;
+        try {
+            firstVisitDate = Instant.parse(db.database.guests.get(guestTableKey).get(GuestDBKeys.GUEST_SINCE_DATE.getKey()));
+        } catch (DateTimeParseException e) {
+            e.printStackTrace();
+            firstVisitExists = false;
+        }
+        Instant dateInstant = date.toInstant();
+
+        boolean checkinMostRecent;
+        boolean checkinFirstVisit;
+
+        if (lastVisitExists) {
+            checkinMostRecent = dateInstant.isAfter(lastVisitDate);
+        } else {
+            checkinMostRecent = true;
+        }
+
+        if (firstVisitExists) {
+            checkinFirstVisit = dateInstant.isBefore(firstVisitDate);
+        } else {
+            checkinFirstVisit = true;
+        }
+
+        if (checkinMostRecent) {
+            db.database.guests.get(guestTableKey).put(GuestDBKeys.LAST_VISIT_DATE.getKey(), dateInstant.toString());
+        }
+        if (checkinFirstVisit) {
+            db.database.guests.get(guestTableKey).put(GuestDBKeys.GUEST_SINCE_DATE.getKey(), dateInstant.toString());
+        }
     }
 
     /** 
@@ -404,11 +469,20 @@ public class MainMenuMockupAlt extends JFrame {
      * @param date the date to check
     */
     private boolean guestCheckedInOnDate(String guestID, Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        String formattedDate = dateFormat.format(date);
+        Instant dateInstant = date.toInstant();
 
         List<Map<String, String>> checkins = db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).values().stream().toList();
-        List<Map<String, String>> checkinsOnDate = checkins.stream().filter(e -> e.get(CheckinsDBKeys.DATE.getKey()).equals(formattedDate)).toList();
+        List<Map<String, String>> checkinsOnDate = checkins.stream().filter(
+            e -> {
+                try {
+                    Instant stored = Instant.parse(e.get(CheckinsDBKeys.DATE.getKey()));
+                    Instant target = dateInstant;
+                    return instantsOnSameDayOfYear(stored, target);
+                } catch (Exception ex) {
+                    return false;
+                }
+            }
+        ).toList();
 
         for (Map<String, String> checkin : checkinsOnDate) {
             if (checkin.get(CheckinsDBKeys.GUEST_ID.getKey()).equals(guestID)) {
@@ -422,8 +496,7 @@ public class MainMenuMockupAlt extends JFrame {
     /**
      * Updates the guest table with the latest data from the database.
      */
-    private void updateGuestsTable()
-    {
+    private void updateGuestsTable() {
         List<Map<String,String>> guestsForDate = filterGuestTableByRosterDate(dateChooser.getDate());
 
         // Update the guest table
@@ -442,7 +515,7 @@ public class MainMenuMockupAlt extends JFrame {
             } else if (guest.get("MediumLockerNumber") != null && !guest.get("MediumLockerNumber").isEmpty()) {
                 locker = guest.get("MediumLockerNumber");
             } else {
-                locker = "No Locker Assigned";
+                locker = "Unassigned";
             }
 
             // Check what kind of storage the guest is using (if any)
@@ -452,54 +525,81 @@ public class MainMenuMockupAlt extends JFrame {
             //} else if (guest.get("MediumLockerNumber") != null && !guest.get("MediumLockerNumber").isEmpty()) {
                 //storage = guest.get("MediumLockerNumber"); TODO CHECK HOW CUBE STORAGE WORKS AND INCORPORATE IT (MAYBE ADD A NEW COLUMN)
             } else {
-                storage = "No Storage Assigned";
+                storage = "Unassigned";
             }
 
-            LocalDate today = LocalDate.now();
-            //System.out.println(today);
             // Check for an assigned bunk (if any)
             String bunk;
-            //db.database.bunkList.get("")
-            // TODO replace PlaceHolder in decision below when we have joinOnValue() figured out
-            if (guest.get("PlaceHolder") != null && !guest.get("PlaceHolder").isEmpty()) {
-                bunk = "shelf:" + guest.get("DayStorageShelf") + " slot:" + guest.get("DayStorageSlot");
+
+            if (guest.get("ReservedBunk") != null && !guest.get("ReservedBunk").isEmpty()) {
+                bunk = guest.get("ReservedBunkSlot") + ":" + guest.get("ReservedBunk");
             } else {
-                bunk = "No Bunk Assigned";
+                bunk = "Unassigned";
             }
 
             // Check for any issues in order of seriousness
-            String issue = "";
+            String issue;
+            String trespass = "";
+            String suspension = "";
+            String warning = "";
 
+            LocalDate today = LocalDate.now(); //Date is of the form YYYY-MM-DD
             // TODO need to work out the GuestID + joinOnValue() - joinValue field, currenlty stumped on what/how i pass it what it needs
             // getGuestTableKey(String guestName)
             List<Map<String,String>> trespassData;
+            List<Map<String,String>> suspensionData;
+            List<Map<String,String>> warningData;
+
             trespassData = DBConnectorV2.joinOnKey(db.database.conflicts.get("NoTrespass"),
                     "GuestId", getGuestTableKey(guest.get("FirstName") + " " + guest.get("LastName")));
 
-//            suspensionData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Suspensions"), "GuestId", guestID);
-//            probationData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Probation"), "GuestId", guestID);
-//            warningData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Warnings"), "GuestId", guestID);
+            suspensionData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Suspensions"),
+                    "GuestId", getGuestTableKey(guest.get("FirstName") + " " + guest.get("LastName")));
 
-            // check Each entry in trespassData List
+            warningData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Warnings"),
+                    "GuestId", getGuestTableKey(guest.get("FirstName") + " " + guest.get("LastName")));
+
+            // check each entry in trespassData list
             for (Map<String,String> oneTrespass : trespassData) {
-                if (oneTrespass != null && !oneTrespass.get(NoTrespassDBKeys.NO_TRESPASS_FROM.getKey()).isEmpty()) {
-                    issue = "No Trespass";
+                if (oneTrespass != null && !oneTrespass.get(NoTrespassDBKeys.CONFLICT_ID.getKey()).isEmpty()) {
+                    trespass = "NO TRESPASS";
                 }
                 else {
-                    issue = "None";
+                    trespass = "None";
                 }
             }
-
-//            } else if (guest.get("ConflictId") != null && !guest.get("ConflictId").isEmpty()) {
-//                issue = "Suspension";
-//            } else {
-//                issue = "None";
-//            }
+            // check each entry in the suspensionData list
+            for (Map<String,String> oneSuspension : suspensionData) {
+                if (oneSuspension != null && !oneSuspension.get(SuspensionDBKeys.CONFLICT_ID.getKey()).isEmpty()) {
+                    suspension = "SUSPENSION";
+                }
+                else {
+                    suspension = "None";
+                }
+            }
+            // check each entry in the warningData list
+            for (Map<String,String> oneWarning : warningData) {
+                if (oneWarning != null && !oneWarning.get(WarningDBKeys.GUEST_ID.getKey()).isEmpty()) {
+                    warning = "WARNING";
+                }
+                else {
+                    warning = "None";
+                }
+            }
+            // checks if there are No Trespass, Suspensions, or Warnings - displays the most serious one in checkin table
+            if (!trespass.equals("")){
+                issue = trespass;
+            } else if (!suspension.equals("")) {
+                issue = suspension;
+            } else if (!warning.equals("")) {
+                issue = warning;
+            } else {
+                issue = "No Issues";
+            }
 
             String[] rowData = {guest.get("FirstName") + " " + guest.get("LastName"),
-                    locker, storage, bunk, issue}; //TODO add updated guest info data here
+                    locker, storage, bunk, issue};
             tableModel.addRow(rowData);
-
         }
     }
 
@@ -585,7 +685,7 @@ public class MainMenuMockupAlt extends JFrame {
                 for (Map.Entry<String, Map<String,String>> entry : checkins) 
                 {
                     if (entry.getValue().get(CheckinsDBKeys.GUEST_ID.getKey()).equals(associatedGuest) &&
-                            entry.getValue().get(CheckinsDBKeys.DATE.getKey()).equals(dateFormat.format(currentSelected))) 
+                            instantsOnSameDayOfYear(Instant.parse(entry.getValue().get(CheckinsDBKeys.DATE.getKey())), currentSelected.toInstant()))
                     {
                         // remove entry from checkins
                         db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).put(entry.getKey(), null);
