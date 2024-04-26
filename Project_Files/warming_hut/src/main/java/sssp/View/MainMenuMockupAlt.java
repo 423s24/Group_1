@@ -557,9 +557,9 @@ public class MainMenuMockupAlt extends JFrame {
      * When the delete button is pressed, the row is removed from the table and the entry is removed from the database.
      */
     Action onDeleteRowButtonPressed = new AbstractAction() {
-        public void actionPerformed(ActionEvent e) {
-            JTable table = (JTable)e.getSource();
-            int modelRow = Integer.valueOf( e.getActionCommand() );
+        public void actionPerformed(ActionEvent evt) {
+            JTable table = (JTable)evt.getSource();
+            int modelRow = Integer.valueOf( evt.getActionCommand() );
             Object delete = table.getModel().getValueAt(modelRow, 5);
             Window window = SwingUtilities.windowForComponent(table);
 
@@ -575,8 +575,23 @@ public class MainMenuMockupAlt extends JFrame {
             {
                 ((DefaultTableModel)table.getModel()).removeRow(modelRow);
 
-                String toDeleteKey = getGuestTableKey(guestName);
-                db.database.guests.put(toDeleteKey, null);
+                String associatedGuest = getGuestTableKey(guestName);
+                Date currentSelected = dateChooser.getDate();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+                Set<Map.Entry<String, Map<String,String>>> checkins = db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).entrySet();
+
+                // filter where checkin.GuestId == associatedGuest && checkin.Date == currentSelected
+                for (Map.Entry<String, Map<String,String>> entry : checkins) 
+                {
+                    if (entry.getValue().get(CheckinsDBKeys.GUEST_ID.getKey()).equals(associatedGuest) &&
+                            entry.getValue().get(CheckinsDBKeys.DATE.getKey()).equals(dateFormat.format(currentSelected))) 
+                    {
+                        // remove entry from checkins
+                        db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).put(entry.getKey(), null);
+                        break;
+                    }
+                }
                 db.asyncPush();
             }
         }
