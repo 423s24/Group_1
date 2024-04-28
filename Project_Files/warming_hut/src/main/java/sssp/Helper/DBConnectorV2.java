@@ -136,8 +136,11 @@ public class DBConnectorV2{
     public static List<Map<String,String>> filterByKeyValuePair(Map<String, Map<String, String>> table, String joinColumn, String joinValue)
     {
         List<Map<String,String>> joinedRows = new ArrayList<>();
-        for(Map.Entry<String, Map<String, String>> row : table.entrySet())
+        for(Entry<String, Map<String, String>> row : table.entrySet())
         {
+            if(row.getValue() == null)
+                continue;
+
             if(row.getValue().containsKey(joinColumn) && row.getValue().get(joinColumn).equals(joinValue))
             {
                 joinedRows.add(row.getValue());
@@ -151,6 +154,9 @@ public class DBConnectorV2{
         List<Entry<String, Map<String, String>>> joinedRows = new ArrayList<>();
         for(Entry<String, Map<String, String>> row : table.entrySet())
         {
+            if(row.getValue() == null)
+                continue;
+
             if(row.getValue().containsKey(joinColumn) && row.getValue().get(joinColumn).equals(joinValue))
             {
                 joinedRows.add(row);
