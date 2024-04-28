@@ -133,7 +133,7 @@ public class SuspensionPanel extends JPanel{
          * The suspension data is retrieved from the database by joining the "Suspensions" table on the "GuestId" key.
          * Each suspension record is represented as a map with key-value pairs.
          */
-        List<Map<String,String>> suspensionData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Suspensions"), "GuestId", activeGuestID);
+        List<Map<String,String>> suspensionData = DBConnectorV2.filterByKeyValuePair(db.database.conflicts.get("Suspensions"), "GuestId", activeGuestID);
         
         String guestNameString = activeGuestData.get(GuestDBKeys.FIRST_NAME.getKey()) + " " + activeGuestData.get(GuestDBKeys.LAST_NAME.getKey());
         suspensionsGuestNameLabel.setText("Guest Name: " + guestNameString);

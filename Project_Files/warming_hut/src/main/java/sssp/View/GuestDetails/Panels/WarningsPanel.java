@@ -151,7 +151,7 @@ public class WarningsPanel extends JPanel{
         }
 
         Map<String,String> activeGuestData = db.database.guests.get(activeGuestID);
-        List<Map<String,String>> warningData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Warnings"), "GuestId", activeGuestID);
+        List<Entry<String,Map<String,String>>> warningData = DBConnectorV2.filterEntriesByKeyValuePair(db.database.conflicts.get("Warnings"), "GuestId", activeGuestID);
 
         guestNameString = activeGuestData.get(GuestDBKeys.FIRST_NAME.getKey()) + " " + activeGuestData.get(GuestDBKeys.LAST_NAME.getKey());
 

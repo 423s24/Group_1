@@ -93,7 +93,7 @@ public class NoTrespassPanel extends JPanel {
         }
 
         Map<String,String> activeGuestData = db.database.guests.get(activeGuestID);
-        List<Map<String,String>> trespassData = DBConnectorV2.joinOnKey(db.database.conflicts.get("NoTrespass"), "GuestId", activeGuestID);
+        List<Map<String,String>> trespassData = DBConnectorV2.filterByKeyValuePair(db.database.conflicts.get("NoTrespass"), "GuestId", activeGuestID);
         String guestNameString = activeGuestData.get(GuestDBKeys.FIRST_NAME.getKey()) + " " + activeGuestData.get(GuestDBKeys.LAST_NAME.getKey());
 
         noTrespassGuestNameLabel.setText("Guest Name: " + guestNameString);

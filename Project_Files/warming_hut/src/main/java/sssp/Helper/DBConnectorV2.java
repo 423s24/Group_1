@@ -131,7 +131,7 @@ public class DBConnectorV2{
         return values;
     }
 
-    public static List<Map<String,String>> joinOnKey(Map<String, Map<String, String>> table, String joinColumn, String joinValue)
+    public static List<Map<String,String>> filterByKeyValuePair(Map<String, Map<String, String>> table, String joinColumn, String joinValue)
     {
         List<Map<String,String>> joinedRows = new ArrayList<>();
         for(Map.Entry<String, Map<String, String>> row : table.entrySet())
