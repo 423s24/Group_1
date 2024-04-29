@@ -5,6 +5,7 @@ import sssp.Helper.DBConnectorV2Singleton;
 import sssp.Helper.Database;
 
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,10 +41,17 @@ public class BunkReservationsPanel {
             bunkReservationCombo.setModel(new DefaultComboBoxModel<>(getAvailableBunks().toArray(new String[0][0])));
             setActiveGuestReservedBunkIndex();
             addActionListeners();
+
+            Database db = DBConnectorV2Singleton.getInstance().database;
+            updateLastAssignedBunkId(activeGuestId);
+            if(lastAssignedBunkId != null){
+                lastAssigned.setText("Bunk " + db.bunkList.get(lastAssignedBunkId).get("BunkNum") + " " + lastAssignedBunkSlot);
+            }
         }
 
     }
 
+    private static JLabel lastAssigned = new JLabel("None in last 30 days");
     private static ActionListener bedSlotListener;
     private static ActionListener bunkReservationListener;
     private static void removeListeners(){
@@ -106,22 +114,18 @@ public class BunkReservationsPanel {
             }
         }
 
-        JLabel lastAssigned = new JLabel("None in last 30 days");
-        JLabel lastAssignedDate = new JLabel("NA");
-        updateLastAssignedBunkId(activeGuestId);
-        if(lastAssignedBunkId != null){
-            lastAssigned.setText(db.database.bunkList.get(lastAssignedBunkId).get("BunkNum"));
-        }
-        if(lastAssignedBunkDate != null){
-            lastAssignedDate.setText("(" + lastAssignedBunkDate + ")");
-        }
-
         bunkReservationCombo = new JComboBox<>(new DefaultComboBoxModel<>(getAvailableBunks().toArray(new String[0][0])));
         bunkReservationCombo.setRenderer(new ComboBoxRenderer());
         bunkReservationCombo.setPreferredSize(new Dimension(225, 30));
         bunkReservationCombo.setSelectedItem(null);
 
         addActionListeners();
+
+        JLabel[] rowLabels = {bedReservationLabel, bunkReservationLabel, lastAssignedLabel};
+        for(JLabel label : rowLabels){
+            label.setFont(new Font("serif", Font.PLAIN, 18));
+        }
+        bunkReservationTitle.setFont(new Font("serif", Font.BOLD, 20));
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -140,12 +144,7 @@ public class BunkReservationsPanel {
         panel.add(bunkReservationCombo, c);
         c.gridy = 3;
         c.gridx = 0;
-        c.insets = new Insets(0, 10, 10 ,10);
-        panel.add(bunkReservedSinceLabel, c);
-        c.gridx = 1;
-        panel.add(reservedSince, c);
-        c.gridy = 4;
-        c.gridx = 0;
+        c.insets = new Insets(15, 10, 0 ,10);
         panel.add(lastAssignedLabel, c);
         c.gridx = 1;
         panel.add(lastAssigned, c);
@@ -242,8 +241,12 @@ public class BunkReservationsPanel {
     }
 
     private static String lastAssignedBunkId = null;
+    private static String lastAssignedBunkSlot = null;
     private static String lastAssignedBunkDate = null;
     private static void updateLastAssignedBunkId(String guestId) {
+        lastAssignedBunkId = null;
+        lastAssignedBunkSlot = null;
+        lastAssignedBunkDate = null;
         Database db = DBConnectorV2Singleton.getInstance().database;
         int dayCounter = 0;
         for(String rosterId : db.guestRoster.keySet()){
@@ -253,6 +256,7 @@ public class BunkReservationsPanel {
             Map<String, Map<String, String>> roster = db.guestRoster.get(rosterId);
             if(roster.containsKey(guestId)){
                 lastAssignedBunkId = roster.get(guestId).get("BunkAssigned");
+                lastAssignedBunkSlot = roster.get(guestId).get("BunkAssignedType");
                 lastAssignedBunkDate = db.attributes.get("GuestRoster").get(rosterId).get("Date");
             }
             dayCounter++;

@@ -21,7 +21,7 @@ public class BunkAssignmentPanel {
     public static JPanel mainBunkPanel;
     private static JPanel bunkPanel = new JPanel(new GridBagLayout());
     private static GridBagConstraints bpc = new GridBagConstraints();
-    
+
     public static JPanel getBunkAssignmentPanel(){
         JPanel scrollPanel = new JPanel(new GridBagLayout());
         ScrollPane scrollPane = new ScrollPane();
@@ -46,7 +46,7 @@ public class BunkAssignmentPanel {
         });
 
         for (JLabel label : labels) {
-            //label.setFont(new Font("Serif", Font.BOLD, 24));
+            label.setFont(new Font("Serif", Font.BOLD, 24));
             label.setHorizontalAlignment(SwingConstants.CENTER);
         }
 
@@ -108,13 +108,18 @@ public class BunkAssignmentPanel {
             reservedLabel.setOpaque(true);
             reservedLabel.setBackground(Color.YELLOW);
         }
-        JLabel lastAssignedLabel = new JLabel("Bunk 1 A");
+        String guestId = "Guest_" + guest.get("GuestId");
+        JLabel lastAssignedLabel = new JLabel(getLastAssignedBunk(guestId));
         JLabel[] labels = {guestNameLabel, reservedLabel, lastAssignedLabel};
         JComboBox<String> bedSlot = new JComboBox<>(new String[]{"A", "B"});
 
         for (JLabel label : labels) {
-            //label.setFont(new Font("Serif", Font.PLAIN, 18));
+            label.setFont(new Font("Serif", Font.PLAIN, 18));
             label.setHorizontalAlignment(SwingConstants.CENTER);
+        }
+
+        if(!lastAssignedLabel.getText().equals("None")){
+            lastAssignedLabel.setFont(new Font("Serif", Font.BOLD, 18));
         }
 
         JComboBox<String[]> bunkAssignmentCombo = new JComboBox<>(new DefaultComboBoxModel<>(getAvailableBunks(bedSlot).toArray(new String[0][0])));
@@ -320,5 +325,18 @@ public class BunkAssignmentPanel {
             this.bunkSlot = bunkSlot;
             this.bunkAssignment = bunkAssignment;
         }
+    }
+
+    public static String getLastAssignedBunk(String guestId){
+        Database db = DBConnectorV2Singleton.getInstance().database;
+        for(String roster : db.guestRoster.keySet()) {
+            if(db.guestRoster.get(roster).containsKey(guestId)){
+                String bunkId = db.guestRoster.get(roster).get(guestId).get("BunkAssigned");
+                String bunkNum = db.bunkList.get(bunkId).get("BunkNum");
+                String type = db.guestRoster.get(roster).get(guestId).get("BunkAssignedType");
+                return "Bunk " + bunkNum + " " + type;
+            }
+        }
+        return "None";
     }
 }
