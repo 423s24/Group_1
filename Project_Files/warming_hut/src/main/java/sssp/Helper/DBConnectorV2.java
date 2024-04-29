@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+import java.util.Map.Entry;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -131,11 +133,14 @@ public class DBConnectorV2{
         return values;
     }
 
-    public static List<Map<String,String>> joinOnKey(Map<String, Map<String, String>> table, String joinColumn, String joinValue)
+    public static List<Map<String,String>> filterByKeyValuePair(Map<String, Map<String, String>> table, String joinColumn, String joinValue)
     {
         List<Map<String,String>> joinedRows = new ArrayList<>();
-        for(Map.Entry<String, Map<String, String>> row : table.entrySet())
+        for(Entry<String, Map<String, String>> row : table.entrySet())
         {
+            if(row.getValue() == null)
+                continue;
+
             if(row.getValue().containsKey(joinColumn) && row.getValue().get(joinColumn).equals(joinValue))
             {
                 joinedRows.add(row.getValue());
@@ -143,6 +148,23 @@ public class DBConnectorV2{
         }
         return joinedRows;
     }
+
+    public static List<Entry<String, Map<String, String>>> filterEntriesByKeyValuePair(Map<String, Map<String, String>> table, String joinColumn, String joinValue)
+    {
+        List<Entry<String, Map<String, String>>> joinedRows = new ArrayList<>();
+        for(Entry<String, Map<String, String>> row : table.entrySet())
+        {
+            if(row.getValue() == null)
+                continue;
+
+            if(row.getValue().containsKey(joinColumn) && row.getValue().get(joinColumn).equals(joinValue))
+            {
+                joinedRows.add(row);
+            }
+        }
+        return joinedRows;
+    }
+
 
 
     // This method is one of the most important methods in this class, sortConflicts begins by pulling a database copy from 

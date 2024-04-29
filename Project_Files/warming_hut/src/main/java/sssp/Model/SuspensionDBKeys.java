@@ -1,7 +1,7 @@
 package sssp.Model;
 
 public enum SuspensionDBKeys {
-    CONFLICT_ID("ConflictId", "Conflict ID"),
+    GUEST_ID("GuestId", "Guest ID"),
     ISSUING_DATE("IssuingDate", "Issuing Date"),
     EXPIRY_DATE("ExpiryDate", "Expiry Date"),
     SERVICE_SUSPENDED("SuspendedFrom", "Suspended From"),

@@ -550,13 +550,13 @@ public class MainMenuMockupAlt extends JFrame {
             List<Map<String,String>> suspensionData;
             List<Map<String,String>> warningData;
 
-            trespassData = DBConnectorV2.joinOnKey(db.database.conflicts.get("NoTrespass"),
+            trespassData = DBConnectorV2.filterByKeyValuePair(db.database.conflicts.get("NoTrespass"),
                     "GuestId", getGuestTableKey(guest.get("FirstName") + " " + guest.get("LastName")));
 
-            suspensionData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Suspensions"),
+            suspensionData = DBConnectorV2.filterByKeyValuePair(db.database.conflicts.get("Suspensions"),
                     "GuestId", getGuestTableKey(guest.get("FirstName") + " " + guest.get("LastName")));
 
-            warningData = DBConnectorV2.joinOnKey(db.database.conflicts.get("Warnings"),
+            warningData = DBConnectorV2.filterByKeyValuePair(db.database.conflicts.get("Warnings"),
                     "GuestId", getGuestTableKey(guest.get("FirstName") + " " + guest.get("LastName")));
 
             // check each entry in trespassData list
@@ -570,7 +570,7 @@ public class MainMenuMockupAlt extends JFrame {
             }
             // check each entry in the suspensionData list
             for (Map<String,String> oneSuspension : suspensionData) {
-                if (oneSuspension != null && !oneSuspension.get(SuspensionDBKeys.CONFLICT_ID.getKey()).isEmpty()) {
+                if (oneSuspension != null && !oneSuspension.get(SuspensionDBKeys.GUEST_ID.getKey()).isEmpty()) {
                     suspension = "SUSPENSION";
                 }
                 else {
