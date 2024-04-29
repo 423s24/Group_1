@@ -26,7 +26,7 @@ import javax.swing.event.TableModelListener;
 
 import sssp.Model.GuestDBKeys;
 import sssp.Model.WarningDBKeys;
-
+import sssp.View.listeners.DeselectOtherTableListener;
 import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
 import sssp.Helper.UUIDGenerator;
@@ -121,6 +121,9 @@ public class WarningsPanel extends JPanel{
         olderWarningsTable.getColumnModel().getColumn(1).setMaxWidth(75);
         olderWarningsTable.getColumnModel().getColumn(2).setMinWidth(100);
         olderWarningsTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+
+        sixMonthWarningsTable.getSelectionModel().addListSelectionListener(new DeselectOtherTableListener(olderWarningsTable));
+        olderWarningsTable.getSelectionModel().addListSelectionListener(new DeselectOtherTableListener(sixMonthWarningsTable));
         
 
         // Create Add and Remove buttons

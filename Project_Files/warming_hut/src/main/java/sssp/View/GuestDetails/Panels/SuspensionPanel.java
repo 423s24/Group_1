@@ -26,6 +26,7 @@ import sssp.Helper.DBConnectorV2Singleton;
 import sssp.Helper.UUIDGenerator;
 import sssp.Model.GuestDBKeys;
 import sssp.Model.SuspensionDBKeys;
+import sssp.View.listeners.DeselectOtherTableListener;
 
 public class SuspensionPanel extends JPanel{
     private DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
@@ -118,6 +119,9 @@ public class SuspensionPanel extends JPanel{
         olderSuspensionsTable.getColumnModel().getColumn(3).setMaxWidth(75);
         olderSuspensionsTable.getColumnModel().getColumn(4).setMinWidth(100);
         olderSuspensionsTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+
+        olderSuspensionsTable.getSelectionModel().addListSelectionListener(new DeselectOtherTableListener(activeSuspensionsTable));
+        activeSuspensionsTable.getSelectionModel().addListSelectionListener(new DeselectOtherTableListener(olderSuspensionsTable));
 
         JButton addSuspensionButton = new JButton("Add Suspension");
 
