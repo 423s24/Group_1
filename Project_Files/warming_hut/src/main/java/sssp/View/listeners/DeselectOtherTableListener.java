@@ -7,7 +7,6 @@ import javax.swing.ListSelectionModel;
 
 public class DeselectOtherTableListener implements ListSelectionListener {
     private JTable other;
-    private boolean isProcessing = false;
 
     public DeselectOtherTableListener(JTable other) {
         this.other = other;
