@@ -570,7 +570,7 @@ public class MainMenuMockupAlt extends JFrame {
             }
             // check each entry in the suspensionData list
             for (Map<String,String> oneSuspension : suspensionData) {
-                if (oneSuspension != null && !oneSuspension.get(SuspensionDBKeys.CONFLICT_ID.getKey()).isEmpty()) {
+                if (oneSuspension != null && !oneSuspension.get(SuspensionDBKeys.GUEST_ID.getKey()).isEmpty()) {
                     suspension = "SUSPENSION";
                 }
                 else {
