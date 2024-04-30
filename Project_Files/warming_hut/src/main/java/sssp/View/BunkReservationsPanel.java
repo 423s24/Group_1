@@ -43,15 +43,12 @@ public class BunkReservationsPanel {
             addActionListeners();
 
             Database db = DBConnectorV2Singleton.getInstance().database;
-            updateLastAssignedBunkId(activeGuestId);
-            if(lastAssignedBunkId != null){
-                lastAssigned.setText("Bunk " + db.bunkList.get(lastAssignedBunkId).get("BunkNum") + " " + lastAssignedBunkSlot);
-            }
+            lastAssigned.setText(BunkAssignmentPanel.getLastAssignedBunk(activeGuestId));
         }
 
     }
 
-    private static JLabel lastAssigned = new JLabel("None in last 30 days");
+    private static final JLabel lastAssigned = new JLabel(BunkAssignmentPanel.getLastAssignedBunk(activeGuestId));
     private static ActionListener bedSlotListener;
     private static ActionListener bunkReservationListener;
     private static void removeListeners(){
@@ -238,29 +235,6 @@ public class BunkReservationsPanel {
             bunkReservationCombo.setSelectedIndex(-1);
         }
         addActionListeners();
-    }
-
-    private static String lastAssignedBunkId = null;
-    private static String lastAssignedBunkSlot = null;
-    private static String lastAssignedBunkDate = null;
-    private static void updateLastAssignedBunkId(String guestId) {
-        lastAssignedBunkId = null;
-        lastAssignedBunkSlot = null;
-        lastAssignedBunkDate = null;
-        Database db = DBConnectorV2Singleton.getInstance().database;
-        int dayCounter = 0;
-        for(String rosterId : db.guestRoster.keySet()){
-            if(dayCounter > 30){
-                return;
-            }
-            Map<String, Map<String, String>> roster = db.guestRoster.get(rosterId);
-            if(roster.containsKey(guestId)){
-                lastAssignedBunkId = roster.get(guestId).get("BunkAssigned");
-                lastAssignedBunkSlot = roster.get(guestId).get("BunkAssignedType");
-                lastAssignedBunkDate = db.attributes.get("GuestRoster").get(rosterId).get("Date");
-            }
-            dayCounter++;
-        }
     }
 
     public static class ComboBoxRenderer extends JLabel implements ListCellRenderer<String[]> {

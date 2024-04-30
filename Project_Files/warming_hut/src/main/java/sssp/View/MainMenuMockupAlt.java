@@ -97,6 +97,23 @@ public class MainMenuMockupAlt extends JFrame {
 
             }
         });
+        final Date[] previousBunkDate = {new Date()};
+        BunkAssignmentPanel.dateChooser.setDateFormatString("MM/dd/yyyy");
+        BunkAssignmentPanel.dateChooser.addPropertyChangeListener(
+                new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent e) {
+                        if ("date".equals(e.getPropertyName())) {
+                            if(dateChooser.getDate() != previousBunkDate[0]){
+                                mainPanel.remove(BunkAssignmentPanel.mainBunkPanel);
+                                BunkAssignmentPanel.mainBunkPanel = BunkAssignmentPanel.getBunkAssignmentPanel();
+                                mainPanel.add(BunkAssignmentPanel.mainBunkPanel, "Panel 2");
+                                cardLayout.show(mainPanel, "Panel 2");
+                                previousBunkDate[0] = dateChooser.getDate();
+                            }
+                        }
+                    }
+                });
         guestDetailsPanelButton.addActionListener(createButtonActionListener(guestDetailsPanelButton, "Panel 3"));
         externalDataReportingPanelButton.addActionListener(createButtonActionListener(externalDataReportingPanelButton,"Panel 4"));
 
