@@ -442,6 +442,10 @@ public class MainMenuMockupAlt extends JFrame {
         try {
             lastVisitDate = Instant.parse(db.database.guests.get(guestTableKey).get(GuestDBKeys.LAST_VISIT_DATE.getKey()));
         } catch (DateTimeParseException e) {
+            lastVisitExists = false;
+        } catch (NullPointerException e) {
+            lastVisitExists = false;
+        } catch (Exception e) {
             e.printStackTrace();
             lastVisitExists = false;
         }
@@ -451,6 +455,11 @@ public class MainMenuMockupAlt extends JFrame {
         try {
             firstVisitDate = Instant.parse(db.database.guests.get(guestTableKey).get(GuestDBKeys.GUEST_SINCE_DATE.getKey()));
         } catch (DateTimeParseException e) {
+            e.printStackTrace();
+            firstVisitExists = false;
+        } catch (NullPointerException e) {
+            firstVisitExists = false;
+        } catch (Exception e) {
             e.printStackTrace();
             firstVisitExists = false;
         }
