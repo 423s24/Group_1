@@ -31,7 +31,24 @@ public class ExternalDataReportingPanel extends JPanel {
 
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
 
-        reportingTable = new JTable(tableModel);
+        reportingTable = new JTable(tableModel) {
+
+            /*@Override
+                public Class getColumnClass(int column) {
+                return getValueAt(0, column).getClass();
+                }*/
+            @Override
+            public Class getColumnClass(int column) {
+                switch (column) {
+                    case 0,1,2,3:
+                        return String.class;
+                    case 4,5:
+                        return Boolean.class;
+                    default:
+                        return String.class;
+                }
+            }
+        };
 
         JScrollPane scrollPane = new JScrollPane(reportingTable);
         reportingPanel.add(scrollPane, BorderLayout.CENTER);
@@ -65,8 +82,8 @@ public class ExternalDataReportingPanel extends JPanel {
             String date = oneCheckin.get("Date");
             String guestName;
             // get Emergency Shelter Status
-            String servicesOnly="", laundry="";
-            String caseWorthy ="", hmis = "";
+            String servicesOnly="", laundry=""; // TODO fix the services only display
+            Boolean caseWorthy, hmis;
 
             String checkinGuestId = oneCheckin.get(CheckinsDBKeys.GUEST_ID.getKey());
             Map<String, String> guest = db.database.guests.get(checkinGuestId);
@@ -74,10 +91,10 @@ public class ExternalDataReportingPanel extends JPanel {
 
             servicesOnly = oneCheckin.get(CheckinsDBKeys.SERVICES_ONLY.getKey());
             laundry = oneCheckin.get(CheckinsDBKeys.LAUNDRY.getKey());
-            caseWorthy = oneCheckin.get(CheckinsDBKeys.CASEWORTHY_ENTERED.getKey());
-            hmis = oneCheckin.get(CheckinsDBKeys.HMIS_ENTERED.getKey());
+            caseWorthy = Boolean.parseBoolean(oneCheckin.get(CheckinsDBKeys.CASEWORTHY_ENTERED.getKey()));
+            hmis = Boolean.parseBoolean(oneCheckin.get(CheckinsDBKeys.HMIS_ENTERED.getKey()));
 
-            String[] rowData = {date, guestName, servicesOnly, laundry, caseWorthy, hmis};
+            Object[] rowData = {date, guestName, servicesOnly, laundry, caseWorthy, hmis};
             tableModel.addRow(rowData);
         }
     }
