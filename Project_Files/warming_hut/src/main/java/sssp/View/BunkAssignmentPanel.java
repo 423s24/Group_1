@@ -1,5 +1,6 @@
 package sssp.View;
 
+import com.toedter.calendar.JDateChooser;
 import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
 import sssp.Helper.Database;
@@ -12,6 +13,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -21,6 +26,7 @@ public class BunkAssignmentPanel {
     public static JPanel mainBunkPanel;
     private static JPanel bunkPanel = new JPanel(new GridBagLayout());
     private static GridBagConstraints bpc = new GridBagConstraints();
+    public static final JDateChooser dateChooser = new JDateChooser(new Date());
 
     public static JPanel getBunkAssignmentPanel(){
         JPanel scrollPanel = new JPanel(new GridBagLayout());
@@ -31,6 +37,9 @@ public class BunkAssignmentPanel {
         reservedBunksA = new ArrayList<>();
         reservedBunksB = new ArrayList<>();
         guestsAdded = new ArrayList<>();
+        guestsAdded = new ArrayList<>();
+        checkedInGuests = new ArrayList<>();
+        bunkAssignmentRows = new ArrayList<>();
         rowNum = 2;
 
         JLabel GuestLabel = new JLabel("Guest");
@@ -50,11 +59,27 @@ public class BunkAssignmentPanel {
             label.setHorizontalAlignment(SwingConstants.CENTER);
         }
 
-        bpc.gridx = 4;
+        // Format of the selected date (Month/Day/Year)
+
+        JLabel dateLabel = new JLabel("Date: ");
+        dateLabel.setFont(new Font("serif", Font.BOLD, 16));
+
+        JPanel datePanel = new JPanel(new GridBagLayout());
+        GridBagConstraints dateC = new GridBagConstraints();
+        dateC.gridx = 0;
+        datePanel.add(dateLabel, dateC);
+        dateC.insets = new Insets(0,10,0,0);
+        dateC.gridx = 1;
+        datePanel.add(dateChooser, dateC);
+
+        bpc.gridx = 0;
         bpc.gridy = 0;
         bpc.weightx = 1;
-        bpc.insets = new Insets(0,0,5,10);
+        bpc.anchor = GridBagConstraints.WEST;
+        bpc.insets = new Insets(0,15,5,15);
+        bunkPanel.add(datePanel, bpc);
         bpc.anchor = GridBagConstraints.EAST;
+        bpc.gridx = 4;
         bunkPanel.add(bunkEditPopup, bpc);
         bpc.gridx = 0;
         bpc.gridy = 1;
@@ -122,23 +147,30 @@ public class BunkAssignmentPanel {
             lastAssignedLabel.setFont(new Font("Serif", Font.BOLD, 18));
         }
 
+        setSelectedBedSlot(bedSlot, guest);
         JComboBox<String[]> bunkAssignmentCombo = new JComboBox<>(new DefaultComboBoxModel<>(getAvailableBunks(bedSlot).toArray(new String[0][0])));
         bunkAssignmentCombo.setRenderer(new ComboBoxRenderer(bedSlot));
         bunkAssignmentCombo.addPopupMenuListener(new MyPopupMenuListener(bedSlot, bunkAssignmentCombo));
         bunkAssignmentCombo.setPreferredSize(new Dimension(225, 30));
         bunkAssignmentCombo.setSelectedItem(null);
-        bunkAssignmentCombo.addItemListener(new ItemListener() {
+        bunkAssignmentCombo.setSelectedIndex(-1);
+        setSelectedBunk(bunkAssignmentCombo, guest);
+        bunkAssignmentCombo.addActionListener(new ActionListener() {
             @Override
-            public void itemStateChanged(ItemEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 if(bunkAssignmentCombo.getSelectedItem() != null){
-                    if(Arrays.stream(bunkHeaders).toList().contains(((String[]) Objects.requireNonNull(bunkAssignmentCombo.getSelectedItem()))[0]) && e.getStateChange() == ItemEvent.SELECTED){
+                    if(Arrays.stream(bunkHeaders).toList().contains(((String[]) Objects.requireNonNull(bunkAssignmentCombo.getSelectedItem()))[0])){
                         String[] item = bunkAssignmentCombo.getItemAt(bunkAssignmentCombo.getSelectedIndex() + 1);
                         bunkAssignmentCombo.setSelectedItem(item);
+                    }
+                    if(bedSlot.getSelectedItem() != null && bunkAssignmentCombo.getSelectedItem() != null){
+                        String[] selectedBunk = ((String[])bunkAssignmentCombo.getSelectedItem());
+                        String selectedBedSlot = (String)bedSlot.getSelectedItem();
+                        updateSelectedBunk(guest, selectedBunk[1], selectedBedSlot);
                     }
                 }
             }
         });
-        bunkAssignmentCombo.setSelectedIndex(-1);
         bedSlot.addPopupMenuListener( new MyPopupMenuListener(bedSlot, bunkAssignmentCombo));
 
         bunkAssignmentRows.add(new BunkAssignmentRow(bedSlot, bunkAssignmentCombo));
@@ -160,13 +192,118 @@ public class BunkAssignmentPanel {
         bpc.gridx = 4;
         bunkPanel.add(lastAssignedLabel, bpc);
     }
+    private static void setSelectedBedSlot(JComboBox<String> bedSlot, Map<String, String> guest) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        String formattedDate = dateFormat.format(dateChooser.getDate());
+
+        DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
+
+        for (String checkIn : db.database.attributes.get("Checkins").keySet()) {
+            String checkInDateFormatted = "";
+            try {
+                Date checkInDate = Date.from(Instant.parse(db.database.attributes.get("Checkins").get(checkIn).get("Date")));
+                checkInDateFormatted = dateFormat.format(checkInDate);
+            } catch (Exception ignored) {
+                System.out.println("Check In Date Parse Exception");
+            }
+            String checkInGuest = db.database.attributes.get("Checkins").get(checkIn).get("GuestId");
+            if (checkInGuest.equals("Guest_" + guest.get("GuestId"))) {
+                if (checkInDateFormatted.equals(formattedDate)) {
+                    String bunkId = db.database.attributes.get("Checkins").get(checkIn).get("AssignedBunk");
+                    String bunkSlot = db.database.attributes.get("Checkins").get(checkIn).get("AssignedBunkSlot");
+                    if (bunkId != null && bunkSlot != null) {
+                        if (db.database.bunkList.get(bunkId) != null) {
+                            int bedIndex = (bunkSlot.equals("A")) ? 0 : 1;
+                            bedSlot.setSelectedIndex(bedIndex);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private static void setSelectedBunk(JComboBox<String[]> bunkCombo, Map<String, String> guest) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        String formattedDate = dateFormat.format(dateChooser.getDate());
+
+        DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
+
+        for(String checkIn : db.database.attributes.get("Checkins").keySet()){
+            String checkInDateFormatted = "";
+            try {
+                Date checkInDate = Date.from(Instant.parse(db.database.attributes.get("Checkins").get(checkIn).get("Date")));
+                checkInDateFormatted = dateFormat.format(checkInDate);
+            } catch (Exception ignored) {
+                System.out.println("Check In Date Parse Exception");
+            }
+            String checkInGuest = db.database.attributes.get("Checkins").get(checkIn).get("GuestId");
+            if(checkInGuest.equals("Guest_" + guest.get("GuestId"))) {
+                if (checkInDateFormatted.equals(formattedDate)) {
+                    String bunkId = db.database.attributes.get("Checkins").get(checkIn).get("AssignedBunk");
+                    String bunkSlot = db.database.attributes.get("Checkins").get(checkIn).get("AssignedBunkSlot");
+                    if(bunkId != null && bunkSlot != null) {
+                        if(db.database.bunkList.get(bunkId) != null) {
+                            for(int i = 0; i < bunkCombo.getItemCount(); i++){
+                                if(((String[])bunkCombo.getItemAt(i))[1].equals(bunkId)){
+                                    bunkCombo.setSelectedIndex(i);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static void updateSelectedBunk(Map<String, String> guest, String bunkId, String bedSlot){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        String formattedDate = dateFormat.format(dateChooser.getDate());
+
+        DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
+        for(String checkIn : db.database.attributes.get("Checkins").keySet()){
+            String checkInDateFormatted = "";
+            try {
+                Date checkInDate = Date.from(Instant.parse(db.database.attributes.get("Checkins").get(checkIn).get("Date")));
+                checkInDateFormatted = dateFormat.format(checkInDate);
+            } catch (Exception ignored) {
+                System.out.println("Check In Date Parse Exception");
+            }
+            String checkInGuest = db.database.attributes.get("Checkins").get(checkIn).get("GuestId");
+            if(checkInGuest.equals("Guest_" + guest.get("GuestId"))){
+                if(checkInDateFormatted.equals(formattedDate)){
+                    db.database.attributes.get("Checkins").get(checkIn).put("AssignedBunk", bunkId);
+                    db.database.attributes.get("Checkins").get(checkIn).put("AssignedBunkSlot", bedSlot);
+                    db.asyncPush();
+                    return;
+                }
+            }
+        }
+    }
 
     private static ArrayList<String> guestsAdded = new ArrayList<>();
+    private static ArrayList<String> checkedInGuests = new ArrayList<>();
     private static int rowNum = 2;
     private static void buildGuestRows(){
         DBConnectorV2 db = DBConnectorV2Singleton.getInstance();
 
-        for (String guestId : db.database.guests.keySet()) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        String formattedDateSelected = dateFormat.format(dateChooser.getDate());
+
+        for(String checkIn : db.database.attributes.get("Checkins").keySet()) {
+            String checkInDateFormatted = "";
+            try {
+                Date checkInDate = Date.from(Instant.parse(db.database.attributes.get("Checkins").get(checkIn).get("Date")));
+                checkInDateFormatted = dateFormat.format(checkInDate);
+            } catch (Exception ignored) {
+                System.out.println("Check In Date Parse Exception");
+            }
+            String checkInGuest = db.database.attributes.get("Checkins").get(checkIn).get("GuestId");
+            if(checkInDateFormatted.equals(formattedDateSelected)){
+                checkedInGuests.add(checkInGuest);
+            }
+        }
+
+        for (String guestId : checkedInGuests) {
             if(!guestsAdded.contains(guestId)) {
                 guestsAdded.add(guestId);
                 Map<String, String> guest = db.database.guests.get(guestId);
@@ -176,7 +313,7 @@ public class BunkAssignmentPanel {
         }
     }
 
-    private static final ArrayList<BunkAssignmentRow> bunkAssignmentRows = new ArrayList<>();
+    private static ArrayList<BunkAssignmentRow> bunkAssignmentRows = new ArrayList<>();
     private static final ArrayList<String[]> mensBunkList = new ArrayList<>();
     private static final ArrayList<String[]> womensBunkList = new ArrayList<>();
     private static final ArrayList<String[]> observationBunkList = new ArrayList<>();
@@ -221,9 +358,9 @@ public class BunkAssignmentPanel {
         int bunkListType = 0;
         for(List<String[]> bunkList : allBunkLists){
             switch (bunkListType) {
-                case 0 -> availableBunks.add(new String[]{bunkHeaders[0]});
-                case 1 -> availableBunks.add(new String[]{bunkHeaders[1]});
-                default -> availableBunks.add(new String[]{bunkHeaders[2]});
+                case 0 -> availableBunks.add(new String[]{bunkHeaders[0], ""});
+                case 1 -> availableBunks.add(new String[]{bunkHeaders[1], ""});
+                default -> availableBunks.add(new String[]{bunkHeaders[2], ""});
             }
             for(String[] bunk : bunkList){
                 if(bunkSlotA){
@@ -329,14 +466,37 @@ public class BunkAssignmentPanel {
 
     public static String getLastAssignedBunk(String guestId){
         Database db = DBConnectorV2Singleton.getInstance().database;
-        for(String roster : db.guestRoster.keySet()) {
-            if(db.guestRoster.get(roster).containsKey(guestId)){
-                String bunkId = db.guestRoster.get(roster).get(guestId).get("BunkAssigned");
-                String bunkNum = db.bunkList.get(bunkId).get("BunkNum");
-                String type = db.guestRoster.get(roster).get(guestId).get("BunkAssignedType");
-                return "Bunk " + bunkNum + " " + type;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        String formattedDateSelected = dateFormat.format(dateChooser.getDate());
+
+        Date nearestFoundDate = null;
+
+        String assignedBunk = "None";
+
+        for(String checkIn : db.attributes.get("Checkins").keySet()) {
+
+            String checkInDateFormatted = "";
+            Date checkInDate = new Date();
+            try {
+                checkInDate = Date.from(Instant.parse(db.attributes.get("Checkins").get(checkIn).get("Date")));
+                checkInDateFormatted = dateFormat.format(checkInDate);
+            } catch (Exception ignored) {
+                System.out.println("Check In Date Parse Exception");
+            }
+
+            if(!checkInDateFormatted.equals(formattedDateSelected)){
+                if(nearestFoundDate == null || checkInDate.after(nearestFoundDate)){
+                    if(db.attributes.get("Checkins").get(checkIn).get("GuestId").equals(guestId)){
+                        String bunkId = db.attributes.get("Checkins").get(checkIn).get("AssignedBunk");
+                        String bunkNum = db.bunkList.get(bunkId).get("BunkNum");
+                        String type = db.attributes.get("Checkins").get(checkIn).get("AssignedBunkSlot");
+                        assignedBunk = "Bunk " + bunkNum + " " + type;
+                        nearestFoundDate = checkInDate;
+                    }
+                }
             }
         }
-        return "None";
+        return assignedBunk;
     }
 }
