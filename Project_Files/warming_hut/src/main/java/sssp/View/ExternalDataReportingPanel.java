@@ -78,8 +78,10 @@ public class ExternalDataReportingPanel extends JPanel {
                 continue;
             }
 
-            //get Date
+            // get Date
             String date = oneCheckin.get("Date");
+            // format the date
+            String formatDate = date.substring(0,10);
             String guestName;
             // get Emergency Shelter Status
             String servicesOnly="", laundry=""; // TODO fix the services only display
@@ -94,7 +96,7 @@ public class ExternalDataReportingPanel extends JPanel {
             caseWorthy = Boolean.parseBoolean(oneCheckin.get(CheckinsDBKeys.CASEWORTHY_ENTERED.getKey()));
             hmis = Boolean.parseBoolean(oneCheckin.get(CheckinsDBKeys.HMIS_ENTERED.getKey()));
 
-            Object[] rowData = {date, guestName, servicesOnly, laundry, caseWorthy, hmis};
+            Object[] rowData = {formatDate, guestName, servicesOnly, laundry, caseWorthy, hmis};
             tableModel.addRow(rowData);
         }
     }
