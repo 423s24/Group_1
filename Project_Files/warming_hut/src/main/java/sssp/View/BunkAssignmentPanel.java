@@ -134,7 +134,7 @@ public class BunkAssignmentPanel {
             reservedLabel.setBackground(Color.YELLOW);
         }
         String guestId = "Guest_" + guest.get("GuestId");
-        JLabel lastAssignedLabel = new JLabel(getLastAssignedBunk(guestId));
+        JLabel lastAssignedLabel = new JLabel(getLastAssignedBunk(guestId, false));
         JLabel[] labels = {guestNameLabel, reservedLabel, lastAssignedLabel};
         JComboBox<String> bedSlot = new JComboBox<>(new String[]{"A", "B"});
 
@@ -464,7 +464,7 @@ public class BunkAssignmentPanel {
         }
     }
 
-    public static String getLastAssignedBunk(String guestId){
+    public static String getLastAssignedBunk(String guestId, boolean onlyCheckCurrentDate){
         Database db = DBConnectorV2Singleton.getInstance().database;
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -485,7 +485,9 @@ public class BunkAssignmentPanel {
                 System.out.println("Check In Date Parse Exception");
             }
 
-            if(!checkInDateFormatted.equals(formattedDateSelected)){
+            boolean currentDateCheck = (onlyCheckCurrentDate && checkInDateFormatted.equals(formattedDateSelected));
+            boolean skipCurrentDateCheck = (!onlyCheckCurrentDate && !checkInDateFormatted.equals(formattedDateSelected));
+            if(currentDateCheck || skipCurrentDateCheck){
                 if(nearestFoundDate == null || checkInDate.after(nearestFoundDate)){
                     if(db.attributes.get("Checkins").get(checkIn).get("GuestId").equals(guestId)){
                         String bunkId = db.attributes.get("Checkins").get(checkIn).get("AssignedBunk");

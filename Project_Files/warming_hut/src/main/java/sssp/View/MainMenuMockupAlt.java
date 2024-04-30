@@ -555,13 +555,13 @@ public class MainMenuMockupAlt extends JFrame {
             }
 
             // Check for an assigned bunk (if any)
-            String bunk;
-
+            String bunk = BunkAssignmentPanel.getLastAssignedBunk("Guest_"+guest.get("GuestId"), true);
+            /*
             if (guest.get("ReservedBunk") != null && !guest.get("ReservedBunk").isEmpty()) {
                 bunk = guest.get("ReservedBunkSlot") + ":" + guest.get("ReservedBunk");
             } else {
                 bunk = "Unassigned";
-            }
+            } */
 
             // Check for any issues in order of seriousness
             String issue;

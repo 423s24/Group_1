@@ -43,12 +43,12 @@ public class BunkReservationsPanel {
             addActionListeners();
 
             Database db = DBConnectorV2Singleton.getInstance().database;
-            lastAssigned.setText(BunkAssignmentPanel.getLastAssignedBunk(activeGuestId));
+            lastAssigned.setText(BunkAssignmentPanel.getLastAssignedBunk(activeGuestId, false));
         }
 
     }
 
-    private static final JLabel lastAssigned = new JLabel(BunkAssignmentPanel.getLastAssignedBunk(activeGuestId));
+    private static final JLabel lastAssigned = new JLabel(BunkAssignmentPanel.getLastAssignedBunk(activeGuestId, false));
     private static ActionListener bedSlotListener;
     private static ActionListener bunkReservationListener;
     private static void removeListeners(){
