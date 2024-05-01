@@ -7,7 +7,8 @@ public enum CheckinsDBKeys {
     LAUNDRY("Laundry"),
     SERVICES_ONLY("ServicesOnly"),
     CASEWORTHY_ENTERED("CaseworthyInfoEnteredInDB"),
-    HMIS_ENTERED("HMISInfoEnteredInDB");
+    HMIS_ENTERED("HMISInfoEnteredInDB"),
+    SHOULD_DISPLAY("ShouldDisplay");
 
     private final String key;
 

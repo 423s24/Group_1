@@ -30,10 +30,7 @@ import java.util.*;
 import java.util.List;
 
 import sssp.Control.SecretManager;
-import sssp.Helper.DBConnectorV2;
-import sssp.Helper.DBConnectorV2Singleton;
-import sssp.Helper.HttpStreamingManagerSingleton;
-import sssp.Helper.UUIDGenerator;
+import sssp.Helper.*;
 import sssp.Model.*;
 
 import static sssp.View.ExternalDataReportingPanel.externalDataReportingPanel;
@@ -340,10 +337,11 @@ public class MainMenuMockupAlt extends JFrame {
         if (db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()) == null)
             return null;
 
+        d = DateHelper.truncateToDay(d);
+
         List<Map<String, String>> checkins = db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).values().stream().toList();
 
         Instant dateInstant = d.toInstant();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
             List<Map<String, String>> checkinsOnDate = checkins.stream().filter(
                 e -> 
                 {
@@ -380,6 +378,8 @@ public class MainMenuMockupAlt extends JFrame {
     private void submitData(JTextField guestNameField, JDateChooser dateChooser) {
         String guestName = guestNameField.getText();
         Date selectedDate = dateChooser.getDate();
+
+        selectedDate = DateHelper.truncateToDay(selectedDate);
 
         // Prevent empty submission
         if (guestName.isEmpty()) {
@@ -431,6 +431,7 @@ public class MainMenuMockupAlt extends JFrame {
         checkinEntry.put(CheckinsDBKeys.LAUNDRY.getKey(), Boolean.toString(false));
         checkinEntry.put(CheckinsDBKeys.CASEWORTHY_ENTERED.getKey(), Boolean.toString(false));
         checkinEntry.put(CheckinsDBKeys.HMIS_ENTERED.getKey(), Boolean.toString(false));
+        checkinEntry.put(CheckinsDBKeys.SHOULD_DISPLAY.getKey(), Boolean.toString(true));
 
         // enter the "Check In" in to the DB
         db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).put(UUIDGenerator.getNewUUID(), checkinEntry);
@@ -523,7 +524,9 @@ public class MainMenuMockupAlt extends JFrame {
      * Updates the guest table with the latest data from the database.
      */
     private void updateGuestsTable() {
-        List<Map<String,String>> guestsForDate = filterGuestTableByRosterDate(dateChooser.getDate());
+        Date currentDate = dateChooser.getDate();
+
+        List<Map<String,String>> guestsForDate = filterGuestTableByRosterDate(currentDate);
 
         // Update the guest table
         DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
@@ -555,7 +558,7 @@ public class MainMenuMockupAlt extends JFrame {
             }
 
             // Check for an assigned bunk (if any)
-            String bunk = BunkAssignmentPanel.getLastAssignedBunk("Guest_"+guest.get("GuestId"), true);
+            String bunk = BunkAssignmentPanel.getLastAssignedBunk("Guest_"+guest.get("GuestId"), true, currentDate);
             /*
             if (guest.get("ReservedBunk") != null && !guest.get("ReservedBunk").isEmpty()) {
                 bunk = guest.get("ReservedBunkSlot") + ":" + guest.get("ReservedBunk");
@@ -703,7 +706,7 @@ public class MainMenuMockupAlt extends JFrame {
 
                 String associatedGuest = getGuestTableKey(guestName);
                 Date currentSelected = dateChooser.getDate();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+                currentSelected = DateHelper.truncateToDay(currentSelected);
 
                 Set<Map.Entry<String, Map<String,String>>> checkins = db.database.attributes.get(AttributesDBKeys.CHECK_INS.getKey()).entrySet();
 
