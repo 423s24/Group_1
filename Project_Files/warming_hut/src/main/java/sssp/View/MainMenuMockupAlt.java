@@ -20,7 +20,6 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
@@ -32,8 +31,10 @@ import java.util.List;
 import sssp.Control.SecretManager;
 import sssp.Helper.*;
 import sssp.Model.*;
-
-import static sssp.View.ExternalDataReportingPanel.externalDataReportingPanel;
+import sssp.View.BunkAssignment.Panels.BunkAssignmentPanel;
+import sssp.View.GuestDetails.GuestDetailsPanel;
+import sssp.View.Reporting.ExternalDataReportingPanel;
+import sssp.View.components.ButtonColumn;
 
 public class MainMenuMockupAlt extends JFrame {
     private JPanel mainPanel;

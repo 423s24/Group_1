@@ -1,3 +1,5 @@
 /Project_Files/warming_hut/target/
 *.jar
 inst/Output/*.exe
+/.vscode/
+/.idea/

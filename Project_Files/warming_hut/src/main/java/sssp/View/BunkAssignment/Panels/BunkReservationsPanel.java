@@ -1,11 +1,10 @@
-package sssp.View;
+package sssp.View.BunkAssignment.Panels;
 
 import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
 import sssp.Helper.Database;
 
 import javax.swing.*;
-import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,8 +40,7 @@ public class BunkReservationsPanel {
             bunkReservationCombo.setModel(new DefaultComboBoxModel<>(getAvailableBunks().toArray(new String[0][0])));
             setActiveGuestReservedBunkIndex();
             addActionListeners();
-
-            Database db = DBConnectorV2Singleton.getInstance().database;
+            
             lastAssigned.setText(BunkAssignmentPanel.getLastAssignedBunk(activeGuestId, false));
         }
 

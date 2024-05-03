@@ -1,10 +1,6 @@
-package sssp.View;
+package sssp.View.GuestDetails.Panels;
 
 import javax.swing.*;
-
-import sssp.View.GuestDetails.Panels.NoTrespassPanel;
-import sssp.View.GuestDetails.Panels.SuspensionPanel;
-import sssp.View.GuestDetails.Panels.WarningsPanel;
 
 import java.awt.*;
 import java.util.List;

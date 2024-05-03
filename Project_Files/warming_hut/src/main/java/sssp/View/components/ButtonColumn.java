@@ -1,6 +1,6 @@
 // Source: https://tips4java.wordpress.com/2009/07/12/table-button-column/
 
-package sssp.View;
+package sssp.View.components;
 
 import java.awt.*;
 import java.awt.event.*;

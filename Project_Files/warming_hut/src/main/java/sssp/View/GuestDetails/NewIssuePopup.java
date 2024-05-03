@@ -1,4 +1,4 @@
-package sssp.View;
+package sssp.View.GuestDetails;
 
 import com.toedter.calendar.JDateChooser;
 

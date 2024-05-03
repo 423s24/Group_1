@@ -1,6 +1,9 @@
 package sssp.View;
 
 import javax.swing.*;
+
+import sssp.View.GuestDetails.NewIssuePopup;
+
 import java.awt.*;
 import java.util.HexFormat;
 

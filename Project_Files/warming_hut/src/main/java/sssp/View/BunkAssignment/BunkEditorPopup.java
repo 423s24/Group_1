@@ -1,4 +1,4 @@
-package sssp.View;
+package sssp.View.BunkAssignment;
 
 import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
@@ -73,11 +73,6 @@ public class BunkEditorPopup {
         JLabel mensAreaLabel = new JLabel("Men's Bunks");
         JLabel womensAreaLabel = new JLabel("Women's Bunks");
         JLabel observationAreaLabel = new JLabel("Observational Area");
-
-        JLabel[] labels = {mensAreaLabel, womensAreaLabel, observationAreaLabel};
-        for (JLabel label : labels) {
-            //label.setFont(new Font("Serif", Font.PLAIN, 22));
-        }
 
         ScrollPane mensScrollPane = new ScrollPane();
         ScrollPane womensScrollPane = new ScrollPane();
@@ -208,11 +203,6 @@ public class BunkEditorPopup {
         saveChangesBtn.addActionListener(e -> {
             saveValues();
         });
-
-        JLabel[] labels = {bunkNumLabel, bunkAreaLabel};
-        for (JLabel label : labels) {
-            //label.setFont(new Font("Serif", Font.PLAIN, 22));
-        }
 
         bunkNumField.setPreferredSize(new Dimension(MENU_WIDTH, 25));
         bunkNumField.setMinimumSize(new Dimension(MENU_WIDTH, 25));

@@ -1,9 +1,12 @@
-package sssp.View;
+package sssp.View.GuestDetails;
 
 import sssp.Helper.DBConnectorV2Singleton;
+import sssp.View.BunkAssignment.Panels.BunkReservationsPanel;
+import sssp.View.GuestDetails.Panels.DisciplinaryInfoPanel;
 import sssp.View.components.*;
 import sssp.Helper.DBConnectorV2;
 import sssp.Model.GuestDBKeys;
+import sssp.View.NameAutocompleteDocumentFilter;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -95,7 +98,6 @@ public class GuestDetailsPanel extends JPanel {
         topBarPanel.add(searchButton);
 
         Border topBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY);
-        Border regBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.GRAY);
         topBarPanel.setBorder(topBorder);
 
         addBasicInfo();

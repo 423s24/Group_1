@@ -1,4 +1,4 @@
-package sssp.View;
+package sssp.View.Reporting;
 
 import sssp.Helper.DBConnectorV2;
 import sssp.Helper.DBConnectorV2Singleton;
@@ -6,18 +6,14 @@ import sssp.Helper.DateHelper;
 import sssp.Model.AttributesDBKeys;
 import sssp.Model.CheckinsDBKeys;
 import sssp.Model.GuestDBKeys;
-import sssp.Model.NoTrespassDBKeys;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -56,9 +52,6 @@ public class ExternalDataReportingPanel extends JPanel {
             }
         };
         reportingTable.getModel().addTableModelListener(dbUpdater);
-
-        // TODO data reporting: action listeners setting DB fields when user clicks checkboxes
-
 
         JScrollPane scrollPane = new JScrollPane(reportingTable);
         reportingPanel.add(scrollPane, BorderLayout.CENTER);
