@@ -590,7 +590,7 @@ public class MainMenuMockupAlt extends JFrame {
 
             // check each entry in trespassData list
             for (Map<String,String> oneTrespass : trespassData) {
-                if (oneTrespass != null && !oneTrespass.get(NoTrespassDBKeys.CONFLICT_ID.getKey()).isEmpty()) {
+                if (oneTrespass != null && !oneTrespass.containsKey(NoTrespassDBKeys.STAFF_INITIALS.getKey())) {
                     trespass = "NO TRESPASS";
                 }
                 else {
